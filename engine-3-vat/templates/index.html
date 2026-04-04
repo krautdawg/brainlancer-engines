@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Engine 3: VAT Intelligence — KI Katapult</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { DEFAULT: '#132A3E', light: '#1d3f5e', darker: '#0d1f2d' },
+            sky:  { DEFAULT: '#00B3FF', dark: '#0090cc' },
+            mint: { DEFAULT: '#00FFC5', dark: '#00cc9e' },
+          },
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    [x-cloak] { display: none !important; }
+    .card-enter { animation: slideIn 0.25s ease-out; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .kz-highlight { animation: pulse-green 1.5s ease-in-out; }
+    @keyframes pulse-green {
+      0%,100% { background-color: transparent; }
+      50%      { background-color: rgba(0,255,197,0.12); }
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1d3f5e; }
+    ::-webkit-scrollbar-thumb { background: #00B3FF44; border-radius: 3px; }
+    .kbd {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 1.6rem; height: 1.6rem; padding: 0 0.3rem;
+      border: 1px solid #00B3FF55; border-radius: 4px;
+      background: #1d3f5e; color: #00B3FF;
+      font-family: monospace; font-size: 0.75rem; font-weight: 700;
+      line-height: 1;
+    }
+    .progress-bar { transition: width 0.4s ease; }
+    .tab-active {
+      color: #00B3FF;
+      border-bottom: 2px solid #00B3FF;
+    }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 9999px;
+      font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .badge-to_review { background: #00B3FF22; color: #00B3FF; border: 1px solid #00B3FF44; }
+    .badge-ok        { background: #00FFC522; color: #00FFC5; border: 1px solid #00FFC544; }
+    .badge-corrected { background: #F59E0B22; color: #F59E0B; border: 1px solid #F59E0B44; }
+    .badge-deleted   { background: #EF444422; color: #EF4444; border: 1px solid #EF444444; }
+    .cat-vst19  { color: #60A5FA; }
+    .cat-vst7   { color: #A78BFA; }
+    .cat-eu     { color: #34D399; }
+    .cat-dritt  { color: #FB923C; }
+    .cat-nicht  { color: #94A3B8; }
+    .risk-high   { color: #EF4444; }
+    .risk-medium { color: #F59E0B; }
+    .risk-low    { color: #10B981; }
+    .triage-card-focused {
+      border-color: #00B3FF !important;
+      box-shadow: 0 0 0 2px #00B3FF33, 0 8px 32px #00000066;
+    }
+  </style>
+</head>
+<body class="h-full font-sans bg-navy text-white" x-data="vatApp()" x-init="init()" @keydown.window="handleKey($event)">
+
+<!-- ===== LOGIN OVERLAY ===== -->
+<div x-show="!isLoggedIn" x-cloak
+     class="fixed inset-0 z-50 bg-navy flex items-center justify-center p-4">
+  <div class="w-full max-w-sm">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 mb-4">
+        <div class="w-8 h-8 rounded-lg bg-sky flex items-center justify-center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#132A3E" stroke-width="2.5">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        <span class="font-bold text-lg tracking-tight">KI Katapult</span>
+      </div>
+      <h1 class="text-2xl font-bold">Engine 3: VAT Intelligence</h1>
+      <p class="text-white/50 text-sm mt-1">USt-Voranmeldung Automation</p>
+    </div>
+    <div class="bg-navy-light rounded-xl p-6 border border-white/10">
+      <form @submit.prevent="login()">
+        <label class="block text-sm text-white/60 mb-1">Passwort</label>
+        <input x-model="password" type="password" placeholder="••••••••••••"
+               class="w-full bg-navy-darker border border-white/20 rounded-lg px-4 py-2.5
+                      text-white placeholder-white/30 focus:outline-none focus:border-sky
+                      focus:ring-1 focus:ring-sky/30 mb-4" />
+        <div x-show="loginError" x-cloak
+             class="text-red-400 text-sm mb-3" x-text="loginError"></div>
+        <button type="submit" :disabled="loading"
+                class="w-full bg-sky hover:bg-sky-dark text-navy-darker font-bold
+                       py-2.5 rounded-lg transition-colors disabled:opacity-50">
+          <span x-show="!loading">Anmelden</span>
+          <span x-show="loading" x-cloak>Bitte warten…</span>
+        </button>
+      </form>
+    </div>
+    <p class="text-center text-white/30 text-xs mt-4">Default: brainlancer2026</p>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div x-show="isLoggedIn" x-cloak class="flex flex-col h-screen">
+
+  <!-- TOP NAVBAR -->
+  <header class="bg-navy-darker border-b border-white/10 px-6 py-3 flex items-center justify-between shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="w-7 h-7 rounded-md bg-sky flex items-center justify-center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#132A3E" stroke-width="2.5">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+      </div>
+      <span class="font-bold text-sm tracking-tight text-white/90">KI Katapult</span>
+      <span class="text-white/20">|</span>
+      <span class="text-sm text-white/70">Engine 3: VAT Intelligence</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-xs text-white/40" x-text="elsterData ? 'Q' + elsterData.quarter + '/' + elsterData.year : ''"></span>
+      <button @click="logout()"
+              class="text-xs text-white/40 hover:text-white/70 transition-colors px-2 py-1 rounded border border-white/10 hover:border-white/30">
+        Abmelden
+      </button>
+    </div>
+  </header>
+
+  <!-- DEMO MODE BANNER -->
+  <div x-show="isDemoMode" x-cloak
+       class="bg-amber-500/10 border-b border-amber-500/30 px-6 py-2 flex items-center gap-3 shrink-0">
+    <div class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></div>
+    <span class="text-amber-400 text-xs font-semibold tracking-wide uppercase">Demo-Modus</span>
+    <span class="text-amber-300/70 text-xs">— Simulierte Daten · Q1/2024 · Kein echtes Email-Konto verbunden</span>
+    <div class="ml-auto flex gap-2">
+      <button @click="clearAndReloadDemo()"
+              class="text-amber-400/60 hover:text-amber-400 text-xs px-2 py-0.5 border border-amber-500/30 rounded transition-colors">
+        Demo neu laden
+      </button>
+    </div>
+  </div>
+
+  <!-- START SCREEN (no data yet) -->
+  <div x-show="!hasData && !loading" x-cloak
+       class="flex-1 flex items-center justify-center p-8">
+    <div class="max-w-lg w-full text-center">
+      <div class="w-16 h-16 rounded-2xl bg-sky/10 border border-sky/30 flex items-center justify-center mx-auto mb-6">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00B3FF" stroke-width="1.5">
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold mb-2">Willkommen zur VAT Intelligence</h2>
+      <p class="text-white/50 text-sm mb-8">Automatisiere deine USt-Voranmeldung mit KI-gestützter Rechnungsanalyse.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <button @click="loadDemo()"
+                class="bg-sky hover:bg-sky-dark text-navy font-bold py-4 rounded-xl transition-colors flex flex-col items-center gap-2">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+          <span>Demo starten</span>
+          <span class="text-xs font-normal text-navy/70">30 Beispiel-Rechnungen · Q1/2024</span>
+        </button>
+        <button @click="showEmailSetup = true"
+                class="bg-white/5 hover:bg-white/10 border border-white/20 text-white font-semibold py-4 rounded-xl transition-colors flex flex-col items-center gap-2">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          <span>Email scannen</span>
+          <span class="text-xs font-normal text-white/50">IMAP-Verbindung konfigurieren</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING STATE -->
+  <div x-show="loading" x-cloak class="flex-1 flex items-center justify-center">
+    <div class="text-center">
+      <div class="w-10 h-10 border-2 border-sky border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p class="text-white/50" x-text="loadingMsg || 'Lade Daten…'"></p>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT (has data) -->
+  <div x-show="hasData && !loading" x-cloak class="flex flex-col flex-1 overflow-hidden">
+
+    <!-- TAB NAVIGATION -->
+    <nav class="bg-navy-darker border-b border-white/10 px-6 flex items-center gap-1 shrink-0">
+      <button @click="activeView = 'triage'"
+              :class="activeView === 'triage' ? 'tab-active' : 'text-white/50 hover:text-white/80'"
+              class="px-4 py-3 text-sm font-medium transition-colors flex items-center gap-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        Triage-Queue
+        <span x-show="stats.to_review > 0" x-cloak
+              class="bg-sky text-navy text-xs font-bold px-1.5 py-0.5 rounded-full"
+              x-text="stats.to_review"></span>
+      </button>
+      <button @click="activeView = 'all'; loadInvoices()"
+              :class="activeView === 'all' ? 'tab-active' : 'text-white/50 hover:text-white/80'"
+              class="px-4 py-3 text-sm font-medium transition-colors flex items-center gap-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+        </svg>
+        Alle Rechnungen
+        <span class="text-white/30 text-xs" x-text="stats.total_incoming || ''"></span>
+      </button>
+      <button @click="activeView = 'elster'; calculateElster()"
+              :class="activeView === 'elster' ? 'tab-active' : 'text-white/50 hover:text-white/80'"
+              class="px-4 py-3 text-sm font-medium transition-colors flex items-center gap-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+        ELSTER
+        <span x-show="elsterData && elsterData.kz83 !== undefined" x-cloak
+              :class="elsterData && elsterData.kz83 > 0 ? 'text-red-400' : 'text-mint'"
+              class="text-xs font-bold"
+              x-text="elsterData ? formatEuro(elsterData.kz83) : ''"></span>
+      </button>
+      <div class="ml-auto flex items-center gap-2 py-2">
+        <button @click="runAiReview()" :disabled="aiLoading"
+                class="text-xs px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v4l3 3"/>
+          </svg>
+          <span x-show="!aiLoading">KI-Review</span>
+          <span x-show="aiLoading" x-cloak>Läuft…</span>
+        </button>
+        <button @click="exportJson()"
+                class="text-xs px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg transition-colors">
+          Export JSON
+        </button>
+      </div>
+    </nav>
+
+    <!-- ===== TRIAGE VIEW ===== -->
+    <div x-show="activeView === 'triage'" x-cloak class="flex-1 flex flex-col overflow-hidden">
+
+      <!-- Progress bar -->
+      <div class="bg-navy-light border-b border-white/10 px-6 py-3 shrink-0">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-4">
+            <span class="text-sm font-medium">
+              Fortschritt: <span class="text-sky font-bold" x-text="stats.reviewed || 0"></span>
+              <span class="text-white/40"> / </span>
+              <span x-text="stats.total_incoming || 0"></span> geprüft
+            </span>
+            <span x-show="stats.to_review > 0" x-cloak class="text-sm text-white/50">
+              — <span class="text-sky font-semibold" x-text="stats.to_review"></span> ausstehend
+            </span>
+          </div>
+          <div class="flex items-center gap-3 text-xs text-white/40">
+            <span class="flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-mint inline-block"></span>
+              <span x-text="(stats.by_status && stats.by_status.ok) || 0"></span> OK
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span>
+              <span x-text="(stats.by_status && stats.by_status.corrected) || 0"></span> Korrigiert
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-red-400 inline-block"></span>
+              <span x-text="(stats.by_status && stats.by_status.deleted) || 0"></span> Gelöscht
+            </span>
+          </div>
+        </div>
+        <div class="h-2 bg-navy-darker rounded-full overflow-hidden">
+          <div class="progress-bar h-full bg-gradient-to-r from-sky to-mint rounded-full"
+               :style="'width: ' + (stats.progress_pct || 0) + '%'"></div>
+        </div>
+      </div>
+
+      <!-- Triage body: queue + detail panel -->
+      <div class="flex-1 flex overflow-hidden">
+
+        <!-- LEFT: Queue -->
+        <div class="w-[340px] lg:w-[380px] shrink-0 border-r border-white/10 flex flex-col overflow-hidden">
+          <!-- Sub-tabs -->
+          <div class="flex border-b border-white/10 px-3 pt-2 gap-1 shrink-0 bg-navy-darker/50">
+            <template x-for="tab in triageTabs" :key="tab.key">
+              <button @click="triageTab = tab.key; filterTriageInvoices()"
+                      :class="triageTab === tab.key ? 'text-sky border-b-2 border-sky' : 'text-white/40 hover:text-white/70'"
+                      class="px-3 py-2 text-xs font-medium transition-colors">
+                <span x-text="tab.label"></span>
+                <span class="ml-1 text-white/30" x-text="tab.count()"></span>
+              </button>
+            </template>
+          </div>
+
+          <!-- Invoice list -->
+          <div class="flex-1 overflow-y-auto p-3 space-y-2" id="triageList">
+            <template x-if="displayedInvoices.length === 0">
+              <div class="text-center py-12 text-white/30">
+                <svg class="w-12 h-12 mx-auto mb-3 opacity-30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-sm">Keine Rechnungen</p>
+                <p class="text-xs mt-1 text-white/20" x-show="triageTab === 'to_review'" x-cloak>Alle geprüft!</p>
+              </div>
+            </template>
+            <template x-for="(inv, idx) in displayedInvoices" :key="inv.id">
+              <div @click="selectInvoice(inv, idx)"
+                   :class="{
+                     'triage-card-focused': selectedId === inv.id,
+                     'opacity-60': inv.status === 'deleted',
+                   }"
+                   class="rounded-xl border border-white/10 p-3 cursor-pointer transition-all hover:border-white/30 bg-navy-light/50 hover:bg-navy-light card-enter">
+                <!-- Status + country row -->
+                <div class="flex items-center justify-between mb-2">
+                  <div :class="'status-badge badge-' + inv.status" x-text="statusLabel(inv.status)"></div>
+                  <div class="flex items-center gap-2">
+                    <span x-show="inv.ai_flag" x-cloak class="text-amber-400 text-xs flex items-center gap-0.5">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3l9 16H3L12 5zm-1 7v3h2v-3h-2zm0 4v2h2v-2h-2z"/></svg>
+                      KI
+                    </span>
+                    <span class="text-xs text-white/40 font-mono" x-text="inv.country || 'DE'"></span>
+                  </div>
+                </div>
+                <!-- Vendor name -->
+                <div class="font-semibold text-sm text-white mb-0.5 truncate" x-text="inv.vendor || 'Unbekannt'"></div>
+                <!-- Date + invoice number -->
+                <div class="text-xs text-white/40 mb-2 truncate" x-text="inv.invoice_date || '—'"></div>
+                <!-- Amount + category -->
+                <div class="flex items-center justify-between">
+                  <span :class="categoryColor(inv)" class="text-xs font-semibold" x-text="categoryShort(inv)"></span>
+                  <span class="text-sm font-bold text-white" x-text="formatEuro(inv.amount_gross)"></span>
+                </div>
+                <!-- Confidence bar -->
+                <div class="mt-2 h-0.5 bg-white/10 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all"
+                       :class="inv.confidence >= 0.80 ? 'bg-mint' : inv.confidence >= 0.60 ? 'bg-amber-400' : 'bg-red-400'"
+                       :style="'width: ' + Math.round((inv.confidence || 0) * 100) + '%'"></div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- RIGHT: Detail panel -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+          <!-- No selection state -->
+          <div x-show="!selectedInvoice" x-cloak
+               class="flex-1 flex items-center justify-center text-white/20">
+            <div class="text-center">
+              <svg class="w-12 h-12 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+              <p class="text-sm">Rechnung auswählen</p>
+              <p class="text-xs mt-1 text-white/15">Klicke links auf eine Rechnung</p>
+            </div>
+          </div>
+
+          <!-- Invoice detail -->
+          <div x-show="selectedInvoice" x-cloak class="flex-1 flex flex-col overflow-hidden">
+            <div class="flex-1 overflow-y-auto p-6">
+
+              <!-- Header row -->
+              <div class="flex items-start justify-between mb-6">
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <div :class="'status-badge badge-' + (selectedInvoice?.status || '')"
+                         x-text="statusLabel(selectedInvoice?.status)"></div>
+                    <span x-show="selectedInvoice?.ai_flag" x-cloak
+                          class="text-amber-400 text-xs font-semibold flex items-center gap-1 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3l9 16H3L12 5zm-1 7v3h2v-3h-2zm0 4v2h2h-2z"/></svg>
+                      KI-Hinweis
+                    </span>
+                  </div>
+                  <h2 class="text-xl font-bold" x-text="selectedInvoice?.vendor || 'Unbekannt'"></h2>
+                  <p class="text-white/50 text-sm mt-0.5"
+                     x-text="[selectedInvoice?.invoice_number, selectedInvoice?.invoice_date].filter(Boolean).join(' · ')"></p>
+                </div>
+                <div class="text-right">
+                  <div class="text-2xl font-bold text-white" x-text="formatEuro(selectedInvoice?.amount_gross)"></div>
+                  <div class="text-sm text-white/50 mt-0.5">
+                    Netto <span class="text-white/70" x-text="formatEuro(selectedInvoice?.amount_net)"></span>
+                    + MwSt <span class="text-white/70" x-text="formatEuro(selectedInvoice?.amount_vat)"></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Classification grid -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                <div class="bg-navy-light rounded-xl p-3 border border-white/10">
+                  <div class="text-xs text-white/40 mb-1">Steuerkat.</div>
+                  <div :class="categoryColor(selectedInvoice)" class="font-bold text-sm"
+                       x-text="categoryLabel(selectedInvoice?.correction_category || selectedInvoice?.category)"></div>
+                </div>
+                <div class="bg-navy-light rounded-xl p-3 border border-white/10">
+                  <div class="text-xs text-white/40 mb-1">Land</div>
+                  <div class="font-bold text-sm" x-text="selectedInvoice?.country || 'DE'"></div>
+                </div>
+                <div class="bg-navy-light rounded-xl p-3 border border-white/10">
+                  <div class="text-xs text-white/40 mb-1">MwSt.-Satz</div>
+                  <div class="font-bold text-sm" x-text="selectedInvoice?.vat_rate > 0 ? selectedInvoice.vat_rate + '%' : '0% (RC)'"></div>
+                </div>
+                <div class="bg-navy-light rounded-xl p-3 border border-white/10">
+                  <div class="text-xs text-white/40 mb-1">Sicherheit</div>
+                  <div :class="selectedInvoice?.confidence >= 0.80 ? 'text-mint' : selectedInvoice?.confidence >= 0.60 ? 'text-amber-400' : 'text-red-400'"
+                       class="font-bold text-sm"
+                       x-text="Math.round((selectedInvoice?.confidence || 0) * 100) + '%'"></div>
+                </div>
+              </div>
+
+              <!-- AI Concern -->
+              <div x-show="selectedInvoice?.ai_reason" x-cloak
+                   class="bg-amber-500/8 border border-amber-500/25 rounded-xl p-4 mb-6">
+                <div class="flex items-start gap-3">
+                  <svg class="w-4 h-4 text-amber-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L1 21h22L12 2zm0 3l9 16H3L12 5zm-1 7v3h2v-3h-2zm0 4v2h2v-2h-2z"/>
+                  </svg>
+                  <div>
+                    <div class="text-amber-400 text-xs font-semibold uppercase tracking-wide mb-1">KI-Hinweis</div>
+                    <p class="text-amber-200/80 text-sm leading-relaxed" x-text="selectedInvoice?.ai_reason"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Correction info (if corrected) -->
+              <div x-show="selectedInvoice?.status === 'corrected' && selectedInvoice?.correction_reason" x-cloak
+                   class="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 mb-6">
+                <div class="text-xs text-amber-400/60 uppercase tracking-wide mb-1">Korrektur</div>
+                <div class="text-sm text-white/70" x-text="selectedInvoice?.correction_category + ' — ' + selectedInvoice?.correction_reason"></div>
+                <div x-show="selectedInvoice?.correction_percentage !== null && selectedInvoice?.correction_percentage !== 100 && selectedInvoice?.correction_percentage !== undefined" x-cloak
+                     class="text-xs text-white/40 mt-1"
+                     x-text="'Anteiliger Abzug: ' + selectedInvoice?.correction_percentage + '%'"></div>
+              </div>
+
+              <!-- Raw text preview -->
+              <div x-show="selectedInvoice?.raw_text" x-cloak class="mb-6">
+                <button @click="showRawText = !showRawText"
+                        class="text-xs text-white/40 hover:text-white/60 flex items-center gap-1 mb-2 transition-colors">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path x-show="!showRawText" d="M9 5l7 7-7 7"/>
+                    <path x-show="showRawText" x-cloak d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  PDF-Textextrakt
+                </button>
+                <div x-show="showRawText" x-cloak
+                     class="bg-navy-darker/60 border border-white/10 rounded-lg p-3 text-xs text-white/40 font-mono max-h-40 overflow-y-auto whitespace-pre-wrap"
+                     x-text="selectedInvoice?.raw_text"></div>
+              </div>
+
+              <!-- Keyboard hint (to_review only) -->
+              <div x-show="selectedInvoice?.status === 'to_review'" x-cloak
+                   class="bg-sky/5 border border-sky/20 rounded-xl p-4">
+                <div class="text-xs text-sky/60 uppercase tracking-wide mb-3">Tastenkürzel</div>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                  <div class="flex items-center gap-2">
+                    <kbd class="kbd">1</kbd>
+                    <span class="text-white/70">Als OK akzeptieren</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <kbd class="kbd">2</kbd>
+                    <span class="text-white/70">Korrigieren</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <kbd class="kbd">3</kbd>
+                    <span class="text-white/70">Löschen / privat</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <kbd class="kbd">Z</kbd>
+                    <span class="text-white/70">Rückgängig</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action bar (to_review only) -->
+            <div x-show="selectedInvoice?.status === 'to_review'" x-cloak
+                 class="shrink-0 border-t border-white/10 bg-navy-darker/50 p-4 flex items-center gap-3">
+              <button @click="markOK()"
+                      class="flex-1 bg-mint/15 hover:bg-mint/25 border border-mint/40 text-mint font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span class="hidden sm:inline">Akzeptieren</span>
+                <kbd class="kbd text-navy bg-mint/30 border-mint/40 !text-mint">1</kbd>
+              </button>
+              <button @click="openCorrection()"
+                      class="flex-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                <span class="hidden sm:inline">Korrigieren</span>
+                <kbd class="kbd border-amber-500/40 !text-amber-400 bg-amber-500/10">2</kbd>
+              </button>
+              <button @click="deleteInvoice()"
+                      class="flex-1 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6l-1 14H6L5 6"/>
+                  <path d="M10 11v6M14 11v6"/>
+                  <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+                </svg>
+                <span class="hidden sm:inline">Löschen</span>
+                <kbd class="kbd border-red-500/40 !text-red-400 bg-red-500/10">3</kbd>
+              </button>
+              <button @click="undoLast()" title="Rückgängig (Z)"
+                      class="bg-white/5 hover:bg-white/10 border border-white/20 text-white/60 font-bold py-2.5 px-3 rounded-xl transition-all flex items-center gap-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 14L4 9l5-5"/>
+                  <path d="M4 9h10.5a5.5 5.5 0 010 11H11"/>
+                </svg>
+                <kbd class="kbd">Z</kbd>
+              </button>
+            </div>
+
+            <!-- Already processed: re-open actions -->
+            <div x-show="selectedInvoice && selectedInvoice.status !== 'to_review'" x-cloak
+                 class="shrink-0 border-t border-white/10 bg-navy-darker/50 p-4 flex items-center gap-3">
+              <button @click="reopenReview()"
+                      class="bg-sky/10 hover:bg-sky/20 border border-sky/30 text-sky font-semibold py-2 px-4 rounded-lg transition-all text-sm flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 4v6h6"/><path d="M23 20v-6h-6"/>
+                  <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
+                </svg>
+                Erneut prüfen
+              </button>
+              <button @click="undoLast()"
+                      class="bg-white/5 hover:bg-white/10 border border-white/20 text-white/50 font-semibold py-2 px-4 rounded-lg transition-all text-sm flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/>
+                </svg>
+                Rückgängig
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ALL INVOICES VIEW ===== -->
+    <div x-show="activeView === 'all'" x-cloak class="flex-1 overflow-auto p-6">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-bold">Alle Rechnungen</h2>
+          <div class="flex gap-2">
+            <select x-model="allFilter" @change="loadInvoices()"
+                    class="bg-navy-light border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-sky">
+              <option value="">Alle Status</option>
+              <option value="to_review">Zu prüfen</option>
+              <option value="ok">OK</option>
+              <option value="corrected">Korrigiert</option>
+              <option value="deleted">Gelöscht</option>
+            </select>
+            <select x-model="directionFilter" @change="loadInvoices()"
+                    class="bg-navy-light border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-sky">
+              <option value="">Alle</option>
+              <option value="incoming">Eingang</option>
+              <option value="outgoing">Ausgang</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-white/10">
+          <table class="w-full text-sm">
+            <thead class="bg-navy-darker/60">
+              <tr>
+                <th class="text-left px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wide">Lieferant</th>
+                <th class="text-left px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wide">Datum</th>
+                <th class="text-right px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wide">Betrag</th>
+                <th class="text-left px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wide">Kategorie</th>
+                <th class="text-left px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wide">Land</th>
+                <th class="text-left px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wide">Status</th>
+                <th class="text-right px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wide">Aktion</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="inv in allInvoices" :key="inv.id">
+                <tr class="border-t border-white/5 hover:bg-white/3 transition-colors">
+                  <td class="px-4 py-3">
+                    <div class="font-medium text-white truncate max-w-[200px]" x-text="inv.vendor || '—'"></div>
+                    <div class="text-xs text-white/30" x-text="inv.invoice_number || ''"></div>
+                  </td>
+                  <td class="px-4 py-3 text-white/60 whitespace-nowrap" x-text="inv.invoice_date || '—'"></td>
+                  <td class="px-4 py-3 text-right font-mono font-semibold whitespace-nowrap" x-text="formatEuro(inv.amount_gross)"></td>
+                  <td class="px-4 py-3">
+                    <span :class="categoryColor(inv)" class="text-xs font-semibold"
+                          x-text="categoryShort(inv)"></span>
+                  </td>
+                  <td class="px-4 py-3 text-white/50 text-xs font-mono" x-text="inv.country || 'DE'"></td>
+                  <td class="px-4 py-3">
+                    <div :class="'status-badge badge-' + inv.status" x-text="statusLabel(inv.status)"></div>
+                  </td>
+                  <td class="px-4 py-3 text-right">
+                    <button @click="activeView = 'triage'; triageTab = inv.status === 'to_review' ? 'to_review' : 'all'; filterTriageInvoices(); selectById(inv.id)"
+                            class="text-xs text-sky/60 hover:text-sky transition-colors">Details</button>
+                  </td>
+                </tr>
+              </template>
+              <template x-if="allInvoices.length === 0">
+                <tr>
+                  <td colspan="7" class="px-4 py-12 text-center text-white/30">Keine Rechnungen gefunden</td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ELSTER VIEW ===== -->
+    <div x-show="activeView === 'elster'" x-cloak class="flex-1 overflow-auto p-6">
+      <div class="max-w-4xl mx-auto">
+
+        <!-- Loading -->
+        <div x-show="elsterLoading" x-cloak class="text-center py-16">
+          <div class="w-8 h-8 border-2 border-sky border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p class="text-white/40">Berechne ELSTER Kennzahlen…</p>
+        </div>
+
+        <div x-show="elsterData && !elsterLoading" x-cloak>
+          <!-- Header -->
+          <div class="flex items-start justify-between mb-8">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs text-white/30 uppercase tracking-widest">USt-Voranmeldung</span>
+                <span x-show="isDemoMode" x-cloak
+                      class="text-xs text-amber-400/60 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">Demo</span>
+              </div>
+              <h2 class="text-2xl font-bold" x-text="'Q' + (elsterData?.quarter || 1) + ' / ' + (elsterData?.year || 2024)"></h2>
+              <p class="text-white/40 text-sm mt-0.5"
+                 x-text="(elsterData?.expense_invoice_count || 0) + ' Eingangsrechnungen · ' + (elsterData?.income_invoice_count || 0) + ' Ausgangsrechnungen'"></p>
+            </div>
+            <div class="flex gap-2">
+              <button @click="downloadXml()"
+                      class="text-sm px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg transition-colors flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                </svg>
+                XML Export
+              </button>
+            </div>
+          </div>
+
+          <!-- Ergebnis callout -->
+          <div :class="elsterData?.kz83 > 0 ? 'border-red-500/40 bg-red-500/8' : 'border-mint/40 bg-mint/8'"
+               class="rounded-2xl border p-6 mb-8 flex items-center justify-between">
+            <div>
+              <div :class="elsterData?.kz83 > 0 ? 'text-red-400' : 'text-mint'"
+                   class="text-xs font-semibold uppercase tracking-widest mb-1">
+                Kz. 83 — <span x-text="elsterData?.result_type"></span>
+              </div>
+              <div :class="elsterData?.kz83 > 0 ? 'text-red-300' : 'text-mint'"
+                   class="text-4xl font-bold" x-text="formatEuro(Math.abs(elsterData?.kz83 || 0))"></div>
+              <div class="text-white/50 text-sm mt-1" x-text="elsterData?.result_label"></div>
+            </div>
+            <div class="text-right text-sm text-white/40">
+              <div>Ausgangsteuer: <span class="text-white font-semibold" x-text="formatEuro(elsterData?.output_tax)"></span></div>
+              <div>Vorsteuer: <span class="text-white font-semibold" x-text="formatEuro(elsterData?.input_tax)"></span></div>
+            </div>
+          </div>
+
+          <!-- Kennzahlen grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+            <!-- Output (Umsatzsteuer) -->
+            <div class="bg-navy-light/40 rounded-2xl border border-white/10 p-5">
+              <h3 class="font-bold text-sm text-white/60 uppercase tracking-wide mb-4 flex items-center gap-2">
+                <div class="w-1.5 h-4 rounded-full bg-sky"></div>
+                Umsätze (Ausgangsrechnungen)
+              </h3>
+              <div class="space-y-3">
+                <div x-show="elsterData?.kz81 > 0" x-cloak class="kz-row flex justify-between items-baseline">
+                  <div>
+                    <span class="font-mono font-bold text-sky text-sm">Kz. 81</span>
+                    <span class="text-white/50 text-xs ml-2">Steuerpflichtige Umsätze 19%</span>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-bold" x-text="formatEuro(elsterData?.kz81)"></div>
+                    <div class="text-xs text-white/40" x-text="'Steuer: ' + formatEuro((elsterData?.kz81 || 0) * 0.19)"></div>
+                  </div>
+                </div>
+                <div x-show="elsterData?.kz86 > 0" x-cloak class="kz-row flex justify-between items-baseline">
+                  <div>
+                    <span class="font-mono font-bold text-sky text-sm">Kz. 86</span>
+                    <span class="text-white/50 text-xs ml-2">Steuerpflichtige Umsätze 7%</span>
+                  </div>
+                  <div class="font-bold" x-text="formatEuro(elsterData?.kz86)"></div>
+                </div>
+                <div x-show="elsterData?.kz41 > 0" x-cloak class="kz-row flex justify-between items-baseline">
+                  <div>
+                    <span class="font-mono font-bold text-sky text-sm">Kz. 41</span>
+                    <span class="text-white/50 text-xs ml-2">Steuerfreie EU-Lieferungen</span>
+                  </div>
+                  <div class="font-bold" x-text="formatEuro(elsterData?.kz41)"></div>
+                </div>
+                <div x-show="elsterData?.kz43 > 0" x-cloak class="kz-row flex justify-between items-baseline">
+                  <div>
+                    <span class="font-mono font-bold text-sky text-sm">Kz. 43</span>
+                    <span class="text-white/50 text-xs ml-2">Steuerfreie Ausfuhren</span>
+                  </div>
+                  <div class="font-bold" x-text="formatEuro(elsterData?.kz43)"></div>
+                </div>
+                <div x-show="elsterData?.kz89 > 0" x-cloak class="kz-row flex justify-between items-baseline">
+                  <div>
+                    <span class="font-mono font-bold text-sky text-sm">Kz. 89</span>
+                    <span class="text-white/50 text-xs ml-2">Innergemeinschaftl. Erwerbe</span>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-bold" x-text="formatEuro(elsterData?.kz89)"></div>
+                    <div class="text-xs text-white/40" x-text="'Steuer: ' + formatEuro((elsterData?.kz89 || 0) * 0.19)"></div>
+                  </div>
+                </div>
+                <div x-show="elsterData?.kz46 > 0" x-cloak class="kz-row flex justify-between items-baseline">
+                  <div>
+                    <span class="font-mono font-bold text-sky text-sm">Kz. 46</span>
+                    <span class="text-white/50 text-xs ml-2">§13b Leistungen (Bemessung)</span>
+                  </div>
+                  <div class="font-bold" x-text="formatEuro(elsterData?.kz46)"></div>
+                </div>
+                <div x-show="elsterData?.kz47 > 0" x-cloak class="kz-row flex justify-between items-baseline">
+                  <div>
+                    <span class="font-mono font-bold text-sky text-sm">Kz. 47</span>
+                    <span class="text-white/50 text-xs ml-2">Steuer §13b (Kz.46 × 19%)</span>
+                  </div>
+                  <div class="font-bold text-red-300" x-text="formatEuro(elsterData?.kz47)"></div>
+                </div>
+                <div class="border-t border-white/10 pt-3 flex justify-between">
+                  <span class="text-white/50 text-sm">= Gesamte Ausgangsteuer</span>
+                  <span class="font-bold text-sky" x-text="formatEuro(elsterData?.output_tax)"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Input (Vorsteuer) -->
+            <div class="bg-navy-light/40 rounded-2xl border border-white/10 p-5">
+              <h3 class="font-bold text-sm text-white/60 uppercase tracking-wide mb-4 flex items-center gap-2">
+                <div class="w-1.5 h-4 rounded-full bg-mint"></div>
+                Vorsteuer (Eingangsrechnungen)
+              </h3>
+              <div class="space-y-3">
+                <div x-show="elsterData?.kz66 > 0" x-cloak class="kz-row flex justify-between items-baseline">
+                  <div>
+                    <span class="font-mono font-bold text-mint text-sm">Kz. 66</span>
+                    <span class="text-white/50 text-xs ml-2">Abziehbare Vorsteuer (inl.)</span>
+                  </div>
+                  <div class="font-bold text-mint" x-text="formatEuro(elsterData?.kz66)"></div>
+                </div>
+                <div x-show="elsterData?.kz67 > 0" x-cloak class="kz-row flex justify-between items-baseline">
+                  <div>
+                    <span class="font-mono font-bold text-mint text-sm">Kz. 67</span>
+                    <span class="text-white/50 text-xs ml-2">Vorsteuer §13b (EU + Dritt.)</span>
+                  </div>
+                  <div class="font-bold text-mint" x-text="formatEuro(elsterData?.kz67)"></div>
+                </div>
+                <div x-show="elsterData?.kz66 === 0 && elsterData?.kz67 === 0" x-cloak
+                     class="text-white/30 text-sm py-4 text-center">Keine Vorsteuer erfasst</div>
+                <div class="border-t border-white/10 pt-3 flex justify-between">
+                  <span class="text-white/50 text-sm">= Gesamte Vorsteuer (Kz.66+67)</span>
+                  <span class="font-bold text-mint" x-text="formatEuro(elsterData?.input_tax)"></span>
+                </div>
+              </div>
+
+              <!-- Income summary -->
+              <div class="mt-6 pt-5 border-t border-white/10">
+                <div class="text-xs text-white/40 uppercase tracking-wide mb-3">Zusammenfassung</div>
+                <div class="space-y-2 text-sm">
+                  <div class="flex justify-between">
+                    <span class="text-white/50">Umsatz gesamt (netto)</span>
+                    <span class="font-semibold" x-text="formatEuro(elsterData?.total_income_net)"></span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-white/50">Ausgaben gesamt (netto)</span>
+                    <span class="font-semibold" x-text="formatEuro(elsterData?.total_expenses_net)"></span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-white/50">Erstattete Vorsteuer</span>
+                    <span class="font-semibold text-mint" x-text="formatEuro(elsterData?.total_vst_reclaimed)"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mein ELSTER Anleitung -->
+          <div class="bg-sky/5 border border-sky/20 rounded-2xl p-6">
+            <h3 class="font-bold mb-4 flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00B3FF" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4M12 8h.01"/>
+              </svg>
+              Eintragung in Mein ELSTER
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+              <template x-for="entry in elsterEntries()" :key="entry.kz">
+                <div class="bg-navy-darker/40 rounded-xl p-3 border border-white/8">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-mono font-bold text-sky text-sm" x-text="entry.kz"></span>
+                    <span :class="entry.amount > 0 ? 'text-white' : 'text-white/30'"
+                          class="font-bold" x-text="formatEuro(entry.amount)"></span>
+                  </div>
+                  <div class="text-xs text-white/40" x-text="entry.label"></div>
+                  <div x-show="entry.note" x-cloak class="text-xs text-sky/50 mt-1" x-text="entry.note"></div>
+                </div>
+              </template>
+            </div>
+
+            <div class="mt-4 p-4 bg-navy-darker/30 rounded-xl border border-white/5">
+              <p class="text-xs text-white/40 leading-relaxed">
+                <strong class="text-white/60">Hinweis:</strong>
+                Diese Werte sind für die manuelle Eintragung in
+                <a href="https://www.elster.de" target="_blank" rel="noopener" class="text-sky hover:underline">Mein ELSTER</a>
+                bestimmt. Bitte prüfe alle Angaben vor der Übermittlung.
+                <span x-show="isDemoMode" x-cloak class="text-amber-400/60"> Demo-Daten — nicht für echte Steuererklärungen verwenden.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CORRECTION MODAL ===== -->
+<div x-show="showCorrectionModal" x-cloak
+     @click.self="showCorrectionModal = false"
+     class="fixed inset-0 z-40 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
+  <div class="bg-navy-light border border-white/20 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="font-bold text-lg">Kategorie korrigieren</h3>
+      <button @click="showCorrectionModal = false" class="text-white/40 hover:text-white/70 transition-colors">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm text-white/60 mb-2">Steuer-Kategorie</label>
+        <select x-model="correctionForm.category"
+                class="w-full bg-navy-darker border border-white/20 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-sky">
+          <option value="VST_19">VST_19 — Vorsteuer 19% (Inland)</option>
+          <option value="VST_7">VST_7 — Vorsteuer 7% (Bücher, Zeitschriften)</option>
+          <option value="VST_0_EU">VST_0_EU — Innergemeinschaftlicher Erwerb (EU)</option>
+          <option value="VST_0_DRITTLAND">VST_0_DRITTLAND — §13b UStG (Drittland)</option>
+          <option value="NICHT_ABZIEHBAR">NICHT_ABZIEHBAR — Nicht abziehbar</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm text-white/60 mb-2">
+          Abzugsfähiger Anteil: <span class="text-sky font-bold" x-text="correctionForm.percentage + '%'"></span>
+        </label>
+        <input type="range" x-model="correctionForm.percentage" min="0" max="100" step="10"
+               class="w-full accent-sky" />
+        <div class="flex justify-between text-xs text-white/30 mt-1">
+          <span>0% (nicht abziehbar)</span>
+          <span>100% (voll abziehbar)</span>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm text-white/60 mb-2">Begründung</label>
+        <textarea x-model="correctionForm.reason" rows="3"
+                  placeholder="z.B. Teilweise private Nutzung, Kundenbewirtung…"
+                  class="w-full bg-navy-darker border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-white/25 focus:outline-none focus:border-sky resize-none"></textarea>
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <button @click="showCorrectionModal = false"
+                class="flex-1 bg-white/5 hover:bg-white/10 border border-white/20 text-white font-semibold py-2.5 rounded-xl transition-colors">
+          Abbrechen
+        </button>
+        <button @click="saveCorrection()"
+                class="flex-1 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-400 font-bold py-2.5 rounded-xl transition-colors">
+          Korrektur speichern
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EMAIL SETUP MODAL ===== -->
+<div x-show="showEmailSetup" x-cloak
+     @click.self="showEmailSetup = false"
+     class="fixed inset-0 z-40 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
+  <div class="bg-navy-light border border-white/20 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="font-bold text-lg">IMAP Email-Scan</h3>
+      <button @click="showEmailSetup = false" class="text-white/40 hover:text-white/70 transition-colors">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="space-y-4">
+      <div class="grid grid-cols-3 gap-3">
+        <div class="col-span-2">
+          <label class="block text-xs text-white/50 mb-1">IMAP Host</label>
+          <input x-model="emailForm.host" type="text" placeholder="imap.gmail.com"
+                 class="w-full bg-navy-darker border border-white/20 rounded-lg px-3 py-2 text-sm text-white placeholder-white/25 focus:outline-none focus:border-sky" />
+        </div>
+        <div>
+          <label class="block text-xs text-white/50 mb-1">Port</label>
+          <input x-model="emailForm.port" type="number" placeholder="993"
+                 class="w-full bg-navy-darker border border-white/20 rounded-lg px-3 py-2 text-sm text-white placeholder-white/25 focus:outline-none focus:border-sky" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs text-white/50 mb-1">Email</label>
+        <input x-model="emailForm.user" type="email" placeholder="you@example.com"
+               class="w-full bg-navy-darker border border-white/20 rounded-lg px-3 py-2 text-sm text-white placeholder-white/25 focus:outline-none focus:border-sky" />
+      </div>
+      <div>
+        <label class="block text-xs text-white/50 mb-1">App-Passwort</label>
+        <input x-model="emailForm.password" type="password" placeholder="App-spezifisches Passwort"
+               class="w-full bg-navy-darker border border-white/20 rounded-lg px-3 py-2 text-sm text-white placeholder-white/25 focus:outline-none focus:border-sky" />
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-white/50 mb-1">Von</label>
+          <input x-model="emailForm.dateFrom" type="date" value="2024-01-01"
+                 class="w-full bg-navy-darker border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-sky" />
+        </div>
+        <div>
+          <label class="block text-xs text-white/50 mb-1">Bis</label>
+          <input x-model="emailForm.dateTo" type="date" value="2024-03-31"
+                 class="w-full bg-navy-darker border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-sky" />
+        </div>
+      </div>
+      <div x-show="emailError" x-cloak class="text-red-400 text-sm" x-text="emailError"></div>
+      <div class="flex gap-3 pt-2">
+        <button @click="showEmailSetup = false"
+                class="flex-1 bg-white/5 hover:bg-white/10 border border-white/20 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm">
+          Abbrechen
+        </button>
+        <button @click="startEmailScan()" :disabled="scanLoading"
+                class="flex-1 bg-sky hover:bg-sky-dark text-navy font-bold py-2.5 rounded-xl transition-colors text-sm disabled:opacity-50">
+          <span x-show="!scanLoading">Scan starten</span>
+          <span x-show="scanLoading" x-cloak>Scanne…</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST NOTIFICATIONS ===== -->
+<div class="fixed bottom-6 right-6 z-50 space-y-2" style="pointer-events: none;">
+  <template x-for="toast in toasts" :key="toast.id">
+    <div :class="{
+           'bg-mint/20 border-mint/40 text-mint': toast.type === 'success',
+           'bg-red-500/20 border-red-500/40 text-red-300': toast.type === 'error',
+           'bg-sky/20 border-sky/40 text-sky': toast.type === 'info',
+           'bg-amber-500/20 border-amber-500/40 text-amber-300': toast.type === 'warn',
+         }"
+         class="border rounded-xl px-4 py-3 text-sm font-medium shadow-xl backdrop-blur flex items-center gap-2"
+         style="pointer-events: auto;">
+      <span x-text="toast.message"></span>
+    </div>
+  </template>
+</div>
+
+<script>
+function vatApp() {
+  return {
+    // Auth
+    isLoggedIn: false,
+    password: '',
+    loginError: '',
+    loading: false,
+    loadingMsg: '',
+
+    // Mode
+    isDemoMode: false,
+    hasData: false,
+
+    // Views
+    activeView: 'triage',
+
+    // Triage
+    triageTab: 'to_review',
+    allTriageInvoices: [],
+    displayedInvoices: [],
+    selectedInvoice: null,
+    selectedId: null,
+    showRawText: false,
+
+    // All invoices view
+    allInvoices: [],
+    allFilter: '',
+    directionFilter: 'incoming',
+
+    // Correction modal
+    showCorrectionModal: false,
+    correctionForm: { category: 'VST_19', percentage: 100, reason: '' },
+
+    // Email setup
+    showEmailSetup: false,
+    emailForm: { host: 'imap.gmail.com', port: 993, user: '', password: '', dateFrom: '2024-01-01', dateTo: '2024-03-31' },
+    emailError: '',
+    scanLoading: false,
+
+    // ELSTER
+    elsterData: null,
+    elsterLoading: false,
+
+    // AI
+    aiLoading: false,
+
+    // Stats
+    stats: {},
+
+    // Toasts
+    toasts: [],
+    toastId: 0,
+
+    triageTabs: [
+      { key: 'to_review', label: 'Zu prüfen', count: () => this.allTriageInvoices.filter(i => i.status === 'to_review').length },
+      { key: 'all',       label: 'Alle',       count: () => this.allTriageInvoices.length },
+      { key: 'ok',        label: 'OK',          count: () => this.allTriageInvoices.filter(i => i.status === 'ok').length },
+      { key: 'corrected', label: 'Korrigiert',  count: () => this.allTriageInvoices.filter(i => i.status === 'corrected').length },
+      { key: 'deleted',   label: 'Gelöscht',    count: () => this.allTriageInvoices.filter(i => i.status === 'deleted').length },
+    ],
+
+    async init() {
+      const res = await this.api('GET', '/api/auth/status')
+      if (res && res.authenticated) {
+        this.isLoggedIn = true
+        await this.checkStats()
+      }
+    },
+
+    async login() {
+      this.loading = true
+      this.loginError = ''
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: this.password }),
+        })
+        if (res.ok) {
+          this.isLoggedIn = true
+          await this.checkStats()
+        } else {
+          const data = await res.json()
+          this.loginError = data.detail || 'Fehler bei der Anmeldung'
+        }
+      } catch (e) {
+        this.loginError = 'Verbindungsfehler'
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async logout() {
+      await this.api('POST', '/api/auth/logout')
+      this.isLoggedIn = false
+      this.hasData = false
+      this.allTriageInvoices = []
+      this.elsterData = null
+      this.stats = {}
+    },
+
+    async checkStats() {
+      const res = await this.api('GET', '/api/stats')
+      if (res) {
+        this.stats = res
+        this.hasData = res.has_data
+        this.isDemoMode = res.demo_mode || false
+        if (this.hasData) {
+          await this.loadTriageInvoices()
+        }
+      }
+    },
+
+    async loadDemo() {
+      this.loading = true
+      this.loadingMsg = 'Lade Demo-Daten…'
+      try {
+        await this.api('POST', '/api/settings/demo-mode')
+        const res = await this.api('POST', '/api/demo/load')
+        if (res && res.ok) {
+          this.isDemoMode = true
+          this.hasData = true
+          this.stats = res.stats || {}
+          this.toast('success', `${res.message}`)
+          await this.loadTriageInvoices()
+          await this.checkStats()
+        }
+      } finally {
+        this.loading = false
+        this.loadingMsg = ''
+      }
+    },
+
+    async clearAndReloadDemo() {
+      this.loading = true
+      this.loadingMsg = 'Lade Demo neu…'
+      this.selectedInvoice = null
+      this.selectedId = null
+      this.elsterData = null
+      try {
+        await this.api('DELETE', '/api/demo/clear')
+        await this.loadDemo()
+      } finally {
+        this.loading = false
+        this.loadingMsg = ''
+      }
+    },
+
+    async loadTriageInvoices() {
+      const res = await this.api('GET', '/api/invoices?direction=incoming')
+      if (res) {
+        this.allTriageInvoices = res.invoices || []
+        this.filterTriageInvoices()
+      }
+    },
+
+    filterTriageInvoices() {
+      if (this.triageTab === 'all') {
+        this.displayedInvoices = [...this.allTriageInvoices]
+      } else {
+        this.displayedInvoices = this.allTriageInvoices.filter(i => i.status === this.triageTab)
+      }
+      // Restore selection if possible
+      if (this.selectedId) {
+        const found = this.displayedInvoices.find(i => i.id === this.selectedId)
+        if (found) this.selectedInvoice = found
+      }
+    },
+
+    async loadInvoices() {
+      const params = new URLSearchParams()
+      if (this.directionFilter) params.set('direction', this.directionFilter)
+      if (this.allFilter) params.set('status', this.allFilter)
+      const res = await this.api('GET', `/api/invoices?${params}`)
+      if (res) this.allInvoices = res.invoices || []
+    },
+
+    selectInvoice(inv, idx) {
+      this.selectedInvoice = inv
+      this.selectedId = inv.id
+      this.showRawText = false
+    },
+
+    selectById(id) {
+      const inv = this.displayedInvoices.find(i => i.id === id)
+        || this.allTriageInvoices.find(i => i.id === id)
+      if (inv) {
+        this.selectedInvoice = inv
+        this.selectedId = inv.id
+      }
+    },
+
+    async markOK() {
+      if (!this.selectedInvoice) return
+      const res = await this.api('PATCH', `/api/invoices/${this.selectedInvoice.id}`, { status: 'ok' })
+      if (res) {
+        this.updateLocalInvoice(res)
+        this.toast('success', 'Akzeptiert: ' + (res.vendor || res.id))
+        this.advanceQueue()
+        this.refreshStats()
+      }
+    },
+
+    openCorrection() {
+      if (!this.selectedInvoice) return
+      this.correctionForm = {
+        category: this.selectedInvoice.correction_category || this.selectedInvoice.category || 'VST_19',
+        percentage: 100,
+        reason: '',
+      }
+      this.showCorrectionModal = true
+    },
+
+    async saveCorrection() {
+      if (!this.selectedInvoice) return
+      const body = {
+        status: 'corrected',
+        correction_category: this.correctionForm.category,
+        correction_reason: this.correctionForm.reason,
+        correction_percentage: parseFloat(this.correctionForm.percentage),
+      }
+      const res = await this.api('PATCH', `/api/invoices/${this.selectedInvoice.id}`, body)
+      if (res) {
+        this.updateLocalInvoice(res)
+        this.showCorrectionModal = false
+        this.toast('warn', 'Korrigiert: ' + (res.vendor || res.id))
+        this.advanceQueue()
+        this.refreshStats()
+      }
+    },
+
+    async deleteInvoice() {
+      if (!this.selectedInvoice) return
+      const res = await this.api('PATCH', `/api/invoices/${this.selectedInvoice.id}`, { status: 'deleted' })
+      if (res) {
+        this.updateLocalInvoice(res)
+        this.toast('error', 'Gelöscht: ' + (res.vendor || res.id))
+        this.advanceQueue()
+        this.refreshStats()
+      }
+    },
+
+    async reopenReview() {
+      if (!this.selectedInvoice) return
+      const res = await this.api('PATCH', `/api/invoices/${this.selectedInvoice.id}`, { status: 'to_review' })
+      if (res) {
+        this.updateLocalInvoice(res)
+        this.toast('info', 'Zur Prüfung zurückgestellt')
+        this.refreshStats()
+      }
+    },
+
+    async undoLast() {
+      const res = await this.api('POST', '/api/invoices/undo')
+      if (res && res.restored) {
+        this.updateLocalInvoice(res.restored)
+        this.toast('info', 'Rückgängig: ' + (res.restored.vendor || ''))
+        this.selectedInvoice = res.restored
+        this.selectedId = res.restored.id
+        this.filterTriageInvoices()
+        this.refreshStats()
+      }
+    },
+
+    async runAiReview() {
+      this.aiLoading = true
+      const res = await this.api('POST', '/api/ai/review')
+      if (res) {
+        this.toast('info', `KI-Review: ${res.reviewed} geprüft, ${res.updated} aktualisiert`)
+        await this.loadTriageInvoices()
+        this.refreshStats()
+      }
+      this.aiLoading = false
+    },
+
+    async calculateElster() {
+      this.elsterLoading = true
+      this.elsterData = null
+      const res = await this.api('GET', '/api/elster/calculate')
+      if (res && !res.error) {
+        this.elsterData = res
+        // Animate KZ rows
+        setTimeout(() => {
+          document.querySelectorAll('.kz-row').forEach((el, i) => {
+            setTimeout(() => el.classList.add('kz-highlight'), i * 80)
+          })
+        }, 100)
+      } else if (res && res.error) {
+        this.toast('error', res.error)
+      }
+      this.elsterLoading = false
+    },
+
+    async exportJson() {
+      window.location.href = '/api/invoices/export/json'
+    },
+
+    async downloadXml() {
+      window.location.href = '/api/elster/xml'
+    },
+
+    async startEmailScan() {
+      this.scanLoading = true
+      this.emailError = ''
+      const body = {
+        imap_host: this.emailForm.host,
+        imap_port: parseInt(this.emailForm.port) || 993,
+        imap_user: this.emailForm.user,
+        imap_password: this.emailForm.password,
+        date_from: this.emailForm.dateFrom,
+        date_to: this.emailForm.dateTo,
+      }
+      const res = await this.api('POST', '/api/scan/email', body)
+      if (res && res.ok) {
+        this.showEmailSetup = false
+        this.hasData = true
+        this.isDemoMode = false
+        this.toast('success', `${res.inserted} Rechnungen importiert`)
+        await this.loadTriageInvoices()
+        this.refreshStats()
+      } else if (res && res.detail) {
+        this.emailError = res.detail
+      }
+      this.scanLoading = false
+    },
+
+    updateLocalInvoice(updated) {
+      const idx = this.allTriageInvoices.findIndex(i => i.id === updated.id)
+      if (idx >= 0) {
+        this.allTriageInvoices[idx] = updated
+        this.allTriageInvoices = [...this.allTriageInvoices]
+      }
+      this.filterTriageInvoices()
+      if (this.selectedId === updated.id) {
+        this.selectedInvoice = updated
+      }
+    },
+
+    advanceQueue() {
+      // Move to next to_review item
+      if (this.triageTab === 'to_review') {
+        const remaining = this.displayedInvoices.filter(i => i.id !== this.selectedId && i.status === 'to_review')
+        if (remaining.length > 0) {
+          this.selectInvoice(remaining[0], 0)
+        } else {
+          this.filterTriageInvoices()
+          this.selectedInvoice = null
+          this.selectedId = null
+        }
+      }
+    },
+
+    async refreshStats() {
+      const res = await this.api('GET', '/api/stats')
+      if (res) this.stats = res
+    },
+
+    handleKey(e) {
+      if (!this.isLoggedIn || !this.hasData) return
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return
+      if (this.showCorrectionModal || this.showEmailSetup) return
+
+      if (this.activeView === 'triage' && this.selectedInvoice?.status === 'to_review') {
+        if (e.key === '1') { e.preventDefault(); this.markOK() }
+        if (e.key === '2') { e.preventDefault(); this.openCorrection() }
+        if (e.key === '3') { e.preventDefault(); this.deleteInvoice() }
+      }
+      if (e.key === 'z' || e.key === 'Z') { e.preventDefault(); this.undoLast() }
+
+      // Arrow key navigation in queue
+      if (this.activeView === 'triage' && this.displayedInvoices.length > 0) {
+        const cur = this.displayedInvoices.findIndex(i => i.id === this.selectedId)
+        if (e.key === 'ArrowDown' || e.key === 'j') {
+          e.preventDefault()
+          const next = Math.min(cur + 1, this.displayedInvoices.length - 1)
+          this.selectInvoice(this.displayedInvoices[next], next)
+        }
+        if (e.key === 'ArrowUp' || e.key === 'k') {
+          e.preventDefault()
+          const prev = Math.max(cur - 1, 0)
+          this.selectInvoice(this.displayedInvoices[prev], prev)
+        }
+      }
+    },
+
+    // ---- Helpers ----
+
+    elsterEntries() {
+      if (!this.elsterData) return []
+      const d = this.elsterData
+      return [
+        { kz: 'Kz. 81', amount: d.kz81, label: 'Steuerpfl. Umsätze 19%' },
+        { kz: 'Kz. 89', amount: d.kz89, label: 'Innergemeinschaftl. Erwerbe 19%', note: d.kz89 > 0 ? '→ Steuer: ' + this.formatEuro(d.kz89 * 0.19) : null },
+        { kz: 'Kz. 46', amount: d.kz46, label: '§13b Leistungen (Bemessung)' },
+        { kz: 'Kz. 47', amount: d.kz47, label: 'Steuer §13b (Kz.46 × 19%)' },
+        { kz: 'Kz. 41', amount: d.kz41, label: 'Steuerfreie EU-Lieferungen' },
+        { kz: 'Kz. 43', amount: d.kz43, label: 'Steuerfreie Ausfuhrlieferungen' },
+        { kz: 'Kz. 66', amount: d.kz66, label: 'Abziehbare Vorsteuer (inl.)' },
+        { kz: 'Kz. 67', amount: d.kz67, label: 'Vorsteuer §13b (EU + Drittland)' },
+        { kz: 'Kz. 83', amount: d.kz83, label: d.result_type, note: d.result_label },
+      ].filter(e => e.amount !== undefined)
+    },
+
+    formatEuro(val) {
+      if (val === null || val === undefined) return '—'
+      const n = parseFloat(val)
+      if (isNaN(n)) return '—'
+      return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(n)
+    },
+
+    statusLabel(status) {
+      const map = {
+        to_review: 'Zu prüfen',
+        ok: 'OK',
+        corrected: 'Korrigiert',
+        deleted: 'Gelöscht',
+      }
+      return map[status] || status || '—'
+    },
+
+    categoryLabel(cat) {
+      const map = {
+        VST_19: 'VST 19%',
+        VST_7: 'VST 7%',
+        VST_0_EU: 'EU (RC)',
+        VST_0_DRITTLAND: '§13b Dritt.',
+        NICHT_ABZIEHBAR: 'Nicht abziehb.',
+        UST_19: 'USt 19%',
+        UST_0_EU_B2B: 'EU B2B',
+        UST_0_EXPORT: 'Export',
+      }
+      return map[cat] || cat || '—'
+    },
+
+    categoryShort(inv) {
+      const cat = (inv && (inv.correction_category || inv.category)) || ''
+      return this.categoryLabel(cat)
+    },
+
+    categoryColor(inv) {
+      const cat = (inv && (inv.correction_category || inv.category)) || ''
+      const map = {
+        VST_19: 'cat-vst19',
+        VST_7: 'cat-vst7',
+        VST_0_EU: 'cat-eu',
+        VST_0_DRITTLAND: 'cat-dritt',
+        NICHT_ABZIEHBAR: 'cat-nicht',
+        UST_19: 'cat-vst19',
+        UST_0_EU_B2B: 'cat-eu',
+        UST_0_EXPORT: 'cat-nicht',
+      }
+      return map[cat] || 'text-white/50'
+    },
+
+    toast(type, message) {
+      const id = ++this.toastId
+      this.toasts.push({ id, type, message })
+      setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id) }, 3500)
+    },
+
+    async api(method, url, body = null) {
+      try {
+        const opts = {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+        }
+        if (body) opts.body = JSON.stringify(body)
+        const res = await fetch(url, opts)
+        if (res.status === 401) {
+          this.isLoggedIn = false
+          return null
+        }
+        const data = await res.json().catch(() => null)
+        if (!res.ok) {
+          this.toast('error', (data && data.detail) || `Fehler ${res.status}`)
+          return data
+        }
+        return data
+      } catch (e) {
+        this.toast('error', 'Netzwerkfehler: ' + e.message)
+        return null
+      }
+    },
+  }
+}
+</script>
+</body>
+</html>

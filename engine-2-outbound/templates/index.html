@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KI Katapult — Engine 2: Outbound Prospecting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#132A3E',
+            'primary-dark': '#0d1f2d',
+            'primary-light': '#1e3f5a',
+            accent:    '#00B3FF',
+            highlight: '#00FFC5',
+          },
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    .scrollbar-thin::-webkit-scrollbar { height: 6px; width: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #1e3f5a; border-radius: 3px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #00B3FF44; border-radius: 3px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #00B3FF88; }
+    .kanban-col { min-width: 300px; max-width: 300px; }
+    .email-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .email-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,179,255,0.15); }
+    .fade-in { animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .prose-email { white-space: pre-wrap; font-family: 'Inter', sans-serif; font-size: 0.9rem; line-height: 1.7; }
+    .step-active { border-color: #00B3FF; background-color: #00B3FF; color: #fff; }
+    .step-done { border-color: #00FFC5; background-color: #00FFC5; color: #132A3E; }
+    .step-idle { border-color: #1e3f5a; background-color: #1e3f5a; color: #6b8aab; }
+  </style>
+</head>
+
+<body class="bg-primary font-sans text-white min-h-screen" x-data="app()" x-init="init()" x-cloak>
+
+<!-- ══════════════════════════════════════════════════════════
+     NOTIFICATION TOAST
+══════════════════════════════════════════════════════════ -->
+<div
+  x-show="notification"
+  x-transition:enter="transition ease-out duration-300"
+  x-transition:enter-start="opacity-0 translate-y-4"
+  x-transition:enter-end="opacity-100 translate-y-0"
+  x-transition:leave="transition ease-in duration-200"
+  x-transition:leave-start="opacity-100"
+  x-transition:leave-end="opacity-0"
+  class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl text-sm font-medium shadow-2xl flex items-center gap-3"
+  :class="notification?.type === 'error' ? 'bg-red-600 text-white' : 'bg-highlight text-primary'"
+>
+  <span x-text="notification?.msg"></span>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     EDIT EMAIL MODAL
+══════════════════════════════════════════════════════════ -->
+<div
+  x-show="editModalOpen"
+  x-transition:enter="transition ease-out duration-200"
+  x-transition:enter-start="opacity-0"
+  x-transition:enter-end="opacity-100"
+  class="fixed inset-0 z-40 flex items-center justify-center p-4"
+  style="background: rgba(13,31,45,0.85);"
+>
+  <div
+    @click.away="closeEditModal()"
+    class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden fade-in"
+  >
+    <!-- Modal header -->
+    <div class="px-6 py-4 flex items-center justify-between" style="background:#132A3E;">
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background:#00B3FF22;color:#00B3FF;"
+            x-text="'Touchpoint ' + (editingSequence?.touchpoint_num || '')"></span>
+          <span class="text-xs text-gray-400" x-text="editingLead?.company || ''"></span>
+        </div>
+        <p class="text-white font-semibold mt-1" x-text="editPreview ? 'E-Mail Vorschau' : 'E-Mail bearbeiten'"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button @click="editPreview = !editPreview"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+          :class="editPreview ? 'bg-accent text-primary' : 'bg-primary-light text-accent border border-accent/30'">
+          <span x-text="editPreview ? 'Bearbeiten' : 'Vorschau'"></span>
+        </button>
+        <button @click="closeEditModal()" class="text-gray-400 hover:text-white transition p-1">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Edit mode -->
+    <div x-show="!editPreview" class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Betreff</label>
+        <input
+          type="text"
+          x-model="editForm.subject"
+          class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40"
+          placeholder="E-Mail Betreff..."
+        />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Inhalt</label>
+        <textarea
+          x-model="editForm.body"
+          rows="14"
+          class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 resize-none"
+          placeholder="E-Mail Text..."
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Preview mode -->
+    <div x-show="editPreview" class="p-6">
+      <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+        <div class="border-b border-gray-200 pb-4 mb-4 space-y-2">
+          <div class="flex gap-3 text-sm">
+            <span class="text-gray-400 w-14 shrink-0">Von:</span>
+            <span class="text-gray-700" x-text="currentCampaign?.sender_name + ' &lt;' + currentCampaign?.sender_email + '&gt;'"></span>
+          </div>
+          <div class="flex gap-3 text-sm">
+            <span class="text-gray-400 w-14 shrink-0">An:</span>
+            <span class="text-gray-700" x-text="(editingLead?.contact || editingLead?.company || '') + ' &lt;' + (editingLead?.email || '') + '&gt;'"></span>
+          </div>
+          <div class="flex gap-3 text-sm">
+            <span class="text-gray-400 w-14 shrink-0">Betreff:</span>
+            <span class="text-gray-700 font-medium" x-text="editForm.subject"></span>
+          </div>
+          <div class="flex gap-3 text-sm">
+            <span class="text-gray-400 w-14 shrink-0">Tag:</span>
+            <span class="text-gray-700" x-text="'Tag ' + (editingSequence?.scheduled_day || 1)"></span>
+          </div>
+        </div>
+        <div class="prose-email text-gray-800" x-text="editForm.body"></div>
+      </div>
+    </div>
+
+    <!-- Modal footer -->
+    <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
+      <button @click="closeEditModal()" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition">
+        Abbrechen
+      </button>
+      <button
+        @click="saveEdit()"
+        :disabled="savingEdit"
+        class="px-5 py-2 rounded-lg text-sm font-semibold text-primary transition flex items-center gap-2"
+        style="background:#00B3FF;"
+      >
+        <svg x-show="savingEdit" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        Speichern
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     GLOBAL LOADING OVERLAY
+══════════════════════════════════════════════════════════ -->
+<div
+  x-show="globalLoading"
+  class="fixed inset-0 z-30 flex items-center justify-center"
+  style="background: rgba(13,31,45,0.7);"
+>
+  <div class="text-center">
+    <svg class="w-12 h-12 animate-spin mx-auto mb-4" style="color:#00B3FF" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+    <p class="text-white font-medium" x-text="loadingMsg || 'Laden...'"></p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     LOGIN PAGE
+══════════════════════════════════════════════════════════ -->
+<div x-show="view === 'login'" class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:#00B3FF;">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div class="text-left">
+          <div class="font-bold text-xl text-white">KI Katapult</div>
+          <div class="text-xs text-gray-400 -mt-0.5">Engine 2: Outbound Prospecting</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-primary-light rounded-2xl p-8 shadow-2xl border border-white/10">
+      <h2 class="text-lg font-semibold text-white mb-6">Anmelden</h2>
+      <form @submit.prevent="login()">
+        <div class="mb-4">
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Passwort</label>
+          <input
+            type="password"
+            x-model="loginPassword"
+            @keydown.enter="login()"
+            autofocus
+            class="w-full rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 border border-white/10"
+            style="background:#132A3E;"
+            placeholder="••••••••••••"
+          />
+        </div>
+        <div x-show="loginError" class="mb-4 p-3 rounded-lg bg-red-500/20 border border-red-500/30 text-red-300 text-sm" x-text="loginError"></div>
+        <button
+          type="submit"
+          :disabled="loginLoading"
+          class="w-full py-3 rounded-xl font-semibold text-primary transition hover:opacity-90 flex items-center justify-center gap-2"
+          style="background:#00B3FF;"
+        >
+          <svg x-show="loginLoading" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <span x-text="loginLoading ? 'Anmelden...' : 'Anmelden'"></span>
+        </button>
+      </form>
+    </div>
+    <p class="text-center text-xs text-gray-600 mt-6">Standard-Passwort: <code class="text-gray-400">brainlancer2026</code></p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN APP
+══════════════════════════════════════════════════════════ -->
+<div x-show="view !== 'login'" class="min-h-screen flex flex-col">
+
+  <!-- ── Top Nav ── -->
+  <nav class="border-b border-white/10 px-6 py-3 flex items-center justify-between sticky top-0 z-20" style="background:#0d1f2d;">
+    <div class="flex items-center gap-4">
+      <button @click="goTo('dashboard')" class="flex items-center gap-2.5 hover:opacity-80 transition">
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#00B3FF;">
+          <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <span class="font-bold text-white text-sm hidden sm:block">KI Katapult</span>
+        <span class="text-gray-500 text-xs hidden md:block">/ Engine 2</span>
+      </button>
+
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-sm" x-show="view !== 'dashboard'">
+        <span class="text-gray-600">/</span>
+        <span class="text-gray-300" x-show="view === 'new-campaign'">Neue Kampagne</span>
+        <span class="text-gray-300" x-show="view === 'campaign-view'" x-text="currentCampaign?.name || 'Kampagne'"></span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button
+        @click="goTo('new-campaign')"
+        x-show="view === 'dashboard'"
+        class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-primary text-sm font-semibold transition hover:opacity-90"
+        style="background:#00B3FF;"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Kampagne
+      </button>
+      <button
+        @click="loadDemo()"
+        x-show="view === 'dashboard'"
+        class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-gray-300 border border-white/10 hover:border-highlight/50 hover:text-highlight transition"
+      >
+        Demo laden
+      </button>
+      <button @click="logout()" class="text-gray-500 hover:text-white transition p-1.5 rounded-lg hover:bg-white/10">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════
+       PAGE: DASHBOARD
+  ══════════════════════════════════════════════════════ -->
+  <div x-show="view === 'dashboard'" class="flex-1 p-6 max-w-7xl mx-auto w-full fade-in">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-white">Kampagnen-Übersicht</h1>
+        <p class="text-gray-400 text-sm mt-1">Verwalten Sie Ihre Outbound-Kampagnen</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button @click="loadDemo()" class="sm:hidden px-3 py-2 rounded-lg text-xs font-medium text-gray-300 border border-white/10 hover:border-highlight/50 hover:text-highlight transition">Demo</button>
+        <button
+          @click="goTo('new-campaign')"
+          class="flex items-center gap-2 px-4 py-2 rounded-xl text-primary text-sm font-semibold transition hover:opacity-90"
+          style="background:#00B3FF;"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Neue Kampagne
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div x-show="campaigns.length === 0" class="text-center py-20">
+      <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background:#1e3f5a;">
+        <svg class="w-8 h-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-white mb-2">Noch keine Kampagnen</h3>
+      <p class="text-gray-500 text-sm mb-6">Erstellen Sie Ihre erste Kampagne oder laden Sie Demo-Daten.</p>
+      <div class="flex items-center justify-center gap-3">
+        <button @click="goTo('new-campaign')" class="px-5 py-2.5 rounded-xl text-primary font-semibold text-sm hover:opacity-90" style="background:#00B3FF;">
+          Kampagne erstellen
+        </button>
+        <button @click="loadDemo()" class="px-5 py-2.5 rounded-xl font-semibold text-sm border border-white/20 text-white hover:bg-white/10 transition">
+          Demo laden
+        </button>
+      </div>
+    </div>
+
+    <!-- Campaign grid -->
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <template x-for="c in campaigns" :key="c.id">
+        <div class="rounded-2xl border border-white/10 overflow-hidden hover:border-accent/30 transition cursor-pointer group" style="background:#1e3f5a;">
+          <!-- Card header -->
+          <div class="p-5 pb-4">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span x-show="c.is_demo" class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:#00FFC522;color:#00FFC5;">DEMO</span>
+                  <span
+                    class="text-xs px-2 py-0.5 rounded-full font-medium"
+                    :class="statusBadgeClass(c.status)"
+                    x-text="statusLabel(c.status)"
+                  ></span>
+                </div>
+                <h3 class="font-semibold text-white text-base leading-tight truncate" x-text="c.name"></h3>
+                <p class="text-xs text-gray-400 mt-0.5" x-text="c.sender_name + ' · ' + c.sender_email"></p>
+              </div>
+            </div>
+
+            <!-- Stats row -->
+            <div class="grid grid-cols-3 gap-2 mt-4">
+              <div class="rounded-lg p-2 text-center" style="background:#132A3E;">
+                <div class="text-lg font-bold" style="color:#00B3FF;" x-text="c.stats?.total_leads || 0"></div>
+                <div class="text-xs text-gray-500">Leads</div>
+              </div>
+              <div class="rounded-lg p-2 text-center" style="background:#132A3E;">
+                <div class="text-lg font-bold" style="color:#00FFC5;" x-text="c.stats?.sequences_count || 0"></div>
+                <div class="text-xs text-gray-500">E-Mails</div>
+              </div>
+              <div class="rounded-lg p-2 text-center" style="background:#132A3E;">
+                <div class="text-lg font-bold text-white" x-text="c.num_touchpoints"></div>
+                <div class="text-xs text-gray-500">Touchpoints</div>
+              </div>
+            </div>
+
+            <!-- Lead status pills -->
+            <div class="flex flex-wrap gap-1.5 mt-3" x-show="c.stats?.total_leads > 0">
+              <template x-for="[status, count] in Object.entries(c.stats?.status_counts || {})" :key="status">
+                <span class="text-xs px-2 py-0.5 rounded-full" :class="leadStatusPill(status)">
+                  <span x-text="count + ' ' + leadStatusLabel(status)"></span>
+                </span>
+              </template>
+            </div>
+          </div>
+
+          <!-- Card footer -->
+          <div class="px-5 py-3 border-t border-white/5 flex items-center justify-between">
+            <span class="text-xs text-gray-500" x-text="formatDate(c.created_at)"></span>
+            <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition">
+              <button
+                @click.stop="goTo('campaign-view', { id: c.id })"
+                class="text-xs px-3 py-1.5 rounded-lg font-medium text-primary transition"
+                style="background:#00B3FF;"
+              >Öffnen</button>
+              <button
+                @click.stop="confirmDelete(c)"
+                class="text-xs px-2 py-1.5 rounded-lg text-red-400 border border-red-500/20 hover:bg-red-500/20 transition"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       PAGE: NEW CAMPAIGN WIZARD
+  ══════════════════════════════════════════════════════ -->
+  <div x-show="view === 'new-campaign'" class="flex-1 p-6 max-w-3xl mx-auto w-full fade-in">
+
+    <!-- Wizard steps indicator -->
+    <div class="flex items-center gap-0 mb-8">
+      <template x-for="(label, i) in wizardStepLabels" :key="i">
+        <div class="flex items-center">
+          <div class="flex flex-col items-center">
+            <div
+              class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition"
+              :class="wizardStep > i+1 ? 'step-done' : wizardStep === i+1 ? 'step-active' : 'step-idle'"
+            >
+              <span x-show="wizardStep <= i+1" x-text="i+1"></span>
+              <svg x-show="wizardStep > i+1" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <span class="text-xs mt-1 font-medium" :class="wizardStep === i+1 ? 'text-accent' : wizardStep > i+1 ? 'text-highlight' : 'text-gray-600'" x-text="label"></span>
+          </div>
+          <div x-show="i < wizardStepLabels.length - 1" class="h-0.5 w-12 sm:w-20 mb-4 mx-1" :class="wizardStep > i+1 ? 'bg-highlight' : 'bg-white/10'"></div>
+        </div>
+      </template>
+    </div>
+
+    <!-- STEP 1: Campaign Settings -->
+    <div x-show="wizardStep === 1" class="fade-in">
+      <h2 class="text-xl font-bold text-white mb-1">Kampagne einrichten</h2>
+      <p class="text-gray-400 text-sm mb-6">Definieren Sie Absender, Ton und Ziel der Kampagne.</p>
+
+      <div class="space-y-5 rounded-2xl p-6 border border-white/10" style="background:#1e3f5a;">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Kampagnen-Name *</label>
+            <input x-model="wizardForm.name" type="text" class="w-full rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 border border-white/10" style="background:#132A3E;" placeholder="z.B. Q2 Outreach SaaS" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Absender-Name *</label>
+            <input x-model="wizardForm.sender_name" type="text" class="w-full rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 border border-white/10" style="background:#132A3E;" placeholder="Max Müller" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Absender-E-Mail *</label>
+            <input x-model="wizardForm.sender_email" type="email" class="w-full rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 border border-white/10" style="background:#132A3E;" placeholder="max@ihr-unternehmen.de" />
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Anzahl Touchpoints</label>
+            <select x-model="wizardForm.num_touchpoints" class="w-full rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none border border-white/10 cursor-pointer" style="background:#132A3E;">
+              <option value="3">3 E-Mails</option>
+              <option value="4" selected>4 E-Mails</option>
+              <option value="5">5 E-Mails</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Kadenz (Tage)</label>
+            <select x-model="wizardForm.cadence" class="w-full rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none border border-white/10 cursor-pointer" style="background:#132A3E;">
+              <option value="1,3,7">Tag 1, 3, 7</option>
+              <option value="1,3,7,14" selected>Tag 1, 3, 7, 14</option>
+              <option value="1,3,7,14,21">Tag 1, 3, 7, 14, 21</option>
+              <option value="1,5,10,20">Tag 1, 5, 10, 20</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tone -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ton</label>
+          <div class="grid grid-cols-3 gap-2">
+            <template x-for="t in toneOptions" :key="t.value">
+              <button
+                @click="wizardForm.tone = t.value"
+                class="p-3 rounded-xl border text-center transition"
+                :class="wizardForm.tone === t.value ? 'border-accent text-accent' : 'border-white/10 text-gray-400 hover:border-white/30'"
+                style="background:#132A3E;"
+              >
+                <div class="text-sm font-semibold" x-text="t.label"></div>
+                <div class="text-xs mt-0.5 opacity-70" x-text="t.desc"></div>
+              </button>
+            </template>
+          </div>
+        </div>
+
+        <!-- Goal -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ziel</label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <template x-for="g in goalOptions" :key="g.value">
+              <button
+                @click="wizardForm.goal = g.value"
+                class="p-3 rounded-xl border text-center transition"
+                :class="wizardForm.goal === g.value ? 'border-accent text-accent' : 'border-white/10 text-gray-400 hover:border-white/30'"
+                style="background:#132A3E;"
+              >
+                <div class="text-lg mb-1" x-text="g.icon"></div>
+                <div class="text-xs font-semibold" x-text="g.label"></div>
+              </button>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-between">
+        <button @click="goTo('dashboard')" class="px-4 py-2 rounded-xl text-sm text-gray-400 hover:text-white transition">Abbrechen</button>
+        <button
+          @click="createCampaignStep()"
+          :disabled="!wizardForm.name || !wizardForm.sender_name || !wizardForm.sender_email"
+          class="px-6 py-2.5 rounded-xl text-primary font-semibold text-sm transition hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+          style="background:#00B3FF;"
+        >
+          Weiter: Leads importieren
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Import Leads -->
+    <div x-show="wizardStep === 2" class="fade-in">
+      <h2 class="text-xl font-bold text-white mb-1">Leads importieren</h2>
+      <p class="text-gray-400 text-sm mb-6">CSV hochladen oder Leads manuell eingeben.</p>
+
+      <!-- CSV Upload -->
+      <div class="rounded-2xl p-6 border border-white/10 mb-4" style="background:#1e3f5a;">
+        <h3 class="font-semibold text-white mb-4 flex items-center gap-2">
+          <svg class="w-4 h-4" style="color:#00B3FF" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+          CSV hochladen
+        </h3>
+        <div
+          class="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition"
+          :class="csvDragOver ? 'border-accent bg-accent/5' : 'border-white/20 hover:border-white/40'"
+          @dragover.prevent="csvDragOver = true"
+          @dragleave="csvDragOver = false"
+          @drop.prevent="handleCsvDrop($event)"
+          @click="$refs.csvInput.click()"
+        >
+          <svg class="w-10 h-10 mx-auto mb-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <p class="text-sm text-gray-300 font-medium">CSV hier ablegen oder klicken</p>
+          <p class="text-xs text-gray-500 mt-1">Spalten: email, company, contact, website, notes</p>
+          <input type="file" x-ref="csvInput" accept=".csv,.txt" @change="handleCsvFile($event)" class="hidden" />
+        </div>
+        <div x-show="csvFileName" class="mt-3 flex items-center gap-2 text-sm text-gray-300">
+          <svg class="w-4 h-4 text-highlight" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <span x-text="csvFileName"></span>
+        </div>
+        <div x-show="csvErrors.length > 0" class="mt-3 space-y-1">
+          <template x-for="err in csvErrors" :key="err">
+            <p class="text-xs text-yellow-400" x-text="'⚠ ' + err"></p>
+          </template>
+        </div>
+      </div>
+
+      <!-- Manual entry -->
+      <div class="rounded-2xl p-6 border border-white/10 mb-4" style="background:#1e3f5a;">
+        <h3 class="font-semibold text-white mb-4 flex items-center gap-2">
+          <svg class="w-4 h-4" style="color:#00B3FF" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          Manuell eingeben
+        </h3>
+        <div class="grid sm:grid-cols-2 gap-3 mb-3">
+          <input x-model="manualLeadForm.email" type="email" class="rounded-xl px-3 py-2 text-white text-sm border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent/40" style="background:#132A3E;" placeholder="E-Mail *" />
+          <input x-model="manualLeadForm.company" type="text" class="rounded-xl px-3 py-2 text-white text-sm border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent/40" style="background:#132A3E;" placeholder="Unternehmen" />
+          <input x-model="manualLeadForm.contact" type="text" class="rounded-xl px-3 py-2 text-white text-sm border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent/40" style="background:#132A3E;" placeholder="Ansprechpartner" />
+          <input x-model="manualLeadForm.website" type="text" class="rounded-xl px-3 py-2 text-white text-sm border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent/40" style="background:#132A3E;" placeholder="Website" />
+          <input x-model="manualLeadForm.notes" type="text" class="sm:col-span-2 rounded-xl px-3 py-2 text-white text-sm border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent/40" style="background:#132A3E;" placeholder="Notizen (optional)" />
+        </div>
+        <button @click="addManualLead()" :disabled="!manualLeadForm.email" class="px-4 py-2 rounded-xl text-sm font-medium transition disabled:opacity-40 border border-accent/40 text-accent hover:bg-accent/10">
+          Lead hinzufügen
+        </button>
+      </div>
+
+      <!-- Lead preview table -->
+      <div x-show="importedLeads.length > 0" class="rounded-2xl border border-white/10 overflow-hidden mb-4" style="background:#1e3f5a;">
+        <div class="px-5 py-3 border-b border-white/10 flex items-center justify-between">
+          <span class="text-sm font-semibold text-white" x-text="importedLeads.length + ' Lead(s) bereit'"></span>
+          <button @click="importedLeads = []" class="text-xs text-red-400 hover:text-red-300 transition">Alle entfernen</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs">
+            <thead>
+              <tr class="border-b border-white/5">
+                <th class="text-left px-4 py-2 text-gray-500 font-medium">E-Mail</th>
+                <th class="text-left px-4 py-2 text-gray-500 font-medium">Unternehmen</th>
+                <th class="text-left px-4 py-2 text-gray-500 font-medium">Kontakt</th>
+                <th class="px-4 py-2"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(lead, idx) in importedLeads" :key="idx">
+                <tr class="border-b border-white/5 hover:bg-white/5">
+                  <td class="px-4 py-2 text-gray-300" x-text="lead.email"></td>
+                  <td class="px-4 py-2 text-gray-400" x-text="lead.company || '—'"></td>
+                  <td class="px-4 py-2 text-gray-400" x-text="lead.contact || '—'"></td>
+                  <td class="px-4 py-2 text-right">
+                    <button @click="importedLeads.splice(idx, 1)" class="text-red-400 hover:text-red-300 transition">
+                      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-between">
+        <button @click="wizardStep = 1" class="px-4 py-2 rounded-xl text-sm text-gray-400 hover:text-white transition">Zurück</button>
+        <button
+          @click="saveLeadsAndGenerate()"
+          :disabled="importedLeads.length === 0"
+          class="px-6 py-2.5 rounded-xl text-primary font-semibold text-sm transition hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+          style="background:#00B3FF;"
+        >
+          Weiter: Sequenzen generieren
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Generate -->
+    <div x-show="wizardStep === 3" class="fade-in">
+      <h2 class="text-xl font-bold text-white mb-1">KI-Sequenzen generieren</h2>
+      <p class="text-gray-400 text-sm mb-6">Gemini Flash schreibt personalisierte E-Mail-Sequenzen.</p>
+
+      <!-- Campaign summary -->
+      <div class="rounded-2xl p-5 border border-white/10 mb-6" style="background:#1e3f5a;">
+        <div class="grid sm:grid-cols-2 gap-3 text-sm">
+          <div><span class="text-gray-500">Kampagne:</span> <span class="text-white font-medium" x-text="wizardForm.name"></span></div>
+          <div><span class="text-gray-500">Absender:</span> <span class="text-white" x-text="wizardForm.sender_name"></span></div>
+          <div><span class="text-gray-500">Leads:</span> <span class="text-white" x-text="importedLeads.length + ' Unternehmen'"></span></div>
+          <div><span class="text-gray-500">Touchpoints:</span> <span class="text-white" x-text="wizardForm.num_touchpoints + ' E-Mails'"></span></div>
+          <div><span class="text-gray-500">Ton:</span> <span class="text-white" x-text="toneLabel(wizardForm.tone)"></span></div>
+          <div><span class="text-gray-500">Ziel:</span> <span class="text-white" x-text="goalLabel(wizardForm.goal)"></span></div>
+        </div>
+      </div>
+
+      <!-- Generating state -->
+      <div x-show="generating" class="text-center py-12">
+        <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center animate-pulse" style="background:#1e3f5a;">
+          <svg class="w-8 h-8 animate-spin" style="color:#00B3FF" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+        </div>
+        <p class="text-white font-semibold mb-2">Gemini schreibt E-Mails...</p>
+        <p class="text-gray-400 text-sm">Personalisiert für jeden Lead. Das kann 20–60 Sekunden dauern.</p>
+      </div>
+
+      <!-- Generate results -->
+      <div x-show="generateResults.length > 0 && !generating" class="space-y-2 mb-6">
+        <template x-for="r in generateResults" :key="r.lead_id">
+          <div class="flex items-center gap-3 p-3 rounded-xl border" :class="r.success ? 'border-highlight/30 bg-highlight/5' : 'border-red-500/30 bg-red-500/5'">
+            <svg x-show="r.success" class="w-4 h-4 shrink-0" style="color:#00FFC5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <svg x-show="!r.success" class="w-4 h-4 shrink-0 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <div class="flex-1 min-w-0">
+              <span class="text-sm font-medium text-white" x-text="r.company"></span>
+              <span x-show="r.success" class="text-xs text-gray-400 ml-2" x-text="r.count + ' E-Mails generiert'"></span>
+              <span x-show="!r.success" class="text-xs text-red-300 ml-2" x-text="r.error"></span>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Action buttons -->
+      <div x-show="!generating && generateResults.length === 0">
+        <button
+          @click="runGenerate()"
+          class="w-full py-3.5 rounded-xl font-semibold text-primary text-sm transition hover:opacity-90 flex items-center justify-center gap-3"
+          style="background:#00B3FF;"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+          Mit Gemini AI generieren
+        </button>
+        <p class="text-center text-xs text-gray-500 mt-3">Benötigt GOOGLE_API_KEY in der Umgebung</p>
+      </div>
+
+      <div x-show="!generating && generateResults.length > 0" class="flex gap-3 mt-2">
+        <button @click="runGenerate()" class="flex-1 py-2.5 rounded-xl text-sm font-medium border border-white/20 text-gray-300 hover:bg-white/10 transition">
+          Erneut generieren
+        </button>
+        <button
+          @click="goTo('campaign-view', { id: wizardCampaignId })"
+          class="flex-1 py-2.5 rounded-xl font-semibold text-primary text-sm transition hover:opacity-90"
+          style="background:#00FFC5;"
+        >
+          Sequenzen ansehen
+        </button>
+      </div>
+      <button x-show="!generating" @click="goTo('campaign-view', { id: wizardCampaignId })" class="w-full mt-3 py-2 text-xs text-gray-500 hover:text-gray-300 transition">
+        Ohne KI-Generierung weiter (manuell bearbeiten)
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       PAGE: CAMPAIGN VIEW / SEQUENCE EDITOR
+  ══════════════════════════════════════════════════════ -->
+  <div x-show="view === 'campaign-view'" class="flex-1 flex flex-col overflow-hidden fade-in">
+
+    <!-- Campaign header bar -->
+    <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between" style="background:#0d1f2d;">
+      <div class="flex items-center gap-4">
+        <button @click="goTo('dashboard')" class="text-gray-500 hover:text-white transition">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="font-bold text-white text-base" x-text="currentCampaign?.name || 'Kampagne'"></h2>
+            <span x-show="currentCampaign?.is_demo" class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:#00FFC522;color:#00FFC5;">DEMO</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-0.5" x-text="(currentCampaign?.sender_name || '') + ' · ' + (currentCampaign?.cadence || '') + ' · ' + toneLabel(currentCampaign?.tone) + ' · Ziel: ' + goalLabel(currentCampaign?.goal)"></p>
+        </div>
+      </div>
+
+      <!-- Stats pills -->
+      <div class="hidden md:flex items-center gap-3">
+        <div class="flex items-center gap-2 text-sm">
+          <div class="px-3 py-1.5 rounded-lg text-xs font-medium" style="background:#1e3f5a;">
+            <span class="font-bold" style="color:#00B3FF;" x-text="campaignLeads.length"></span>
+            <span class="text-gray-400 ml-1">Leads</span>
+          </div>
+          <div class="px-3 py-1.5 rounded-lg text-xs font-medium" style="background:#1e3f5a;">
+            <span class="font-bold" style="color:#00FFC5;" x-text="totalSequences"></span>
+            <span class="text-gray-400 ml-1">E-Mails</span>
+          </div>
+        </div>
+
+        <!-- Export buttons -->
+        <div class="flex items-center gap-2">
+          <button
+            @click="exportCSV()"
+            class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-white/20 text-gray-300 hover:border-highlight/50 hover:text-highlight transition"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            CSV
+          </button>
+          <button
+            @click="exportEML()"
+            class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-white/20 text-gray-300 hover:border-accent/50 hover:text-accent transition"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            .EML
+          </button>
+        </div>
+
+        <!-- Generate button -->
+        <button
+          @click="generateForCampaign()"
+          :disabled="generatingCampaign"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg text-primary text-xs font-semibold transition hover:opacity-90 disabled:opacity-50"
+          style="background:#00B3FF;"
+        >
+          <svg x-show="generatingCampaign" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <svg x-show="!generatingCampaign" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <span x-text="generatingCampaign ? 'Generiert...' : '(Re-)generieren'"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Status filter tabs -->
+    <div class="px-6 py-3 border-b border-white/5 flex items-center gap-1 overflow-x-auto scrollbar-thin" style="background:#0d1f2d;">
+      <template x-for="f in statusFilters" :key="f.value">
+        <button
+          @click="statusFilter = f.value"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition"
+          :class="statusFilter === f.value ? 'text-primary' : 'text-gray-400 hover:text-gray-200'"
+          :style="statusFilter === f.value ? 'background:#00B3FF;' : ''"
+        >
+          <span x-text="f.label"></span>
+          <span x-show="f.value !== 'all'" class="ml-1 opacity-70" x-text="'(' + leadsCountByStatus(f.value) + ')'"></span>
+        </button>
+      </template>
+    </div>
+
+    <!-- Empty state for sequences -->
+    <div
+      x-show="filteredLeads.length === 0 && !generatingCampaign"
+      class="flex-1 flex items-center justify-center text-center p-12"
+    >
+      <div>
+        <div class="w-14 h-14 rounded-xl mx-auto mb-3 flex items-center justify-center" style="background:#1e3f5a;">
+          <svg class="w-7 h-7 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <p class="text-white font-medium mb-1" x-text="campaignLeads.length === 0 ? 'Keine Leads in dieser Kampagne' : 'Keine Leads mit diesem Status'"></p>
+        <p class="text-gray-500 text-sm" x-show="campaignLeads.length === 0">Gehen Sie zurück und importieren Sie Leads.</p>
+      </div>
+    </div>
+
+    <!-- ── Kanban Board ── -->
+    <div class="flex-1 overflow-x-auto overflow-y-auto scrollbar-thin p-6 pb-8">
+      <div class="flex gap-4 h-full" style="min-width: max-content;">
+        <template x-for="lead in filteredLeads" :key="lead.id">
+          <div class="kanban-col flex flex-col">
+
+            <!-- Lead column header -->
+            <div class="rounded-t-2xl px-4 pt-4 pb-3 border border-b-0 border-white/10" style="background:#1e3f5a;">
+              <div class="flex items-start justify-between mb-2">
+                <div class="flex-1 min-w-0">
+                  <h4 class="font-semibold text-white text-sm leading-tight truncate" x-text="lead.company || lead.email"></h4>
+                  <p class="text-xs text-gray-400 truncate mt-0.5" x-text="lead.contact || ''"></p>
+                </div>
+                <div>
+                  <select
+                    :value="lead.status"
+                    @change="updateLeadStatus(lead.id, $event.target.value)"
+                    class="text-xs rounded-lg px-2 py-1 border border-white/10 cursor-pointer focus:outline-none ml-2"
+                    style="background:#132A3E;"
+                    :class="leadStatusSelectClass(lead.status)"
+                  >
+                    <option value="draft">Entwurf</option>
+                    <option value="sent">Gesendet</option>
+                    <option value="replied">Geantwortet</option>
+                    <option value="meeting_booked">Meeting</option>
+                  </select>
+                </div>
+              </div>
+              <p class="text-xs truncate" style="color:#00B3FF;" x-text="lead.email"></p>
+              <p x-show="lead.website" class="text-xs text-gray-600 truncate" x-text="lead.website"></p>
+              <div class="mt-2 pt-2 border-t border-white/5 flex items-center justify-between">
+                <span class="text-xs text-gray-500" x-text="(campaignSequences[lead.id] || []).length + ' E-Mails'"></span>
+                <span class="text-xs text-gray-500" x-text="'Tag ' + (currentCampaign?.cadence?.split(',')[0] || 1) + '–' + (currentCampaign?.cadence?.split(',').slice(-1)[0] || 14)"></span>
+              </div>
+            </div>
+
+            <!-- Email cards stack -->
+            <div class="flex-1 space-y-2.5 overflow-y-auto scrollbar-thin px-0.5 py-2 rounded-b-2xl border border-t-0 border-white/10 px-3 pb-3" style="background:#1a3650; max-height: calc(100vh - 280px);">
+              <template x-for="seq in (campaignSequences[lead.id] || [])" :key="seq.id">
+                <div
+                  class="email-card rounded-xl border border-white/10 p-4 cursor-pointer group"
+                  style="background:#132A3E;"
+                  @click="openEditModal(lead, seq)"
+                >
+                  <!-- Card meta row -->
+                  <div class="flex items-center justify-between mb-2.5">
+                    <div class="flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold text-primary shrink-0" style="background:#00B3FF;" x-text="seq.touchpoint_num"></span>
+                      <span class="text-xs font-medium px-2 py-0.5 rounded-full border border-white/10 text-gray-400" x-text="'Tag ' + seq.scheduled_day"></span>
+                    </div>
+                    <button
+                      class="opacity-0 group-hover:opacity-100 transition p-1 rounded-lg hover:bg-accent/20 text-accent"
+                      @click.stop="openEditModal(lead, seq)"
+                      title="Bearbeiten"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    </button>
+                  </div>
+
+                  <!-- Subject -->
+                  <p class="text-white text-xs font-semibold leading-tight mb-2 line-clamp-2" x-text="seq.subject || '(kein Betreff)'"></p>
+
+                  <!-- Body preview -->
+                  <p class="text-gray-500 text-xs leading-relaxed line-clamp-3" x-text="seq.body ? seq.body.replace(/\n/g, ' ').substring(0, 140) + '...' : '(kein Inhalt)'"></p>
+
+                  <!-- Angle badge -->
+                  <div class="mt-2.5 pt-2 border-t border-white/5">
+                    <span class="text-xs text-gray-600 italic" x-text="emailAngleLabel(seq.touchpoint_num)"></span>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Empty sequences placeholder -->
+              <div
+                x-show="!campaignSequences[lead.id] || campaignSequences[lead.id].length === 0"
+                class="text-center py-8 text-gray-600 text-xs"
+              >
+                <svg class="w-8 h-8 mx-auto mb-2 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Noch keine Sequenz.<br/>Klicken Sie auf "(Re-)generieren".
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Mobile export bar -->
+    <div class="md:hidden border-t border-white/10 px-4 py-3 flex gap-2" style="background:#0d1f2d;">
+      <button @click="exportCSV()" class="flex-1 py-2 rounded-lg text-xs font-medium border border-white/20 text-gray-300 text-center">CSV exportieren</button>
+      <button @click="exportEML()" class="flex-1 py-2 rounded-lg text-xs font-medium border border-white/20 text-gray-300 text-center">.EML exportieren</button>
+      <button @click="generateForCampaign()" :disabled="generatingCampaign" class="flex-1 py-2 rounded-lg text-xs font-semibold text-primary text-center disabled:opacity-50" style="background:#00B3FF;" x-text="generatingCampaign ? '...' : 'Generieren'"></button>
+    </div>
+  </div>
+
+</div><!-- end main app -->
+
+<!-- ══════════════════════════════════════════════════════════
+     ALPINE.JS APPLICATION SCRIPT
+══════════════════════════════════════════════════════════ -->
+<script>
+function app() {
+  return {
+    // ── State ────────────────────────────────────────────
+    view: 'loading',
+    globalLoading: true,
+    loadingMsg: 'Laden...',
+
+    // Auth
+    loginPassword: '',
+    loginError: '',
+    loginLoading: false,
+
+    // Dashboard
+    campaigns: [],
+
+    // Wizard
+    wizardStep: 1,
+    wizardCampaignId: null,
+    wizardForm: {
+      name: '', sender_name: '', sender_email: '',
+      num_touchpoints: 4, cadence: '1,3,7,14', tone: 'formal', goal: 'meeting'
+    },
+    csvFile: null,
+    csvFileName: '',
+    csvErrors: [],
+    csvDragOver: false,
+    importedLeads: [],
+    manualLeadForm: { email: '', company: '', contact: '', website: '', notes: '' },
+
+    // Generate
+    generating: false,
+    generateResults: [],
+    generatingCampaign: false,
+
+    // Campaign view
+    currentCampaign: null,
+    campaignLeads: [],
+    campaignSequences: {},
+    statusFilter: 'all',
+
+    // Edit modal
+    editModalOpen: false,
+    editingLead: null,
+    editingSequence: null,
+    editForm: { subject: '', body: '' },
+    editPreview: false,
+    savingEdit: false,
+
+    // Notification
+    notification: null,
+    _notifTimer: null,
+
+    // Options
+    wizardStepLabels: ['Einrichten', 'Leads', 'Generieren'],
+    toneOptions: [
+      { value: 'formal',     label: 'Formal',      desc: 'Professionell' },
+      { value: 'casual',     label: 'Locker',       desc: 'Freundlich' },
+      { value: 'provocative',label: 'Provokant',    desc: 'Direkt' },
+    ],
+    goalOptions: [
+      { value: 'meeting', label: 'Meeting',   icon: '📅' },
+      { value: 'demo',    label: 'Demo',      icon: '💻' },
+      { value: 'call',    label: 'Anruf',     icon: '📞' },
+      { value: 'reply',   label: 'Antwort',   icon: '💬' },
+    ],
+    statusFilters: [
+      { value: 'all',           label: 'Alle' },
+      { value: 'draft',         label: 'Entwurf' },
+      { value: 'sent',          label: 'Gesendet' },
+      { value: 'replied',       label: 'Geantwortet' },
+      { value: 'meeting_booked',label: 'Meeting' },
+    ],
+    angleLabels: [
+      'Value Proposition',
+      'Social Proof',
+      'Pain Point',
+      'Dringlichkeit',
+      'Breakup Mail',
+    ],
+
+    // ── Computed ─────────────────────────────────────────
+    get filteredLeads() {
+      if (this.statusFilter === 'all') return this.campaignLeads;
+      return this.campaignLeads.filter(l => l.status === this.statusFilter);
+    },
+    get totalSequences() {
+      return Object.values(this.campaignSequences).reduce((s, arr) => s + arr.length, 0);
+    },
+
+    // ── Init ─────────────────────────────────────────────
+    async init() {
+      try {
+        const res = await fetch('/api/auth/check');
+        const data = await res.json();
+        if (data.authenticated) {
+          await this.loadCampaigns();
+          this.view = 'dashboard';
+        } else {
+          this.view = 'login';
+        }
+      } catch {
+        this.view = 'login';
+      }
+      this.globalLoading = false;
+    },
+
+    // ── Auth ─────────────────────────────────────────────
+    async login() {
+      this.loginError = '';
+      this.loginLoading = true;
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: this.loginPassword }),
+        });
+        if (!res.ok) {
+          this.loginError = 'Falsches Passwort.';
+          return;
+        }
+        await this.loadCampaigns();
+        this.view = 'dashboard';
+        this.loginPassword = '';
+      } catch {
+        this.loginError = 'Verbindungsfehler.';
+      } finally {
+        this.loginLoading = false;
+      }
+    },
+
+    async logout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      this.view = 'login';
+      this.campaigns = [];
+    },
+
+    // ── Navigation ────────────────────────────────────────
+    goTo(v, params = {}) {
+      this.view = v;
+      if (v === 'campaign-view' && params.id) {
+        this.loadCampaignView(params.id);
+      }
+      if (v === 'new-campaign') {
+        this.resetWizard();
+      }
+    },
+
+    // ── Dashboard ─────────────────────────────────────────
+    async loadCampaigns() {
+      try {
+        const res = await fetch('/api/campaigns');
+        const data = await res.json();
+        this.campaigns = data.campaigns || [];
+      } catch {
+        this.notify('Fehler beim Laden der Kampagnen', 'error');
+      }
+    },
+
+    confirmDelete(c) {
+      if (confirm(`Kampagne "${c.name}" wirklich löschen?`)) {
+        this.deleteCampaign(c.id);
+      }
+    },
+
+    async deleteCampaign(id) {
+      try {
+        await fetch(`/api/campaigns/${id}`, { method: 'DELETE' });
+        this.campaigns = this.campaigns.filter(c => c.id !== id);
+        this.notify('Kampagne gelöscht');
+      } catch {
+        this.notify('Fehler beim Löschen', 'error');
+      }
+    },
+
+    async loadDemo() {
+      this.globalLoading = true;
+      this.loadingMsg = 'Demo-Daten laden...';
+      try {
+        const res = await fetch('/api/demo', { method: 'POST' });
+        const data = await res.json();
+        await this.loadCampaigns();
+        this.notify('Demo-Kampagne geladen!');
+        this.goTo('campaign-view', { id: data.campaign_id });
+      } catch {
+        this.notify('Fehler beim Laden der Demo', 'error');
+      } finally {
+        this.globalLoading = false;
+        this.loadingMsg = '';
+      }
+    },
+
+    // ── Wizard ───────────────────────────────────────────
+    resetWizard() {
+      this.wizardStep = 1;
+      this.wizardCampaignId = null;
+      this.wizardForm = {
+        name: '', sender_name: '', sender_email: '',
+        num_touchpoints: 4, cadence: '1,3,7,14', tone: 'formal', goal: 'meeting'
+      };
+      this.importedLeads = [];
+      this.csvFileName = '';
+      this.csvErrors = [];
+      this.generateResults = [];
+      this.generating = false;
+    },
+
+    async createCampaignStep() {
+      try {
+        const res = await fetch('/api/campaigns', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...this.wizardForm,
+            num_touchpoints: parseInt(this.wizardForm.num_touchpoints),
+          }),
+        });
+        const data = await res.json();
+        this.wizardCampaignId = data.campaign_id;
+        this.wizardStep = 2;
+      } catch {
+        this.notify('Fehler beim Erstellen der Kampagne', 'error');
+      }
+    },
+
+    // CSV handling
+    handleCsvDrop(event) {
+      this.csvDragOver = false;
+      const file = event.dataTransfer.files[0];
+      if (file) this.processCsvFile(file);
+    },
+    handleCsvFile(event) {
+      const file = event.target.files[0];
+      if (file) this.processCsvFile(file);
+    },
+    async processCsvFile(file) {
+      this.csvFileName = file.name;
+      this.csvErrors = [];
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        const res = await fetch(`/api/campaigns/${this.wizardCampaignId}/leads/import`, {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.errors?.length) this.csvErrors = data.errors;
+        // Reload leads from server
+        const leadsRes = await fetch(`/api/campaigns/${this.wizardCampaignId}/leads`);
+        const leadsData = await leadsRes.json();
+        this.importedLeads = leadsData.leads || [];
+        if (data.added > 0) this.notify(`${data.added} Leads importiert`);
+      } catch {
+        this.notify('Fehler beim CSV-Import', 'error');
+      }
+    },
+
+    addManualLead() {
+      if (!this.manualLeadForm.email) return;
+      this.importedLeads.push({ ...this.manualLeadForm });
+      this.manualLeadForm = { email: '', company: '', contact: '', website: '', notes: '' };
+    },
+
+    async saveLeadsAndGenerate() {
+      // Save any manually added leads not yet on server
+      for (const lead of this.importedLeads.filter(l => !l.id)) {
+        try {
+          const res = await fetch(`/api/campaigns/${this.wizardCampaignId}/leads`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(lead),
+          });
+          const data = await res.json();
+          lead.id = data.lead_id;
+        } catch {}
+      }
+      this.wizardStep = 3;
+    },
+
+    async runGenerate() {
+      this.generating = true;
+      this.generateResults = [];
+      try {
+        const res = await fetch(`/api/campaigns/${this.wizardCampaignId}/generate`, { method: 'POST' });
+        const data = await res.json();
+        this.generateResults = data.results || [];
+        const ok = this.generateResults.filter(r => r.success).length;
+        this.notify(`${ok} Sequenz(en) generiert!`);
+      } catch (e) {
+        this.notify('Generierung fehlgeschlagen: ' + e.message, 'error');
+      } finally {
+        this.generating = false;
+      }
+    },
+
+    // ── Campaign View ────────────────────────────────────
+    async loadCampaignView(id) {
+      this.globalLoading = true;
+      this.loadingMsg = 'Kampagne laden...';
+      try {
+        const [campaignRes, seqRes] = await Promise.all([
+          fetch(`/api/campaigns/${id}`),
+          fetch(`/api/campaigns/${id}/sequences`),
+        ]);
+        this.currentCampaign = await campaignRes.json();
+        const seqData = await seqRes.json();
+        this.campaignLeads = seqData.leads || [];
+        this.campaignSequences = {};
+        for (const lead of this.campaignLeads) {
+          this.campaignSequences[lead.id] = lead.sequences || [];
+        }
+        this.statusFilter = 'all';
+      } catch {
+        this.notify('Fehler beim Laden der Kampagne', 'error');
+      } finally {
+        this.globalLoading = false;
+        this.loadingMsg = '';
+      }
+    },
+
+    async generateForCampaign() {
+      if (!this.currentCampaign) return;
+      this.generatingCampaign = true;
+      try {
+        const res = await fetch(`/api/campaigns/${this.currentCampaign.id}/generate`, { method: 'POST' });
+        const data = await res.json();
+        // Update sequences
+        this.campaignLeads = data.leads || this.campaignLeads;
+        this.campaignSequences = {};
+        for (const lead of this.campaignLeads) {
+          this.campaignSequences[lead.id] = lead.sequences || [];
+        }
+        const ok = (data.results || []).filter(r => r.success).length;
+        this.notify(`${ok} Sequenz(en) regeneriert`);
+      } catch (e) {
+        this.notify('Generierung fehlgeschlagen', 'error');
+      } finally {
+        this.generatingCampaign = false;
+      }
+    },
+
+    async updateLeadStatus(leadId, status) {
+      try {
+        await fetch(`/api/leads/${leadId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status }),
+        });
+        const lead = this.campaignLeads.find(l => l.id === leadId);
+        if (lead) lead.status = status;
+      } catch {
+        this.notify('Status konnte nicht aktualisiert werden', 'error');
+      }
+    },
+
+    // ── Edit Modal ───────────────────────────────────────
+    openEditModal(lead, seq) {
+      this.editingLead = lead;
+      this.editingSequence = seq;
+      this.editForm = { subject: seq.subject || '', body: seq.body || '' };
+      this.editPreview = false;
+      this.editModalOpen = true;
+    },
+
+    closeEditModal() {
+      this.editModalOpen = false;
+      this.editingLead = null;
+      this.editingSequence = null;
+    },
+
+    async saveEdit() {
+      if (!this.editingSequence) return;
+      this.savingEdit = true;
+      try {
+        await fetch(`/api/sequences/${this.editingSequence.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(this.editForm),
+        });
+        // Update local state
+        const seqs = this.campaignSequences[this.editingLead.id] || [];
+        const idx = seqs.findIndex(s => s.id === this.editingSequence.id);
+        if (idx !== -1) {
+          seqs[idx] = { ...seqs[idx], ...this.editForm };
+          this.campaignSequences[this.editingLead.id] = [...seqs];
+        }
+        this.closeEditModal();
+        this.notify('E-Mail gespeichert');
+      } catch {
+        this.notify('Fehler beim Speichern', 'error');
+      } finally {
+        this.savingEdit = false;
+      }
+    },
+
+    // ── Export ───────────────────────────────────────────
+    exportCSV() {
+      if (!this.currentCampaign) return;
+      window.location.href = `/api/campaigns/${this.currentCampaign.id}/export/csv`;
+    },
+    exportEML() {
+      if (!this.currentCampaign) return;
+      window.location.href = `/api/campaigns/${this.currentCampaign.id}/export/eml`;
+    },
+
+    // ── Helpers ──────────────────────────────────────────
+    notify(msg, type = 'success') {
+      this.notification = { msg, type };
+      if (this._notifTimer) clearTimeout(this._notifTimer);
+      this._notifTimer = setTimeout(() => { this.notification = null; }, 3500);
+    },
+
+    formatDate(dt) {
+      if (!dt) return '';
+      try {
+        return new Date(dt + 'Z').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      } catch { return dt; }
+    },
+
+    leadsCountByStatus(status) {
+      return this.campaignLeads.filter(l => l.status === status).length;
+    },
+
+    toneLabel(t) {
+      const map = { formal: 'Formal', casual: 'Locker', provocative: 'Provokant' };
+      return map[t] || t || '';
+    },
+    goalLabel(g) {
+      const map = { meeting: 'Meeting', demo: 'Demo', call: 'Anruf', reply: 'Antwort' };
+      return map[g] || g || '';
+    },
+    statusLabel(s) {
+      const map = { draft: 'Entwurf', active: 'Aktiv', completed: 'Abgeschlossen', paused: 'Pausiert' };
+      return map[s] || s || '';
+    },
+    leadStatusLabel(s) {
+      const map = { draft: 'Entwurf', sent: 'Gesendet', replied: 'Geantwortet', meeting_booked: 'Meeting' };
+      return map[s] || s;
+    },
+    emailAngleLabel(n) {
+      return this.angleLabels[(n - 1) % this.angleLabels.length] || '';
+    },
+
+    statusBadgeClass(s) {
+      const map = {
+        draft: 'bg-gray-700 text-gray-300',
+        active: 'bg-accent/20 text-accent',
+        completed: 'bg-highlight/20 text-highlight',
+        paused: 'bg-yellow-500/20 text-yellow-400',
+      };
+      return map[s] || 'bg-gray-700 text-gray-300';
+    },
+
+    leadStatusPill(s) {
+      const map = {
+        draft: 'bg-gray-700 text-gray-400',
+        sent: 'bg-blue-500/20 text-blue-300',
+        replied: 'bg-yellow-500/20 text-yellow-300',
+        meeting_booked: 'bg-highlight/20 text-highlight',
+      };
+      return map[s] || 'bg-gray-700 text-gray-400';
+    },
+
+    leadStatusSelectClass(s) {
+      const map = {
+        draft: 'text-gray-400',
+        sent: 'text-blue-300',
+        replied: 'text-yellow-300',
+        meeting_booked: 'text-green-300',
+      };
+      return map[s] || 'text-gray-400';
+    },
+  };
+}
+</script>
+</body>
+</html>

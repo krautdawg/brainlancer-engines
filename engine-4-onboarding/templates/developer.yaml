@@ -1,0 +1,182 @@
+name: "Developer Onboarding"
+template_type: "onboarding"
+tasks:
+  - title: "Send offer letter"
+    description: "Draft and send the official offer letter via DocuSign"
+    assignee: "hr"
+    due_offset: -14
+    category: "pre-boarding"
+
+  - title: "Add to payroll system"
+    description: "Set up bank details and configure salary payments"
+    assignee: "hr"
+    due_offset: -10
+    category: "pre-boarding"
+
+  - title: "Enroll in health insurance"
+    description: "Send enrollment forms and confirm coverage selection"
+    assignee: "hr"
+    due_offset: -7
+    category: "pre-boarding"
+
+  - title: "Order laptop and peripherals"
+    description: "MacBook Pro + external monitor, keyboard, mouse, headset"
+    assignee: "it"
+    due_offset: -7
+    category: "pre-boarding"
+
+  - title: "Create company email account"
+    description: "Set up Google Workspace account with proper display name"
+    assignee: "it"
+    due_offset: -5
+    category: "accounts"
+
+  - title: "Add to Slack workspace"
+    description: "Invite to all relevant channels: #general, #engineering, #random"
+    assignee: "it"
+    due_offset: -3
+    category: "accounts"
+
+  - title: "Create GitHub organization account"
+    description: "Add to org, assign to relevant teams and repos"
+    assignee: "it"
+    due_offset: -3
+    category: "accounts"
+
+  - title: "Set up VPN access credentials"
+    description: "Configure WireGuard VPN and send credentials securely"
+    assignee: "it"
+    due_offset: -2
+    category: "accounts"
+
+  - title: "Configure Jira project access"
+    description: "Add to relevant projects with appropriate permission level"
+    assignee: "it"
+    due_offset: -1
+    category: "accounts"
+
+  - title: "Send welcome email with day-one schedule"
+    description: "First day schedule, office address, parking, contact details"
+    assignee: "hr"
+    due_offset: -1
+    category: "pre-boarding"
+
+  - title: "Office building access and tour"
+    description: "Issue access badge, walk through building, show emergency exits"
+    assignee: "manager"
+    due_offset: 0
+    category: "orientation"
+
+  - title: "Team introduction meeting"
+    description: "30-minute intro call/meeting with the full engineering team"
+    assignee: "manager"
+    due_offset: 0
+    category: "orientation"
+
+  - title: "IT workstation setup session"
+    description: "Configure laptop, install required software, test logins"
+    assignee: "it"
+    due_offset: 0
+    category: "setup"
+
+  - title: "Security and compliance briefing"
+    description: "Data handling policy, password requirements, incident reporting"
+    assignee: "it"
+    due_offset: 0
+    category: "compliance"
+
+  - title: "Complete HR onboarding paperwork"
+    description: "Sign employment contract, NDA, and policy acknowledgements"
+    assignee: "hr"
+    due_offset: 0
+    category: "compliance"
+
+  - title: "Set up local development environment"
+    description: "Clone repos, install dependencies, run app locally"
+    assignee: "it"
+    due_offset: 1
+    category: "setup"
+
+  - title: "First 1:1 meeting with manager"
+    description: "Discuss goals, working style, expectations, and 30-day plan"
+    assignee: "manager"
+    due_offset: 1
+    category: "orientation"
+
+  - title: "Review company handbook and policies"
+    description: "Read through handbook, note questions for HR"
+    assignee: "new_hire"
+    due_offset: 2
+    category: "training"
+
+  - title: "Complete security awareness training"
+    description: "Online security module in the learning management system"
+    assignee: "new_hire"
+    due_offset: 3
+    category: "compliance"
+
+  - title: "Development environment fully configured"
+    description: "All services running, tests passing, ready to contribute"
+    assignee: "new_hire"
+    due_offset: 3
+    category: "setup"
+
+  - title: "Introduction to codebase walkthrough"
+    description: "60-minute architecture overview with senior developer"
+    assignee: "manager"
+    due_offset: 3
+    category: "training"
+
+  - title: "Set up monitoring and alerting access"
+    description: "Grafana, Datadog, or equivalent — configure personal alerts"
+    assignee: "it"
+    due_offset: 4
+    category: "accounts"
+
+  - title: "Shadow senior developer on a task"
+    description: "Pair programming or observation session on a real ticket"
+    assignee: "new_hire"
+    due_offset: 5
+    category: "training"
+
+  - title: "Participate in first code review"
+    description: "Review a pull request or submit one for review"
+    assignee: "new_hire"
+    due_offset: 5
+    category: "training"
+
+  - title: "Complete compliance training module"
+    description: "GDPR, data security, and company-specific compliance course"
+    assignee: "new_hire"
+    due_offset: 7
+    category: "compliance"
+
+  - title: "Two-week check-in with manager"
+    description: "Review first two weeks, address blockers, adjust 30-day plan"
+    assignee: "manager"
+    due_offset: 14
+    category: "check-in"
+
+  - title: "Independently complete first development task"
+    description: "Ship a small feature or bug fix end-to-end"
+    assignee: "new_hire"
+    due_offset: 21
+    category: "milestone"
+
+  - title: "30-day performance goals setting"
+    description: "Set measurable OKRs for the next quarter"
+    assignee: "manager"
+    due_offset: 30
+    category: "check-in"
+
+  - title: "Full system access review and audit"
+    description: "Verify all access levels are appropriate for role"
+    assignee: "it"
+    due_offset: 30
+    category: "compliance"
+
+  - title: "Submit onboarding feedback survey"
+    description: "Rate and comment on the onboarding experience"
+    assignee: "new_hire"
+    due_offset: 30
+    category: "feedback"

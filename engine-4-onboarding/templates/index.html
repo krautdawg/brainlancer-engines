@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KI Katapult — Onboarding Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#132A3E',
+            'navy-light': '#1a3a54',
+            accent: '#00B3FF',
+            highlight: '#00FFC5',
+          },
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    body { font-family: 'Inter', sans-serif; }
+    .kanban-col { min-height: 500px; }
+    .task-card { transition: box-shadow 0.15s ease, transform 0.15s ease; }
+    .task-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.12); transform: translateY(-1px); }
+    .task-card.dragging { opacity: 0.5; transform: rotate(2deg); }
+    .drop-zone.drag-over { background: rgba(0,179,255,0.08); border: 2px dashed #00B3FF; }
+    .progress-bar { transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+    .sidebar-item { transition: background 0.15s ease; }
+    .sidebar-item:hover { background: rgba(255,255,255,0.08); }
+    .sidebar-item.active { background: rgba(0,179,255,0.15); border-left: 3px solid #00B3FF; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #00B3FF !important; box-shadow: 0 0 0 3px rgba(0,179,255,0.12); }
+    .notification-dot { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+    .toast-enter { animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased" x-data="app()" x-init="init()" x-cloak>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     LOGIN SCREEN
+════════════════════════════════════════════════════════════════ -->
+<div x-show="!loggedIn" class="min-h-screen bg-navy flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div class="bg-navy p-8 text-center">
+      <div class="flex items-center justify-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <span class="text-white text-xl font-bold tracking-tight">KI Katapult</span>
+      </div>
+      <h1 class="text-highlight text-sm font-semibold tracking-widest uppercase mt-1">Onboarding Engine</h1>
+    </div>
+    <div class="p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-1">Sign in</h2>
+      <p class="text-gray-500 text-sm mb-6">Enter your access password to continue</p>
+      <form @submit.prevent="login()">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+          <input
+            x-model="loginPassword"
+            type="password"
+            class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm bg-gray-50 focus:bg-white transition-all"
+            placeholder="Enter password"
+            autofocus
+          />
+          <p x-show="loginError" class="text-red-500 text-xs mt-1.5" x-text="loginError"></p>
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-accent hover:bg-blue-500 text-white font-semibold py-3 rounded-lg transition-colors text-sm"
+          :disabled="loginLoading"
+        >
+          <span x-show="!loginLoading">Sign In</span>
+          <span x-show="loginLoading">Signing in...</span>
+        </button>
+      </form>
+      <p class="text-center text-gray-400 text-xs mt-6">Default password: <code class="bg-gray-100 px-1 rounded">brainlancer2026</code></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MAIN APPLICATION
+════════════════════════════════════════════════════════════════ -->
+<div x-show="loggedIn" class="flex h-screen overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-navy text-white flex flex-col flex-shrink-0 overflow-hidden">
+    <!-- Logo -->
+    <div class="p-5 border-b border-white/10">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 bg-accent rounded-md flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-white font-bold text-sm leading-tight">KI Katapult</div>
+          <div class="text-white/40 text-xs">Onboarding Engine</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="p-3 space-y-1">
+      <button
+        @click="page = 'dashboard'; selectedEmployeeId = null"
+        class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-white"
+        :class="page === 'dashboard' && !selectedEmployeeId ? 'active !text-white' : ''"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+        </svg>
+        Dashboard
+      </button>
+      <button
+        @click="page = 'new-onboarding'"
+        class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-white"
+        :class="page === 'new-onboarding' ? 'active !text-white' : ''"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        New Onboarding
+      </button>
+    </nav>
+
+    <!-- Employee List -->
+    <div class="flex-1 overflow-y-auto p-3">
+      <div class="text-white/30 text-xs font-semibold uppercase tracking-wider px-3 mb-2">Active</div>
+      <template x-for="emp in employees.filter(e => e.type === 'onboarding')" :key="emp.id">
+        <button
+          @click="selectEmployee(emp.id)"
+          class="sidebar-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-left mb-0.5"
+          :class="selectedEmployeeId === emp.id ? 'active !text-white' : 'text-white/70 hover:text-white'"
+        >
+          <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+               :class="emp.type === 'onboarding' ? 'bg-accent/20 text-accent' : 'bg-orange-500/20 text-orange-400'"
+               x-text="emp.name.split(' ').map(n=>n[0]).join('').slice(0,2)"></div>
+          <div class="flex-1 min-w-0">
+            <div class="truncate font-medium" x-text="emp.name"></div>
+            <div class="text-white/40 text-xs truncate" x-text="emp.role"></div>
+          </div>
+          <div x-show="emp.overdue_count > 0"
+               class="bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center flex-shrink-0 font-bold"
+               x-text="emp.overdue_count"></div>
+        </button>
+      </template>
+
+      <div x-show="employees.filter(e => e.type === 'offboarding').length > 0" class="text-white/30 text-xs font-semibold uppercase tracking-wider px-3 mb-2 mt-4">Offboarding</div>
+      <template x-for="emp in employees.filter(e => e.type === 'offboarding')" :key="emp.id">
+        <button
+          @click="selectEmployee(emp.id)"
+          class="sidebar-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-left mb-0.5"
+          :class="selectedEmployeeId === emp.id ? 'active !text-white' : 'text-white/70 hover:text-white'"
+        >
+          <div class="w-7 h-7 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs font-bold flex-shrink-0"
+               x-text="emp.name.split(' ').map(n=>n[0]).join('').slice(0,2)"></div>
+          <div class="flex-1 min-w-0">
+            <div class="truncate font-medium" x-text="emp.name"></div>
+            <div class="text-white/40 text-xs truncate">Offboarding</div>
+          </div>
+        </button>
+      </template>
+
+      <div x-show="employees.length === 0" class="text-white/30 text-xs text-center py-4">
+        No employees yet
+      </div>
+    </div>
+
+    <!-- Demo button -->
+    <div class="p-3 border-t border-white/10">
+      <button
+        @click="loadDemo()"
+        :disabled="demoLoading"
+        class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+      >
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        <span x-text="demoLoading ? 'Loading...' : 'Load Demo Data'"></span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+    <!-- HEADER -->
+    <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between flex-shrink-0">
+      <div>
+        <h1 class="text-lg font-bold text-gray-900" x-text="pageTitle()"></h1>
+        <p class="text-gray-400 text-xs mt-0.5" x-text="pageSubtitle()"></p>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- Notifications bell -->
+        <div class="relative">
+          <button
+            @click="showNotifications = !showNotifications; if(showNotifications) loadNotifications()"
+            class="relative w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <span x-show="unreadCount > 0"
+                  class="notification-dot absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+
+          <!-- Notifications dropdown -->
+          <div
+            x-show="showNotifications"
+            @click.outside="showNotifications = false"
+            x-transition:enter="transition ease-out duration-150"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            class="absolute right-0 top-11 w-80 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden"
+          >
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+              <span class="font-semibold text-sm text-gray-900">Notifications</span>
+              <button @click="markAllRead()" class="text-xs text-accent hover:underline">Mark all read</button>
+            </div>
+            <div class="max-h-80 overflow-y-auto">
+              <template x-if="notifications.length === 0">
+                <div class="text-gray-400 text-sm text-center py-8">No notifications</div>
+              </template>
+              <template x-for="n in notifications" :key="n.id">
+                <div class="flex gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-50 cursor-pointer"
+                     :class="!n.read ? 'bg-blue-50/50' : ''"
+                     @click="markRead(n.id)">
+                  <div class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0"
+                       :class="n.type === 'warning' ? 'bg-red-400' : n.type === 'success' ? 'bg-green-400' : 'bg-accent'"></div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-xs text-gray-700 leading-relaxed" x-text="n.message"></p>
+                    <p class="text-gray-400 text-xs mt-0.5" x-text="formatTime(n.created_at)"></p>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logout -->
+        <button
+          @click="logout()"
+          class="flex items-center gap-2 text-xs text-gray-500 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-lg transition-colors"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          </svg>
+          Sign out
+        </button>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="flex-1 overflow-auto">
+
+      <!-- ═══════════════ DASHBOARD PAGE ═══════════════ -->
+      <div x-show="page === 'dashboard' && !selectedEmployeeId" class="p-6">
+
+        <!-- Stats row -->
+        <div class="grid grid-cols-4 gap-4 mb-6">
+          <div class="bg-white rounded-xl p-4 border border-gray-200">
+            <div class="text-2xl font-bold text-gray-900" x-text="employees.filter(e=>e.type==='onboarding').length"></div>
+            <div class="text-xs text-gray-500 mt-0.5">Active Onboardings</div>
+          </div>
+          <div class="bg-white rounded-xl p-4 border border-gray-200">
+            <div class="text-2xl font-bold text-gray-900" x-text="employees.filter(e=>e.type==='offboarding').length"></div>
+            <div class="text-xs text-gray-500 mt-0.5">Active Offboardings</div>
+          </div>
+          <div class="bg-white rounded-xl p-4 border border-gray-200">
+            <div class="text-2xl font-bold text-red-500" x-text="employees.reduce((a,e)=>a+(e.overdue_count||0),0)"></div>
+            <div class="text-xs text-gray-500 mt-0.5">Overdue Tasks</div>
+          </div>
+          <div class="bg-white rounded-xl p-4 border border-gray-200">
+            <div class="text-2xl font-bold text-highlight" x-text="employees.length > 0 ? Math.round(employees.reduce((a,e)=>a+(e.progress||0),0)/employees.length) + '%' : '0%'"></div>
+            <div class="text-xs text-gray-500 mt-0.5">Avg Completion</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-6">
+          <!-- Employee Cards -->
+          <div class="col-span-2 space-y-3">
+            <h2 class="font-semibold text-gray-900 text-sm">Employees</h2>
+            <template x-if="employees.length === 0">
+              <div class="bg-white rounded-xl border border-gray-200 p-8 text-center">
+                <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <p class="text-gray-500 text-sm mb-3">No employees yet</p>
+                <button @click="page = 'new-onboarding'" class="text-accent text-sm font-medium hover:underline">Start your first onboarding</button>
+                <span class="text-gray-400 text-sm mx-2">or</span>
+                <button @click="loadDemo()" class="text-accent text-sm font-medium hover:underline">load demo data</button>
+              </div>
+            </template>
+            <template x-for="emp in employees" :key="emp.id">
+              <div class="bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 transition-colors cursor-pointer"
+                   @click="selectEmployee(emp.id)">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
+                         :class="emp.type === 'onboarding' ? 'bg-accent/10 text-accent' : 'bg-orange-100 text-orange-600'"
+                         x-text="emp.name.split(' ').map(n=>n[0]).join('').slice(0,2)"></div>
+                    <div>
+                      <div class="font-semibold text-gray-900" x-text="emp.name"></div>
+                      <div class="text-gray-400 text-xs" x-text="emp.role + ' · ' + emp.department"></div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                          :class="emp.type === 'onboarding' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'"
+                          x-text="emp.type === 'onboarding' ? 'Onboarding' : 'Offboarding'"></span>
+                    <span x-show="emp.overdue_count > 0" class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-600 font-medium" x-text="emp.overdue_count + ' overdue'"></span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 bg-gray-100 rounded-full h-1.5">
+                    <div class="progress-bar h-1.5 rounded-full"
+                         :class="emp.progress >= 80 ? 'bg-highlight' : emp.overdue_count > 0 ? 'bg-red-400' : 'bg-accent'"
+                         :style="`width: ${emp.progress}%`"></div>
+                  </div>
+                  <span class="text-xs font-semibold text-gray-600 w-8 text-right" x-text="emp.progress + '%'"></span>
+                </div>
+                <div class="flex items-center gap-4 mt-2">
+                  <span class="text-xs text-gray-400" x-text="emp.done_tasks + '/' + emp.total_tasks + ' tasks done'"></span>
+                  <span class="text-xs text-gray-400" x-text="'Start: ' + formatDate(emp.start_date)"></span>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <!-- Activity Feed -->
+          <div class="space-y-3">
+            <h2 class="font-semibold text-gray-900 text-sm">Recent Activity</h2>
+            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <template x-if="activityLog.length === 0">
+                <div class="text-gray-400 text-sm text-center p-6">No activity yet</div>
+              </template>
+              <template x-for="(item, idx) in activityLog.slice(0,12)" :key="item.id">
+                <div class="flex gap-3 px-4 py-3 border-b border-gray-50 last:border-0">
+                  <div class="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0"></div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-xs text-gray-700 leading-relaxed">
+                      <span class="font-medium" x-text="item.employee_name"></span>
+                      <span class="text-gray-500"> — </span>
+                      <span x-text="item.action"></span>
+                    </p>
+                    <p class="text-gray-400 text-xs mt-0.5" x-text="formatTime(item.created_at)"></p>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ TASK BOARD (KANBAN) ═══════════════ -->
+      <div x-show="page === 'board' || selectedEmployeeId" class="flex flex-col h-full">
+        <!-- Board header -->
+        <div class="px-6 pt-6 pb-4 bg-white border-b border-gray-200 flex-shrink-0" x-show="selectedEmployee">
+          <div class="flex items-center gap-4">
+            <button @click="selectedEmployeeId = null; page = 'dashboard'" class="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold"
+                   :class="selectedEmployee?.type === 'onboarding' ? 'bg-accent/10 text-accent' : 'bg-orange-100 text-orange-600'"
+                   x-text="selectedEmployee?.name?.split(' ').map(n=>n[0]).join('').slice(0,2) || ''"></div>
+              <div>
+                <h2 class="font-bold text-gray-900" x-text="selectedEmployee?.name"></h2>
+                <p class="text-gray-400 text-xs" x-text="(selectedEmployee?.role || '') + ' · ' + (selectedEmployee?.department || '')"></p>
+              </div>
+            </div>
+            <div class="ml-auto flex items-center gap-3">
+              <!-- Task filter by assignee -->
+              <select x-model="assigneeFilter" class="text-xs border border-gray-200 rounded-lg px-3 py-1.5 bg-white text-gray-600">
+                <option value="">All Assignees</option>
+                <option value="hr">HR</option>
+                <option value="it">IT</option>
+                <option value="manager">Manager</option>
+                <option value="new_hire">New Hire</option>
+              </select>
+              <!-- Progress -->
+              <div class="flex items-center gap-2">
+                <div class="w-24 bg-gray-100 rounded-full h-1.5">
+                  <div class="progress-bar h-1.5 rounded-full bg-accent"
+                       :style="`width: ${selectedEmployee?.progress || 0}%`"></div>
+                </div>
+                <span class="text-xs font-semibold text-gray-600" x-text="(selectedEmployee?.progress || 0) + '%'"></span>
+              </div>
+              <span x-show="(selectedEmployee?.overdue_count || 0) > 0" class="text-xs px-2 py-1 bg-red-100 text-red-600 rounded-full font-medium" x-text="(selectedEmployee?.overdue_count || 0) + ' overdue'"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kanban Columns -->
+        <div class="flex-1 overflow-x-auto p-6">
+          <div class="flex gap-4 h-full" style="min-width: 900px">
+
+            <!-- TO DO Column -->
+            <div class="flex-1 flex flex-col min-w-56">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full bg-gray-400"></div>
+                  <span class="text-sm font-semibold text-gray-700">To Do</span>
+                </div>
+                <span class="text-xs bg-gray-100 text-gray-500 rounded-full px-2 py-0.5 font-medium" x-text="todoTasks.length"></span>
+              </div>
+              <div class="flex-1 kanban-col drop-zone bg-gray-100/50 rounded-xl p-2 space-y-2 overflow-y-auto"
+                   :class="dragOverColumn === 'todo' ? 'drag-over' : ''"
+                   @dragover.prevent="dragOverColumn = 'todo'"
+                   @dragleave="dragOverColumn = null"
+                   @drop.prevent="dropTask('todo')">
+                <template x-for="task in todoTasks" :key="task.id">
+                  <div class="task-card bg-white rounded-lg p-3 cursor-grab shadow-sm border border-gray-200/80"
+                       draggable="true"
+                       @dragstart="dragStart($event, task.id)"
+                       @dragend="dragOverColumn = null"
+                       @click="openTaskModal(task)">
+                    <p class="text-sm font-medium text-gray-800 leading-snug" x-text="task.title"></p>
+                    <div class="flex flex-wrap gap-1 mt-2">
+                      <span class="text-xs px-1.5 py-0.5 rounded font-medium" :class="categoryClass(task.category)" x-text="task.category"></span>
+                      <span class="text-xs px-1.5 py-0.5 rounded font-medium" :class="assigneeClass(task.assignee)" x-text="formatAssignee(task.assignee)"></span>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2" x-text="'Due: ' + formatDate(task.due_date)"></p>
+                  </div>
+                </template>
+                <div x-show="todoTasks.length === 0" class="text-gray-400 text-xs text-center py-6">No tasks</div>
+              </div>
+            </div>
+
+            <!-- IN PROGRESS Column -->
+            <div class="flex-1 flex flex-col min-w-56">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full bg-accent"></div>
+                  <span class="text-sm font-semibold text-gray-700">In Progress</span>
+                </div>
+                <span class="text-xs bg-blue-100 text-accent rounded-full px-2 py-0.5 font-medium" x-text="inProgressTasks.length"></span>
+              </div>
+              <div class="flex-1 kanban-col drop-zone bg-blue-50/30 rounded-xl p-2 space-y-2 overflow-y-auto"
+                   :class="dragOverColumn === 'in_progress' ? 'drag-over' : ''"
+                   @dragover.prevent="dragOverColumn = 'in_progress'"
+                   @dragleave="dragOverColumn = null"
+                   @drop.prevent="dropTask('in_progress')">
+                <template x-for="task in inProgressTasks" :key="task.id">
+                  <div class="task-card bg-white rounded-lg p-3 cursor-grab shadow-sm border border-blue-200/60"
+                       draggable="true"
+                       @dragstart="dragStart($event, task.id)"
+                       @dragend="dragOverColumn = null"
+                       @click="openTaskModal(task)">
+                    <p class="text-sm font-medium text-gray-800 leading-snug" x-text="task.title"></p>
+                    <div class="flex flex-wrap gap-1 mt-2">
+                      <span class="text-xs px-1.5 py-0.5 rounded font-medium" :class="categoryClass(task.category)" x-text="task.category"></span>
+                      <span class="text-xs px-1.5 py-0.5 rounded font-medium" :class="assigneeClass(task.assignee)" x-text="formatAssignee(task.assignee)"></span>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2" x-text="'Due: ' + formatDate(task.due_date)"></p>
+                    <div x-show="task.notes" class="text-xs text-gray-500 mt-1.5 italic truncate" x-text="task.notes"></div>
+                  </div>
+                </template>
+                <div x-show="inProgressTasks.length === 0" class="text-gray-400 text-xs text-center py-6">No tasks</div>
+              </div>
+            </div>
+
+            <!-- DONE Column -->
+            <div class="flex-1 flex flex-col min-w-56">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full bg-highlight"></div>
+                  <span class="text-sm font-semibold text-gray-700">Done</span>
+                </div>
+                <span class="text-xs bg-emerald-100 text-emerald-600 rounded-full px-2 py-0.5 font-medium" x-text="doneTasks.length"></span>
+              </div>
+              <div class="flex-1 kanban-col drop-zone bg-emerald-50/30 rounded-xl p-2 space-y-2 overflow-y-auto"
+                   :class="dragOverColumn === 'done' ? 'drag-over' : ''"
+                   @dragover.prevent="dragOverColumn = 'done'"
+                   @dragleave="dragOverColumn = null"
+                   @drop.prevent="dropTask('done')">
+                <template x-for="task in doneTasks" :key="task.id">
+                  <div class="task-card bg-white rounded-lg p-3 cursor-grab shadow-sm border border-emerald-200/60 opacity-80"
+                       draggable="true"
+                       @dragstart="dragStart($event, task.id)"
+                       @dragend="dragOverColumn = null"
+                       @click="openTaskModal(task)">
+                    <p class="text-sm font-medium text-gray-500 leading-snug line-through" x-text="task.title"></p>
+                    <div class="flex flex-wrap gap-1 mt-2">
+                      <span class="text-xs px-1.5 py-0.5 rounded font-medium" :class="categoryClass(task.category)" x-text="task.category"></span>
+                      <span class="text-xs px-1.5 py-0.5 rounded font-medium" :class="assigneeClass(task.assignee)" x-text="formatAssignee(task.assignee)"></span>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2" x-text="task.completed_at ? 'Done: ' + formatTime(task.completed_at) : 'Completed'"></p>
+                  </div>
+                </template>
+                <div x-show="doneTasks.length === 0" class="text-gray-400 text-xs text-center py-6">No completed tasks</div>
+              </div>
+            </div>
+
+            <!-- OVERDUE Column -->
+            <div class="flex-1 flex flex-col min-w-56">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                  <span class="text-sm font-semibold text-gray-700">Overdue</span>
+                </div>
+                <span class="text-xs bg-red-100 text-red-500 rounded-full px-2 py-0.5 font-medium" x-text="overdueTasks.length"></span>
+              </div>
+              <div class="flex-1 kanban-col drop-zone bg-red-50/30 rounded-xl p-2 space-y-2 overflow-y-auto"
+                   :class="dragOverColumn === 'overdue' ? 'drag-over' : ''"
+                   @dragover.prevent="dragOverColumn = 'overdue'"
+                   @dragleave="dragOverColumn = null"
+                   @drop.prevent="dropTask('overdue')">
+                <template x-for="task in overdueTasks" :key="task.id">
+                  <div class="task-card bg-white rounded-lg p-3 cursor-grab shadow-sm border border-red-200"
+                       draggable="true"
+                       @dragstart="dragStart($event, task.id)"
+                       @dragend="dragOverColumn = null"
+                       @click="openTaskModal(task)">
+                    <div class="flex items-start justify-between gap-2">
+                      <p class="text-sm font-medium text-gray-800 leading-snug" x-text="task.title"></p>
+                      <svg class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                      </svg>
+                    </div>
+                    <div class="flex flex-wrap gap-1 mt-2">
+                      <span class="text-xs px-1.5 py-0.5 rounded font-medium" :class="categoryClass(task.category)" x-text="task.category"></span>
+                      <span class="text-xs px-1.5 py-0.5 rounded font-medium" :class="assigneeClass(task.assignee)" x-text="formatAssignee(task.assignee)"></span>
+                    </div>
+                    <p class="text-xs text-red-400 mt-2 font-medium" x-text="'Was due: ' + formatDate(task.due_date)"></p>
+                  </div>
+                </template>
+                <div x-show="overdueTasks.length === 0" class="text-gray-400 text-xs text-center py-6">No overdue tasks</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ NEW ONBOARDING FORM ═══════════════ -->
+      <div x-show="page === 'new-onboarding'" class="p-6 max-w-2xl mx-auto">
+        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+          <div class="bg-navy px-6 py-5">
+            <h2 class="text-white font-bold text-lg">New Onboarding / Offboarding</h2>
+            <p class="text-white/50 text-sm mt-0.5">Fill in the details to auto-generate a task checklist</p>
+          </div>
+          <form @submit.prevent="createEmployee()" class="p-6 space-y-5">
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Full Name <span class="text-red-400">*</span></label>
+                <input x-model="newEmployee.name" type="text" required class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm" placeholder="Jane Smith" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Email Address <span class="text-red-400">*</span></label>
+                <input x-model="newEmployee.email" type="email" required class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm" placeholder="jane@company.com" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Role / Job Title <span class="text-red-400">*</span></label>
+                <input x-model="newEmployee.role" type="text" required class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm" placeholder="Senior Developer" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Department</label>
+                <input x-model="newEmployee.department" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm" placeholder="Engineering" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Checklist Template <span class="text-red-400">*</span></label>
+                <select x-model="newEmployee.template" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white">
+                  <option value="developer">Developer Onboarding (30 tasks)</option>
+                  <option value="designer">Designer Onboarding (30 tasks)</option>
+                  <option value="offboarding">Offboarding (25 tasks)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Type</label>
+                <select x-model="newEmployee.type" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white">
+                  <option value="onboarding">Onboarding</option>
+                  <option value="offboarding">Offboarding</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5" x-text="newEmployee.type === 'offboarding' ? 'Last Day' : 'Start Date'"></label><span class="text-red-400 ml-0.5">*</span>
+                <input x-model="newEmployee.start_date" type="date" required class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Office Location</label>
+                <input x-model="newEmployee.office_location" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm" placeholder="Berlin HQ" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Manager Name</label>
+                <input x-model="newEmployee.manager_name" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm" placeholder="Alex Kim" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Manager Email</label>
+                <input x-model="newEmployee.manager_email" type="email" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm" placeholder="alex@company.com" />
+              </div>
+            </div>
+
+            <!-- Preview tasks count -->
+            <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
+              <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-accent mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div>
+                  <p class="text-sm font-medium text-gray-700">Auto-generated Checklist</p>
+                  <p class="text-xs text-gray-500 mt-0.5" x-text="newEmployee.template === 'offboarding' ? '25 tasks will be generated: notification, handover, access revocation, payroll, records' : newEmployee.template === 'designer' ? '30 tasks: pre-boarding, Day 1, Week 1, Month 1 — design toolchain focus' : '30 tasks: pre-boarding, Day 1, Week 1, Month 1 — developer toolchain focus'"></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+              <button type="button" @click="page = 'dashboard'" class="px-5 py-2.5 text-sm text-gray-600 hover:text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
+              <button type="submit" :disabled="createLoading" class="px-6 py-2.5 text-sm bg-accent hover:bg-blue-500 text-white font-semibold rounded-lg transition-colors disabled:opacity-60">
+                <span x-show="!createLoading">Generate Checklist</span>
+                <span x-show="createLoading">Creating...</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TASK EDIT MODAL
+════════════════════════════════════════════════════════════════ -->
+<div
+  x-show="taskModal"
+  x-transition:enter="transition ease-out duration-200"
+  x-transition:enter-start="opacity-0"
+  x-transition:enter-end="opacity-100"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4"
+  style="background: rgba(0,0,0,0.4)"
+  @click.self="taskModal = null"
+>
+  <div
+    x-show="taskModal"
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0 scale-95"
+    x-transition:enter-end="opacity-100 scale-100"
+    class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
+    @click.stop
+  >
+    <template x-if="taskModal">
+      <div>
+        <div class="px-6 py-4 border-b border-gray-200 flex items-start justify-between">
+          <div>
+            <h3 class="font-bold text-gray-900 leading-snug" x-text="taskModal.title"></h3>
+            <div class="flex gap-1.5 mt-1.5">
+              <span class="text-xs px-1.5 py-0.5 rounded font-medium" :class="categoryClass(taskModal.category)" x-text="taskModal.category"></span>
+              <span class="text-xs px-1.5 py-0.5 rounded font-medium" :class="assigneeClass(taskModal.assignee)" x-text="formatAssignee(taskModal.assignee)"></span>
+            </div>
+          </div>
+          <button @click="taskModal = null" class="text-gray-400 hover:text-gray-600 p-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div x-show="taskModal.description" class="text-sm text-gray-600 leading-relaxed" x-text="taskModal.description"></div>
+
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span class="text-gray-500 text-xs">Due Date</span>
+              <p class="font-medium text-gray-800 mt-0.5" x-text="formatDate(taskModal.due_date)"></p>
+            </div>
+            <div>
+              <span class="text-gray-500 text-xs">Current Status</span>
+              <p class="font-medium text-gray-800 mt-0.5 capitalize" x-text="taskModal.status.replace('_', ' ')"></p>
+            </div>
+          </div>
+
+          <!-- Status buttons -->
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-2">Change Status</label>
+            <div class="flex gap-2 flex-wrap">
+              <button @click="quickUpdateTask(taskModal.id, 'todo')"
+                      class="text-xs px-3 py-1.5 rounded-lg border transition-all font-medium"
+                      :class="taskModal.status === 'todo' ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+                To Do
+              </button>
+              <button @click="quickUpdateTask(taskModal.id, 'in_progress')"
+                      class="text-xs px-3 py-1.5 rounded-lg border transition-all font-medium"
+                      :class="taskModal.status === 'in_progress' ? 'bg-accent text-white border-accent' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+                In Progress
+              </button>
+              <button @click="quickUpdateTask(taskModal.id, 'done')"
+                      class="text-xs px-3 py-1.5 rounded-lg border transition-all font-medium"
+                      :class="taskModal.status === 'done' ? 'bg-emerald-500 text-white border-emerald-500' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+                Done
+              </button>
+            </div>
+          </div>
+
+          <!-- Assignee -->
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-2">Reassign To</label>
+            <select x-model="taskModal.assignee"
+                    @change="quickUpdateTask(taskModal.id, taskModal.status, taskModal.assignee)"
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white">
+              <option value="hr">HR</option>
+              <option value="it">IT</option>
+              <option value="manager">Manager</option>
+              <option value="new_hire">New Hire</option>
+            </select>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-2">Notes</label>
+            <textarea
+              x-model="taskModalNotes"
+              rows="3"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none"
+              placeholder="Add notes or comments..."></textarea>
+          </div>
+        </div>
+        <div class="px-6 pb-6 flex justify-end gap-3">
+          <button @click="taskModal = null" class="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
+          <button @click="saveTaskNotes()" class="px-5 py-2 text-sm bg-accent text-white font-semibold rounded-lg hover:bg-blue-500 transition-colors">Save Notes</button>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div
+  x-show="toast"
+  x-transition:enter="transition ease-out duration-300"
+  x-transition:enter-start="opacity-0 translate-x-8"
+  x-transition:enter-end="opacity-100 translate-x-0"
+  x-transition:leave="transition ease-in duration-200"
+  x-transition:leave-start="opacity-100"
+  x-transition:leave-end="opacity-0"
+  class="fixed bottom-5 right-5 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl text-sm font-medium text-white max-w-xs"
+  :class="toast?.type === 'error' ? 'bg-red-500' : toast?.type === 'warning' ? 'bg-amber-500' : 'bg-navy'"
+>
+  <svg x-show="toast?.type === 'success'" class="w-4 h-4 text-highlight" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+  </svg>
+  <span x-text="toast?.message"></span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ALPINE.JS APPLICATION
+════════════════════════════════════════════════════════════════ -->
+<script>
+function app() {
+  return {
+    // Auth
+    loggedIn: false,
+    loginPassword: '',
+    loginError: '',
+    loginLoading: false,
+
+    // Navigation
+    page: 'dashboard',
+
+    // Data
+    employees: [],
+    currentTasks: [],
+    notifications: [],
+    activityLog: [],
+
+    // Selection
+    selectedEmployeeId: null,
+
+    // Filters
+    assigneeFilter: '',
+
+    // Forms
+    newEmployee: {
+      name: '', email: '', role: '', department: '',
+      manager_name: '', manager_email: '', office_location: '',
+      start_date: '', type: 'onboarding', template: 'developer'
+    },
+    createLoading: false,
+
+    // UI State
+    showNotifications: false,
+    taskModal: null,
+    taskModalNotes: '',
+    draggedTaskId: null,
+    dragOverColumn: null,
+    demoLoading: false,
+    toast: null,
+
+    // ── Computed ──
+    get unreadCount() {
+      return this.notifications.filter(n => !n.read).length;
+    },
+    get selectedEmployee() {
+      return this.employees.find(e => e.id === this.selectedEmployeeId) || null;
+    },
+    get filteredTasks() {
+      if (!this.assigneeFilter) return this.currentTasks;
+      return this.currentTasks.filter(t => t.assignee === this.assigneeFilter);
+    },
+    get todoTasks() { return this.filteredTasks.filter(t => t.status === 'todo'); },
+    get inProgressTasks() { return this.filteredTasks.filter(t => t.status === 'in_progress'); },
+    get doneTasks() { return this.filteredTasks.filter(t => t.status === 'done'); },
+    get overdueTasks() { return this.filteredTasks.filter(t => t.status === 'overdue'); },
+
+    // ── Page titles ──
+    pageTitle() {
+      if (this.selectedEmployeeId && this.selectedEmployee) {
+        return this.selectedEmployee.name + ' — Task Board';
+      }
+      const titles = { dashboard: 'Dashboard', 'new-onboarding': 'New Onboarding', board: 'Task Board' };
+      return titles[this.page] || 'Dashboard';
+    },
+    pageSubtitle() {
+      if (this.selectedEmployeeId && this.selectedEmployee) {
+        const emp = this.selectedEmployee;
+        return `${emp.total_tasks} tasks · ${emp.progress}% complete · ${emp.type}`;
+      }
+      const now = new Date();
+      return now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    },
+
+    // ── Auth ──
+    async login() {
+      this.loginLoading = true;
+      this.loginError = '';
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: this.loginPassword })
+        });
+        if (res.ok) {
+          this.loggedIn = true;
+          await this.loadEmployees();
+          await this.loadNotifications();
+          await this.loadActivity();
+        } else {
+          this.loginError = 'Incorrect password. Try again.';
+        }
+      } catch(e) {
+        this.loginError = 'Connection error. Please try again.';
+      } finally {
+        this.loginLoading = false;
+      }
+    },
+
+    async checkAuth() {
+      try {
+        const res = await fetch('/api/me');
+        const data = await res.json();
+        if (data.authenticated) {
+          this.loggedIn = true;
+          await this.loadEmployees();
+          await this.loadNotifications();
+          await this.loadActivity();
+        }
+      } catch(e) {}
+    },
+
+    async logout() {
+      await fetch('/api/logout', { method: 'POST' });
+      this.loggedIn = false;
+      this.employees = [];
+      this.currentTasks = [];
+      this.notifications = [];
+      this.selectedEmployeeId = null;
+      this.loginPassword = '';
+    },
+
+    // ── Data loading ──
+    async loadEmployees() {
+      try {
+        const res = await fetch('/api/employees');
+        if (res.ok) this.employees = await res.json();
+      } catch(e) {}
+    },
+
+    async selectEmployee(id) {
+      this.selectedEmployeeId = id;
+      this.page = 'board';
+      this.assigneeFilter = '';
+      await this.loadTasks(id);
+    },
+
+    async loadTasks(employeeId) {
+      try {
+        const res = await fetch(`/api/employees/${employeeId}/tasks`);
+        if (res.ok) {
+          this.currentTasks = await res.json();
+          // Refresh employee stats
+          await this.loadEmployees();
+        }
+      } catch(e) {}
+    },
+
+    async loadNotifications() {
+      try {
+        const res = await fetch('/api/notifications');
+        if (res.ok) {
+          const data = await res.json();
+          this.notifications = data.notifications;
+        }
+      } catch(e) {}
+    },
+
+    async loadActivity() {
+      try {
+        const res = await fetch('/api/activity');
+        if (res.ok) this.activityLog = await res.json();
+      } catch(e) {}
+    },
+
+    // ── Create employee ──
+    async createEmployee() {
+      if (!this.newEmployee.name || !this.newEmployee.email || !this.newEmployee.start_date) {
+        this.showToast('Please fill in all required fields', 'error');
+        return;
+      }
+      this.createLoading = true;
+      try {
+        const res = await fetch('/api/employees', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(this.newEmployee)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          await this.loadEmployees();
+          await this.loadActivity();
+          await this.loadNotifications();
+          this.showToast(`Created ${this.newEmployee.name} with ${data.task_count} tasks`);
+          // Reset form
+          this.newEmployee = { name: '', email: '', role: '', department: '', manager_name: '', manager_email: '', office_location: '', start_date: '', type: 'onboarding', template: 'developer' };
+          // Navigate to the new employee's board
+          this.selectedEmployeeId = data.employee_id;
+          this.page = 'board';
+          await this.loadTasks(data.employee_id);
+        }
+      } catch(e) {
+        this.showToast('Failed to create employee', 'error');
+      } finally {
+        this.createLoading = false;
+      }
+    },
+
+    // ── Task operations ──
+    openTaskModal(task) {
+      this.taskModal = { ...task };
+      this.taskModalNotes = task.notes || '';
+    },
+
+    async quickUpdateTask(taskId, status, assignee) {
+      const updates = { status };
+      if (assignee !== undefined) updates.assignee = assignee;
+      try {
+        const res = await fetch(`/api/tasks/${taskId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates)
+        });
+        if (res.ok) {
+          const updated = await res.json();
+          // Update in-memory tasks
+          const idx = this.currentTasks.findIndex(t => t.id === taskId);
+          if (idx !== -1) this.currentTasks[idx] = updated;
+          if (this.taskModal?.id === taskId) this.taskModal = { ...updated, notes: this.taskModalNotes };
+          // Refresh employee stats
+          await this.loadEmployees();
+          await this.loadNotifications();
+          if (status === 'done') this.showToast('Task marked as done', 'success');
+        }
+      } catch(e) {
+        this.showToast('Failed to update task', 'error');
+      }
+    },
+
+    async saveTaskNotes() {
+      if (!this.taskModal) return;
+      await this.quickUpdateTask(this.taskModal.id, this.taskModal.status, this.taskModal.assignee);
+      // Save notes separately
+      try {
+        await fetch(`/api/tasks/${this.taskModal.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ notes: this.taskModalNotes })
+        });
+        const idx = this.currentTasks.findIndex(t => t.id === this.taskModal.id);
+        if (idx !== -1) this.currentTasks[idx].notes = this.taskModalNotes;
+        this.showToast('Notes saved');
+        this.taskModal = null;
+      } catch(e) {}
+    },
+
+    // ── Drag and drop ──
+    dragStart(e, taskId) {
+      this.draggedTaskId = taskId;
+      e.dataTransfer.effectAllowed = 'move';
+      e.target.classList.add('dragging');
+    },
+
+    async dropTask(status) {
+      if (!this.draggedTaskId) return;
+      await this.quickUpdateTask(this.draggedTaskId, status);
+      this.draggedTaskId = null;
+      this.dragOverColumn = null;
+    },
+
+    // ── Notifications ──
+    async markAllRead() {
+      await fetch('/api/notifications/read-all', { method: 'PUT' });
+      this.notifications.forEach(n => n.read = 1);
+    },
+
+    async markRead(id) {
+      await fetch(`/api/notifications/${id}/read`, { method: 'PUT' });
+      const n = this.notifications.find(n => n.id === id);
+      if (n) n.read = 1;
+    },
+
+    // ── Demo ──
+    async loadDemo() {
+      this.demoLoading = true;
+      try {
+        const res = await fetch('/api/demo/init', { method: 'POST' });
+        const data = await res.json();
+        await this.loadEmployees();
+        await this.loadNotifications();
+        await this.loadActivity();
+        this.showToast(data.message === 'Demo data already loaded' ? 'Demo already loaded' : 'Demo data loaded — 3 employees added');
+      } catch(e) {
+        this.showToast('Failed to load demo data', 'error');
+      } finally {
+        this.demoLoading = false;
+      }
+    },
+
+    // ── Helpers ──
+    formatDate(d) {
+      if (!d) return '—';
+      const date = new Date(d + 'T00:00:00');
+      return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    },
+
+    formatTime(ts) {
+      if (!ts) return '';
+      const date = new Date(ts);
+      const now = new Date();
+      const diff = now - date;
+      if (diff < 60000) return 'just now';
+      if (diff < 3600000) return Math.floor(diff/60000) + 'm ago';
+      if (diff < 86400000) return Math.floor(diff/3600000) + 'h ago';
+      if (diff < 604800000) return Math.floor(diff/86400000) + 'd ago';
+      return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    },
+
+    formatAssignee(a) {
+      const map = { hr: 'HR', it: 'IT', manager: 'Manager', new_hire: 'New Hire' };
+      return map[a] || a;
+    },
+
+    assigneeClass(a) {
+      const map = {
+        hr: 'bg-purple-100 text-purple-700',
+        it: 'bg-blue-100 text-blue-700',
+        manager: 'bg-green-100 text-green-700',
+        new_hire: 'bg-orange-100 text-orange-700',
+      };
+      return map[a] || 'bg-gray-100 text-gray-600';
+    },
+
+    categoryClass(c) {
+      const map = {
+        'pre-boarding': 'bg-indigo-50 text-indigo-600',
+        'accounts': 'bg-cyan-50 text-cyan-600',
+        'orientation': 'bg-teal-50 text-teal-600',
+        'setup': 'bg-sky-50 text-sky-600',
+        'compliance': 'bg-rose-50 text-rose-600',
+        'training': 'bg-amber-50 text-amber-600',
+        'check-in': 'bg-violet-50 text-violet-600',
+        'milestone': 'bg-lime-50 text-lime-600',
+        'feedback': 'bg-pink-50 text-pink-600',
+        'handover': 'bg-orange-50 text-orange-600',
+        'notification': 'bg-red-50 text-red-600',
+        'access': 'bg-red-50 text-red-600',
+        'exit': 'bg-gray-100 text-gray-600',
+        'logistics': 'bg-yellow-50 text-yellow-600',
+        'payroll': 'bg-emerald-50 text-emerald-600',
+        'records': 'bg-slate-100 text-slate-600',
+      };
+      return map[c] || 'bg-gray-100 text-gray-500';
+    },
+
+    showToast(message, type = 'success') {
+      this.toast = { message, type };
+      setTimeout(() => { this.toast = null; }, 3500);
+    },
+
+    // ── Init ──
+    async init() {
+      await this.checkAuth();
+      // Set default start date to today
+      const today = new Date().toISOString().split('T')[0];
+      this.newEmployee.start_date = today;
+      // Auto-poll notifications
+      setInterval(() => {
+        if (this.loggedIn) this.loadNotifications();
+      }, 30000);
+    }
+  };
+}
+</script>
+
+</body>
+</html>

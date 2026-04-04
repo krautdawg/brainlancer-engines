@@ -1,0 +1,29 @@
+email:
+  accounts:
+    - host: imap.gmail.com
+      port: 993
+      user: your@gmail.com
+      password: your_app_password
+      ssl: true
+      folders:
+        - INBOX
+        - Invoices
+        - Rechnungen
+
+scan:
+  date_from: "2024-01-01"
+  date_to: "2024-03-31"
+  quarter: 1
+  year: 2024
+  attachment_types:
+    - application/pdf
+
+business:
+  name: "Muster GmbH"
+  vat_id: "DE123456789"
+  tax_number: "12/345/67890"
+  address:
+    street: "Musterstraße 1"
+    city: "Berlin"
+    postcode: "10115"
+    country: "DE"

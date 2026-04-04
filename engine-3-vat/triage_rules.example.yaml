@@ -1,0 +1,81 @@
+rules:
+  # Drittland (non-EU) SaaS - reverse charge §13b
+  - name: "US Cloud Services → VST_0_DRITTLAND"
+    pattern: "(aws|amazon web services|dropbox|github|openai|anthropic|chatgpt|notion|figma|canva|slack|zoom|loom|stripe|twilio|sendgrid)"
+    category: VST_0_DRITTLAND
+    confidence: 0.90
+    note: "US-based SaaS, reverse charge applies under §13b UStG"
+
+  # EU SaaS - reverse charge innergemeinschaftlicher Erwerb
+  - name: "EU Software → VST_0_EU"
+    pattern: "(atlassian|jira|confluence|spotify|adobe|microsoft 365|office 365|linkedin|xing)"
+    category: VST_0_EU
+    confidence: 0.85
+    note: "EU-based service, reverse charge for innergemeinschaftlicher Erwerb"
+
+  # German hosting / tech
+  - name: "German Hosting → VST_19"
+    pattern: "(hetzner|ionos|strato|1&1|netcup|contabo|uberspace|all-inkl)"
+    category: VST_19
+    confidence: 0.95
+
+  # German telecom
+  - name: "German Telecom → VST_19"
+    pattern: "(telekom|vodafone|o2|1und1|eins und eins|sipgate)"
+    category: VST_19
+    confidence: 0.95
+
+  # German office supplies
+  - name: "German Retail → VST_19"
+    pattern: "(amazon.de|otto|mediamarkt|saturn|staples|viking|buerostuhl)"
+    category: VST_19
+    confidence: 0.80
+
+  # Books and educational materials
+  - name: "Books → VST_7"
+    pattern: "(isbn|buchhandlung|buch|thalia|hugendubel|fachbuch|springer verlag|o'reilly|oreilly)"
+    category: VST_7
+    confidence: 0.85
+
+  # Insurance - not deductible
+  - name: "Insurance → NICHT_ABZIEHBAR"
+    pattern: "(versicherung|insurance|allianz|axa|ergo|generali|haftpflicht|betriebshaftpflicht)"
+    category: NICHT_ABZIEHBAR
+    confidence: 0.90
+    note: "Insurance premiums are not input VAT deductible"
+
+  # Restaurants / entertainment - not deductible
+  - name: "Restaurants → NICHT_ABZIEHBAR"
+    pattern: "(restaurant|gasthaus|café|cafe|bistro|bewirtung|bewirtungsbeleg|essen|speisen)"
+    category: NICHT_ABZIEHBAR
+    confidence: 0.75
+    note: "Entertainment/meal expenses: input VAT generally not deductible"
+
+  # German software companies
+  - name: "German Software → VST_19"
+    pattern: "(datev|lexware|sevdesk|fastbill|billomat|invoiceninja|wiso)"
+    category: VST_19
+    confidence: 0.92
+
+private_keywords:
+  - "privat"
+  - "private"
+  - "personal"
+  - "hobby"
+  - "drogerie"
+  - "apotheke"
+  - "lebensmittel"
+  - "supermarkt"
+  - "dm markt"
+  - "rossmann"
+
+business_keywords:
+  - "rechnung"
+  - "invoice"
+  - "faktura"
+  - "steuernummer"
+  - "ust-id"
+  - "netto"
+  - "mwst"
+  - "umsatzsteuer"
+  - "lieferschein"

@@ -1,0 +1,152 @@
+name: "Employee Offboarding"
+template_type: "offboarding"
+tasks:
+  - title: "Notify IT of departure date"
+    description: "Alert IT team to begin preparing access revocation schedule"
+    assignee: "manager"
+    due_offset: -14
+    category: "notification"
+
+  - title: "Create knowledge transfer document"
+    description: "Start documenting current projects, processes, and tribal knowledge"
+    assignee: "new_hire"
+    due_offset: -14
+    category: "handover"
+
+  - title: "Schedule exit interview with HR"
+    description: "Book 45-minute exit interview for the final week"
+    assignee: "hr"
+    due_offset: -10
+    category: "exit"
+
+  - title: "Identify knowledge transfer recipients"
+    description: "Assign specific team members to receive each area of knowledge"
+    assignee: "manager"
+    due_offset: -10
+    category: "handover"
+
+  - title: "Begin project handover to team"
+    description: "Start transitioning active projects and ownership responsibilities"
+    assignee: "new_hire"
+    due_offset: -7
+    category: "handover"
+
+  - title: "Schedule equipment return appointment"
+    description: "Book IT appointment for hardware return and account closure"
+    assignee: "it"
+    due_offset: -7
+    category: "logistics"
+
+  - title: "Complete knowledge transfer documents"
+    description: "Finalize all documentation — processes, passwords, contacts, runbooks"
+    assignee: "new_hire"
+    due_offset: -5
+    category: "handover"
+
+  - title: "Transfer all project ownership"
+    description: "Reassign GitHub repos, Jira projects, Figma files to new owners"
+    assignee: "new_hire"
+    due_offset: -3
+    category: "handover"
+
+  - title: "Update internal documentation and wikis"
+    description: "Ensure all team docs reflect current state and new owners"
+    assignee: "new_hire"
+    due_offset: -3
+    category: "handover"
+
+  - title: "Conduct knowledge transfer sessions"
+    description: "Live walkthroughs with recipients — record sessions for reference"
+    assignee: "new_hire"
+    due_offset: -2
+    category: "handover"
+
+  - title: "Return access badges and office keys"
+    description: "Physical return of all building access items"
+    assignee: "manager"
+    due_offset: -1
+    category: "logistics"
+
+  - title: "Final payroll and expense reconciliation"
+    description: "Process final salary, outstanding expenses, and bonus payments"
+    assignee: "hr"
+    due_offset: -1
+    category: "payroll"
+
+  - title: "Conduct exit interview"
+    description: "Structured interview covering experience, feedback, and suggestions"
+    assignee: "hr"
+    due_offset: -1
+    category: "exit"
+
+  - title: "Peer and manager farewell reviews"
+    description: "Collect final feedback from team; document for records"
+    assignee: "manager"
+    due_offset: -1
+    category: "exit"
+
+  - title: "Revoke VPN and remote access"
+    description: "Immediately terminate all remote access credentials"
+    assignee: "it"
+    due_offset: 0
+    category: "access"
+
+  - title: "Revoke GitHub and code repository access"
+    description: "Remove from all orgs, repos, and CI/CD pipelines"
+    assignee: "it"
+    due_offset: 0
+    category: "access"
+
+  - title: "Disable company email account"
+    description: "Disable login, set auto-reply, preserve mailbox per retention policy"
+    assignee: "it"
+    due_offset: 0
+    category: "access"
+
+  - title: "Remove from all SaaS platforms"
+    description: "Slack, Jira, Figma, Notion, Salesforce — all subscribed tools"
+    assignee: "it"
+    due_offset: 0
+    category: "access"
+
+  - title: "Return company equipment"
+    description: "Laptop, peripherals, phone, and any other company hardware"
+    assignee: "new_hire"
+    due_offset: 0
+    category: "logistics"
+
+  - title: "Set up email forwarding and auto-reply"
+    description: "Configure redirect to manager or shared inbox for 30 days"
+    assignee: "it"
+    due_offset: 1
+    category: "access"
+
+  - title: "Archive employee data and records"
+    description: "Archive email, files, and accounts per data retention policy"
+    assignee: "hr"
+    due_offset: 1
+    category: "records"
+
+  - title: "Remove from payroll system"
+    description: "Terminate payroll, update tax records, issue P45/final documents"
+    assignee: "hr"
+    due_offset: 2
+    category: "payroll"
+
+  - title: "Update team org chart and directory"
+    description: "Remove from org chart, update team pages, internal directory"
+    assignee: "hr"
+    due_offset: 3
+    category: "records"
+
+  - title: "Cancel personal SaaS subscriptions"
+    description: "Review and cancel any subscriptions tied to personal work email"
+    assignee: "it"
+    due_offset: 5
+    category: "access"
+
+  - title: "Send offboarding satisfaction survey"
+    description: "Anonymous survey to capture retrospective onboarding/offboarding feedback"
+    assignee: "hr"
+    due_offset: 7
+    category: "feedback"

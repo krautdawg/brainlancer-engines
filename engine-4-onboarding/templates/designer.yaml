@@ -1,0 +1,182 @@
+name: "Designer Onboarding"
+template_type: "onboarding"
+tasks:
+  - title: "Send offer letter"
+    description: "Draft and send the official offer letter via DocuSign"
+    assignee: "hr"
+    due_offset: -14
+    category: "pre-boarding"
+
+  - title: "Add to payroll system"
+    description: "Set up bank details and configure salary payments"
+    assignee: "hr"
+    due_offset: -10
+    category: "pre-boarding"
+
+  - title: "Enroll in health insurance"
+    description: "Send enrollment forms and confirm coverage selection"
+    assignee: "hr"
+    due_offset: -7
+    category: "pre-boarding"
+
+  - title: "Order MacBook and design peripherals"
+    description: "MacBook Pro M3, XDR display, Apple Pencil, ergonomic accessories"
+    assignee: "it"
+    due_offset: -7
+    category: "pre-boarding"
+
+  - title: "Create company email account"
+    description: "Set up Google Workspace account with proper display name"
+    assignee: "it"
+    due_offset: -5
+    category: "accounts"
+
+  - title: "Set up Figma team access"
+    description: "Add to design org, share relevant project files and libraries"
+    assignee: "it"
+    due_offset: -3
+    category: "accounts"
+
+  - title: "Set up Adobe Creative Cloud account"
+    description: "Full CC license — Photoshop, Illustrator, After Effects, InDesign"
+    assignee: "it"
+    due_offset: -3
+    category: "accounts"
+
+  - title: "Add to Slack workspace"
+    description: "Invite to #design, #product, #general, #random channels"
+    assignee: "it"
+    due_offset: -2
+    category: "accounts"
+
+  - title: "Configure Notion and project management access"
+    description: "Add to design workspace, roadmap board, and sprint planning"
+    assignee: "it"
+    due_offset: -1
+    category: "accounts"
+
+  - title: "Send welcome email with day-one schedule"
+    description: "First day schedule, office address, parking, dress code, contacts"
+    assignee: "hr"
+    due_offset: -1
+    category: "pre-boarding"
+
+  - title: "Office building access and tour"
+    description: "Issue access badge, show design studio space, meeting rooms"
+    assignee: "manager"
+    due_offset: 0
+    category: "orientation"
+
+  - title: "Team introduction meeting"
+    description: "30-minute intro call/meeting with the full product design team"
+    assignee: "manager"
+    due_offset: 0
+    category: "orientation"
+
+  - title: "IT workstation and software setup"
+    description: "Configure MacBook, install design tools, calibrate display"
+    assignee: "it"
+    due_offset: 0
+    category: "setup"
+
+  - title: "Security and compliance briefing"
+    description: "Data handling policy, NDA reminder, asset confidentiality"
+    assignee: "it"
+    due_offset: 0
+    category: "compliance"
+
+  - title: "Complete HR onboarding paperwork"
+    description: "Sign employment contract, NDA, and policy acknowledgements"
+    assignee: "hr"
+    due_offset: 0
+    category: "compliance"
+
+  - title: "Configure design tools and preferences"
+    description: "Set up Figma plugins, color profiles, font libraries"
+    assignee: "it"
+    due_offset: 1
+    category: "setup"
+
+  - title: "First 1:1 meeting with manager"
+    description: "Discuss design philosophy, team culture, expectations, 30-day plan"
+    assignee: "manager"
+    due_offset: 1
+    category: "orientation"
+
+  - title: "Review company handbook and policies"
+    description: "Read through handbook, note questions for HR"
+    assignee: "new_hire"
+    due_offset: 2
+    category: "training"
+
+  - title: "Complete security awareness training"
+    description: "Online security module in the learning management system"
+    assignee: "new_hire"
+    due_offset: 3
+    category: "compliance"
+
+  - title: "Review brand guidelines and design system"
+    description: "Study brand bible, component library, and design tokens"
+    assignee: "new_hire"
+    due_offset: 3
+    category: "training"
+
+  - title: "Design system and assets walkthrough"
+    description: "60-minute tour of component library, icon sets, and Figma structure"
+    assignee: "manager"
+    due_offset: 3
+    category: "training"
+
+  - title: "Set up Zeplin and handoff tool access"
+    description: "Configure Zeplin or Figma Dev Mode for developer handoff"
+    assignee: "it"
+    due_offset: 4
+    category: "accounts"
+
+  - title: "Shadow senior designer on active project"
+    description: "Observe design process, critiques, and stakeholder feedback session"
+    assignee: "new_hire"
+    due_offset: 5
+    category: "training"
+
+  - title: "Participate in first design review"
+    description: "Present work-in-progress or critique team members' designs"
+    assignee: "new_hire"
+    due_offset: 5
+    category: "training"
+
+  - title: "Complete compliance training module"
+    description: "GDPR, data handling, and company-specific compliance course"
+    assignee: "new_hire"
+    due_offset: 7
+    category: "compliance"
+
+  - title: "Two-week check-in with manager"
+    description: "Review design work so far, address creative blockers"
+    assignee: "manager"
+    due_offset: 14
+    category: "check-in"
+
+  - title: "Independently complete first design project"
+    description: "Own a small feature from concept to handoff"
+    assignee: "new_hire"
+    due_offset: 21
+    category: "milestone"
+
+  - title: "30-day performance goals setting"
+    description: "Define design KPIs and objectives for the next quarter"
+    assignee: "manager"
+    due_offset: 30
+    category: "check-in"
+
+  - title: "Design portfolio and work quality review"
+    description: "Manager reviews output quality against team standards"
+    assignee: "manager"
+    due_offset: 30
+    category: "check-in"
+
+  - title: "Submit onboarding feedback survey"
+    description: "Rate and comment on the onboarding experience"
+    assignee: "new_hire"
+    due_offset: 30
+    category: "feedback"
