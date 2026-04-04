@@ -9,8 +9,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application
 COPY . .
 
-# Create data directory for SQLite
-RUN mkdir -p /data
+# Create data directory for SQLite with proper perms
+RUN mkdir -p /data && chmod 777 /data
 
 ENV DB_PATH=/data/leadgen.db
 ENV PORT=3001

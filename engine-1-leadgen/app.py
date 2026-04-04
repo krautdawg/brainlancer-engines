@@ -53,7 +53,7 @@ def ensure_session_id(request: Request) -> str:
 async def login_page(request: Request):
     if is_authenticated(request):
         return RedirectResponse("/", status_code=302)
-    return templates.TemplateResponse("login.html", {"request": request, "error": None})
+    return templates.TemplateResponse(name="login.html", context={"request": request, "error": None}, request=request)
 
 
 @app.post("/login", response_class=HTMLResponse)
@@ -65,7 +65,7 @@ async def login_submit(request: Request):
         request.session["credits"] = CREDITS_PER_SESSION
         ensure_session_id(request)
         return RedirectResponse("/", status_code=303)
-    return templates.TemplateResponse("login.html", {"request": request, "error": "Falsches Passwort"})
+    return templates.TemplateResponse(name="login.html", context={"request": request, "error": "Falsches Passwort"}, request=request)
 
 
 @app.post("/logout")
@@ -79,7 +79,7 @@ async def index(request: Request):
     if not is_authenticated(request):
         return RedirectResponse("/login", status_code=302)
     credits = request.session.get("credits", CREDITS_PER_SESSION)
-    return templates.TemplateResponse("index.html", {"request": request, "credits": credits})
+    return templates.TemplateResponse(name="index.html", context={"request": request, "credits": credits}, request=request)
 
 
 # ── API ───────────────────────────────────────────────────────────────────────
