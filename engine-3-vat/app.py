@@ -20,7 +20,7 @@ load_dotenv()
 # Internal modules
 import db
 from demo_data import load_demo_data, get_demo_stats
-from triage_engine import batch_triage, load_rules
+from triage_engine import batch_triage
 from ai_reviewer import review_invoices_with_ai, apply_ai_review_results
 from elster_calculator import (
     calculate_elster, format_elster_summary, generate_elster_xml
@@ -381,8 +381,6 @@ async def scan_email(request: Request, body: ScanRequest):
                 inserted.append(inv)
 
             # Run triage on all new invoices
-            rules = load_rules("triage_rules.yaml")
-            existing = db.get_invoices()
             for inv in inserted:
                 triaged = batch_triage([inv], "triage_rules.yaml")
                 if triaged:

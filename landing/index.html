@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brainlancer — AI Automation Engines for SMEs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#132A3E',
+            'navy-light': '#1a3a52',
+            'navy-dark': '#0d1f2d',
+            sky: '#00B3FF',
+            mint: '#00FFC5',
+          },
+          fontFamily: { inter: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .gradient-border { background: linear-gradient(135deg, #00B3FF, #00FFC5); padding: 1px; border-radius: 1rem; }
+    .status-live { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+    .bg-grid { background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0); background-size: 40px 40px; }
+  </style>
+</head>
+<body class="bg-navy text-white min-h-screen bg-grid">
+
+  <!-- Hero -->
+  <header class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-navy-dark via-navy to-navy-light"></div>
+    <div class="relative max-w-6xl mx-auto px-6 pt-16 pb-20 text-center">
+      <div class="inline-flex items-center gap-2 bg-navy-light/60 border border-white/10 rounded-full px-4 py-1.5 text-sm mb-8">
+        <span class="w-2 h-2 rounded-full bg-mint status-live"></span>
+        <span class="text-white/70">5 Engines — Live Demos Available</span>
+      </div>
+      <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
+        AI-Powered<br>
+        <span class="bg-gradient-to-r from-sky to-mint bg-clip-text text-transparent">Operation Engines</span><br>
+        for SMEs
+      </h1>
+      <p class="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10">
+        Installable automation systems that eliminate repetitive operations work.
+        Each engine handles a complete business workflow end-to-end — from data intake to actionable output.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="#engines" class="bg-sky hover:bg-sky/80 text-navy font-semibold px-8 py-3 rounded-lg transition-all">
+          Explore Engines
+        </a>
+        <a href="mailto:tim@ki-katapult.de" class="border border-white/20 hover:border-white/40 text-white/80 hover:text-white px-8 py-3 rounded-lg transition-all">
+          Book Discovery Call
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- How It Works -->
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <h2 class="text-2xl font-bold text-center mb-12">How It Works</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <div class="w-14 h-14 bg-sky/10 border border-sky/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7 text-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </div>
+        <h3 class="font-semibold text-lg mb-2">1. Pick Your Engine</h3>
+        <p class="text-white/50 text-sm">Choose the workflow that's eating your team's time. Each engine targets a specific operational bottleneck.</p>
+      </div>
+      <div class="text-center">
+        <div class="w-14 h-14 bg-mint/10 border border-mint/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <h3 class="font-semibold text-lg mb-2">2. We Install & Configure</h3>
+        <p class="text-white/50 text-sm">We connect it to your existing tools — CRM, email, accounting, HR system. No rip-and-replace.</p>
+      </div>
+      <div class="text-center">
+        <div class="w-14 h-14 bg-sky/10 border border-sky/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7 text-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <h3 class="font-semibold text-lg mb-2">3. It Runs Itself</h3>
+        <p class="text-white/50 text-sm">The engine handles the workflow autonomously. You stay in the loop for decisions that matter.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Engine Cards -->
+  <section id="engines" class="max-w-6xl mx-auto px-6 py-16">
+    <h2 class="text-2xl font-bold text-center mb-4">The Engines</h2>
+    <p class="text-white/50 text-center mb-12 max-w-xl mx-auto">Each engine is a standalone system. Try the live demos — they work with sample data out of the box.</p>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Engine 1: Lead Generator -->
+      <a href="https://leadgen.brainlancer.ki-katapult.de" class="card-hover block">
+        <div class="gradient-border h-full">
+          <div class="bg-navy-light rounded-2xl p-6 h-full">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-10 h-10 bg-sky/10 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </div>
+              <span class="text-xs font-medium bg-mint/10 text-mint px-2.5 py-1 rounded-full status-live">Live Demo</span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Lead Generator</h3>
+            <p class="text-white/50 text-sm mb-4">Enter any company URL — AI analyzes the business, builds an ideal customer profile, and discovers matching leads with contact details.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">ICP Analysis</span>
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">Web Scraping</span>
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">CSV Export</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- Engine 2: Outbound Prospecting -->
+      <a href="https://outbound.brainlancer.ki-katapult.de" class="card-hover block">
+        <div class="gradient-border h-full">
+          <div class="bg-navy-light rounded-2xl p-6 h-full">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-10 h-10 bg-sky/10 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </div>
+              <span class="text-xs font-medium bg-mint/10 text-mint px-2.5 py-1 rounded-full status-live">Live Demo</span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Outbound Prospecting</h3>
+            <p class="text-white/50 text-sm mb-4">Import leads, AI writes personalized multi-touch email sequences. Review, edit, and export ready-to-send campaigns.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">Email Sequences</span>
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">Personalization</span>
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">Campaign Mgmt</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- Engine 3: VAT Intelligence -->
+      <a href="https://vat.brainlancer.ki-katapult.de" class="card-hover block">
+        <div class="gradient-border h-full">
+          <div class="bg-navy-light rounded-2xl p-6 h-full">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-10 h-10 bg-sky/10 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+              </div>
+              <span class="text-xs font-medium bg-mint/10 text-mint px-2.5 py-1 rounded-full status-live">Live Demo</span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Invoice & VAT Intelligence</h3>
+            <p class="text-white/50 text-sm mb-4">Scans email for invoices, auto-categorizes expenses, calculates ELSTER tax returns. Keyboard-driven triage queue for fast review.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">PDF Analysis</span>
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">Auto-Triage</span>
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">ELSTER XML</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- Engine 4: Onboarding -->
+      <a href="https://onboarding.brainlancer.ki-katapult.de" class="card-hover block">
+        <div class="gradient-border h-full">
+          <div class="bg-navy-light rounded-2xl p-6 h-full">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-10 h-10 bg-sky/10 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+              </div>
+              <span class="text-xs font-medium bg-mint/10 text-mint px-2.5 py-1 rounded-full status-live">Live Demo</span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Employee Onboarding</h3>
+            <p class="text-white/50 text-sm mb-4">New hire triggers a 30-step checklist. Assigns tasks to HR, IT, and managers. Tracks progress, escalates overdue items.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">Checklists</span>
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">Task Board</span>
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">Notifications</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- Engine 5: Supplier Monitor -->
+      <a href="https://supplier.brainlancer.ki-katapult.de" class="card-hover block">
+        <div class="gradient-border h-full">
+          <div class="bg-navy-light rounded-2xl p-6 h-full">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-10 h-10 bg-sky/10 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+              </div>
+              <span class="text-xs font-medium bg-mint/10 text-mint px-2.5 py-1 rounded-full status-live">Live Demo</span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Supplier & PO Monitor</h3>
+            <p class="text-white/50 text-sm mb-4">Track purchase orders, auto-chase overdue deliveries, flag price deviations. Weekly spend reports with actionable insights.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">PO Tracking</span>
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">Auto-Chase</span>
+              <span class="text-xs bg-white/5 text-white/40 px-2 py-1 rounded">Spend Analytics</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- CTA Card -->
+      <div class="card-hover">
+        <div class="border border-dashed border-white/20 rounded-2xl p-6 h-full flex flex-col items-center justify-center text-center">
+          <div class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+          </div>
+          <h3 class="font-bold text-lg mb-2 text-white/60">Custom Engine</h3>
+          <p class="text-white/40 text-sm mb-4">Have a repetitive workflow that needs automating? We'll build a custom engine for your specific process.</p>
+          <a href="mailto:tim@ki-katapult.de" class="text-sky text-sm font-medium hover:text-sky/80 transition-colors">
+            Let's talk →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <h2 class="text-2xl font-bold text-center mb-4">Simple Pricing</h2>
+    <p class="text-white/50 text-center mb-12 max-w-xl mx-auto">Every engine is open source. Pay for installation, customization, and ongoing support.</p>
+
+    <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      <div class="bg-navy-light border border-white/10 rounded-2xl p-6">
+        <h3 class="font-semibold text-lg mb-1">Starter</h3>
+        <p class="text-white/40 text-sm mb-4">Single engine, standard config</p>
+        <div class="text-3xl font-bold mb-1">2.500€</div>
+        <p class="text-white/40 text-xs mb-6">one-time setup</p>
+        <ul class="space-y-2 text-sm text-white/60">
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> 1 engine installed</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Connected to your tools</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> 30 days support</li>
+        </ul>
+      </div>
+
+      <div class="bg-navy-light border border-sky/30 rounded-2xl p-6 relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-sky text-navy text-xs font-bold px-3 py-1 rounded-full">Popular</div>
+        <h3 class="font-semibold text-lg mb-1">Growth</h3>
+        <p class="text-white/40 text-sm mb-4">2-3 engines, custom workflows</p>
+        <div class="text-3xl font-bold mb-1">5.000€</div>
+        <p class="text-white/40 text-xs mb-6">one-time + 500€/mo retainer</p>
+        <ul class="space-y-2 text-sm text-white/60">
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Up to 3 engines</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Custom integrations</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Ongoing maintenance</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Priority support</li>
+        </ul>
+      </div>
+
+      <div class="bg-navy-light border border-white/10 rounded-2xl p-6">
+        <h3 class="font-semibold text-lg mb-1">Enterprise</h3>
+        <p class="text-white/40 text-sm mb-4">Full suite + custom engines</p>
+        <div class="text-3xl font-bold mb-1">Custom</div>
+        <p class="text-white/40 text-xs mb-6">let's talk</p>
+        <ul class="space-y-2 text-sm text-white/60">
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> All 5+ engines</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Custom engine development</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Dedicated support</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> SLA guarantee</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="max-w-6xl mx-auto px-6 py-12 border-t border-white/10">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+      <div>
+        <span class="font-bold text-lg">Brainlancer</span>
+        <span class="text-white/30 ml-2 text-sm">by KI Katapult</span>
+      </div>
+      <div class="flex gap-6 text-sm text-white/40">
+        <a href="mailto:tim@ki-katapult.de" class="hover:text-white transition-colors">tim@ki-katapult.de</a>
+        <a href="https://github.com/krautdawg" class="hover:text-white transition-colors">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
