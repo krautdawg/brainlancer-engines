@@ -18,18 +18,18 @@ LOGIN_HTML = """<!DOCTYPE html>
   <title>Brainlancer — Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={theme:{extend:{colors:{navy:'#132A3E',sky:'#00B3FF',mint:'#00FFC5'},fontFamily:{inter:['Inter','sans-serif']}}}}</script>
+  <script>tailwind.config={theme:{extend:{colors:{sky:'#00B3FF',mint:'#00FFC5'},fontFamily:{inter:['Inter','sans-serif']}}}}</script>
   <style>*{font-family:'Inter',sans-serif}</style>
 </head>
-<body class="bg-navy min-h-screen flex items-center justify-center">
-  <div class="bg-white/5 border border-white/10 rounded-2xl p-8 w-full max-w-sm">
-    <h1 class="text-2xl font-bold text-white text-center mb-2">Brainlancer</h1>
-    <p class="text-white/40 text-center text-sm mb-6">AI Automation Engine Portfolio</p>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center">
+  <div class="bg-white border border-slate-200 rounded-2xl p-8 w-full max-w-sm shadow-md">
+    <h1 class="text-2xl font-bold text-slate-900 text-center mb-2">Brainlancer</h1>
+    <p class="text-slate-400 text-center text-sm mb-6">AI Automation Engine Portfolio</p>
     <form method="post" action="/login">
       <input type="password" name="password" placeholder="Password" autofocus
-             class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-sky mb-4" />
+             class="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 mb-4" />
       <button type="submit"
-              class="w-full bg-sky hover:bg-sky/80 text-navy font-semibold py-3 rounded-lg transition-all">
+              class="w-full bg-sky hover:bg-sky/80 text-white font-semibold py-3 rounded-lg transition-all shadow-sm">
         Enter
       </button>
       {error}

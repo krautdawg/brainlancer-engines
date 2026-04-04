@@ -13,10 +13,10 @@
       theme: {
         extend: {
           colors: {
-            navy: '#132A3E',
-            'navy-light': '#1a3a54',
+            navy: '#f8fafc',
+            'navy-light': '#ffffff',
             accent: '#00B3FF',
-            highlight: '#00FFC5',
+            highlight: '#10b981',
           },
           fontFamily: { sans: ['Inter', 'sans-serif'] }
         }
@@ -34,8 +34,8 @@
     .drop-zone.drag-over { background: rgba(0,179,255,0.08); border: 2px dashed #00B3FF; }
     .progress-bar { transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
     .sidebar-item { transition: background 0.15s ease; }
-    .sidebar-item:hover { background: rgba(255,255,255,0.08); }
-    .sidebar-item.active { background: rgba(0,179,255,0.15); border-left: 3px solid #00B3FF; }
+    .sidebar-item:hover { background: rgba(0,0,0,0.05); }
+    .sidebar-item.active { background: rgba(14,165,233,0.1); border-left: 3px solid #0ea5e9; }
     input:focus, select:focus, textarea:focus { outline: none; border-color: #00B3FF !important; box-shadow: 0 0 0 3px rgba(0,179,255,0.12); }
     .notification-dot { animation: pulse 2s infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
@@ -51,18 +51,18 @@
 <!-- ═══════════════════════════════════════════════════════════════
      LOGIN SCREEN
 ════════════════════════════════════════════════════════════════ -->
-<div x-show="!loggedIn" class="min-h-screen bg-navy flex items-center justify-center p-4">
+<div x-show="!loggedIn" class="min-h-screen bg-slate-50 flex items-center justify-center p-4">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-    <div class="bg-navy p-8 text-center">
+    <div class="bg-sky-500 p-8 text-center">
       <div class="flex items-center justify-center gap-3 mb-2">
-        <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center">
+        <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
         </div>
         <span class="text-white text-xl font-bold tracking-tight">KI Katapult</span>
       </div>
-      <h1 class="text-highlight text-sm font-semibold tracking-widest uppercase mt-1">Onboarding Engine</h1>
+      <h1 class="text-white/80 text-sm font-semibold tracking-widest uppercase mt-1">Onboarding Engine</h1>
     </div>
     <div class="p-8">
       <h2 class="text-2xl font-bold text-gray-900 mb-1">Sign in</h2>
@@ -99,9 +99,9 @@
 <div x-show="loggedIn" class="flex h-screen overflow-hidden">
 
   <!-- SIDEBAR -->
-  <aside class="w-64 bg-navy text-white flex flex-col flex-shrink-0 overflow-hidden">
+  <aside class="w-64 bg-white border-r border-slate-200 text-slate-700 flex flex-col flex-shrink-0 overflow-hidden">
     <!-- Logo -->
-    <div class="p-5 border-b border-white/10">
+    <div class="p-5 border-b border-slate-200">
       <div class="flex items-center gap-2.5">
         <div class="w-8 h-8 bg-accent rounded-md flex items-center justify-center flex-shrink-0">
           <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,8 +109,8 @@
           </svg>
         </div>
         <div>
-          <div class="text-white font-bold text-sm leading-tight">KI Katapult</div>
-          <div class="text-white/40 text-xs">Onboarding Engine</div>
+          <div class="text-slate-800 font-bold text-sm leading-tight">KI Katapult</div>
+          <div class="text-slate-400 text-xs">Onboarding Engine</div>
         </div>
       </div>
     </div>
@@ -119,8 +119,8 @@
     <nav class="p-3 space-y-1">
       <button
         @click="page = 'dashboard'; selectedEmployeeId = null"
-        class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-white"
-        :class="page === 'dashboard' && !selectedEmployeeId ? 'active !text-white' : ''"
+        class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-slate-900"
+        :class="page === 'dashboard' && !selectedEmployeeId ? 'active !text-sky-600' : ''"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
@@ -129,8 +129,8 @@
       </button>
       <button
         @click="page = 'new-onboarding'"
-        class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-white"
-        :class="page === 'new-onboarding' ? 'active !text-white' : ''"
+        class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-slate-900"
+        :class="page === 'new-onboarding' ? 'active !text-sky-600' : ''"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -141,19 +141,19 @@
 
     <!-- Employee List -->
     <div class="flex-1 overflow-y-auto p-3">
-      <div class="text-white/30 text-xs font-semibold uppercase tracking-wider px-3 mb-2">Active</div>
+      <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider px-3 mb-2">Active</div>
       <template x-for="emp in employees.filter(e => e.type === 'onboarding')" :key="emp.id">
         <button
           @click="selectEmployee(emp.id)"
           class="sidebar-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-left mb-0.5"
-          :class="selectedEmployeeId === emp.id ? 'active !text-white' : 'text-white/70 hover:text-white'"
+          :class="selectedEmployeeId === emp.id ? 'active !text-sky-600' : 'text-slate-600 hover:text-slate-900'"
         >
           <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-               :class="emp.type === 'onboarding' ? 'bg-accent/20 text-accent' : 'bg-orange-500/20 text-orange-400'"
+               :class="emp.type === 'onboarding' ? 'bg-sky-100 text-sky-600' : 'bg-orange-100 text-orange-600'"
                x-text="emp.name.split(' ').map(n=>n[0]).join('').slice(0,2)"></div>
           <div class="flex-1 min-w-0">
             <div class="truncate font-medium" x-text="emp.name"></div>
-            <div class="text-white/40 text-xs truncate" x-text="emp.role"></div>
+            <div class="text-slate-400 text-xs truncate" x-text="emp.role"></div>
           </div>
           <div x-show="emp.overdue_count > 0"
                class="bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center flex-shrink-0 font-bold"
@@ -161,33 +161,33 @@
         </button>
       </template>
 
-      <div x-show="employees.filter(e => e.type === 'offboarding').length > 0" class="text-white/30 text-xs font-semibold uppercase tracking-wider px-3 mb-2 mt-4">Offboarding</div>
+      <div x-show="employees.filter(e => e.type === 'offboarding').length > 0" class="text-slate-400 text-xs font-semibold uppercase tracking-wider px-3 mb-2 mt-4">Offboarding</div>
       <template x-for="emp in employees.filter(e => e.type === 'offboarding')" :key="emp.id">
         <button
           @click="selectEmployee(emp.id)"
           class="sidebar-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-left mb-0.5"
-          :class="selectedEmployeeId === emp.id ? 'active !text-white' : 'text-white/70 hover:text-white'"
+          :class="selectedEmployeeId === emp.id ? 'active !text-sky-600' : 'text-slate-600 hover:text-slate-900'"
         >
-          <div class="w-7 h-7 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs font-bold flex-shrink-0"
+          <div class="w-7 h-7 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold flex-shrink-0"
                x-text="emp.name.split(' ').map(n=>n[0]).join('').slice(0,2)"></div>
           <div class="flex-1 min-w-0">
             <div class="truncate font-medium" x-text="emp.name"></div>
-            <div class="text-white/40 text-xs truncate">Offboarding</div>
+            <div class="text-slate-400 text-xs truncate">Offboarding</div>
           </div>
         </button>
       </template>
 
-      <div x-show="employees.length === 0" class="text-white/30 text-xs text-center py-4">
+      <div x-show="employees.length === 0" class="text-slate-400 text-xs text-center py-4">
         No employees yet
       </div>
     </div>
 
     <!-- Demo button -->
-    <div class="p-3 border-t border-white/10">
+    <div class="p-3 border-t border-slate-200">
       <button
         @click="loadDemo()"
         :disabled="demoLoading"
-        class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+        class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
       >
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -554,9 +554,9 @@
       <!-- ═══════════════ NEW ONBOARDING FORM ═══════════════ -->
       <div x-show="page === 'new-onboarding'" class="p-6 max-w-2xl mx-auto">
         <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-          <div class="bg-navy px-6 py-5">
-            <h2 class="text-white font-bold text-lg">New Onboarding / Offboarding</h2>
-            <p class="text-white/50 text-sm mt-0.5">Fill in the details to auto-generate a task checklist</p>
+          <div class="bg-sky-50 border-b border-slate-200 px-6 py-5">
+            <h2 class="text-slate-800 font-bold text-lg">New Onboarding / Offboarding</h2>
+            <p class="text-slate-500 text-sm mt-0.5">Fill in the details to auto-generate a task checklist</p>
           </div>
           <form @submit.prevent="createEmployee()" class="p-6 space-y-5">
 
@@ -706,7 +706,7 @@
             <div class="flex gap-2 flex-wrap">
               <button @click="quickUpdateTask(taskModal.id, 'todo')"
                       class="text-xs px-3 py-1.5 rounded-lg border transition-all font-medium"
-                      :class="taskModal.status === 'todo' ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+                      :class="taskModal.status === 'todo' ? 'bg-slate-100 text-slate-700 border-slate-200' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
                 To Do
               </button>
               <button @click="quickUpdateTask(taskModal.id, 'in_progress')"
@@ -764,7 +764,7 @@
   x-transition:leave-start="opacity-100"
   x-transition:leave-end="opacity-0"
   class="fixed bottom-5 right-5 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl text-sm font-medium text-white max-w-xs"
-  :class="toast?.type === 'error' ? 'bg-red-500' : toast?.type === 'warning' ? 'bg-amber-500' : 'bg-navy'"
+  :class="toast?.type === 'error' ? 'bg-red-500' : toast?.type === 'warning' ? 'bg-amber-500' : 'bg-sky-600'"
 >
   <svg x-show="toast?.type === 'success'" class="w-4 h-4 text-highlight" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>

@@ -13,11 +13,11 @@
       theme: {
         extend: {
           colors: {
-            primary:   '#132A3E',
-            'primary-dark': '#0d1f2d',
-            'primary-light': '#1e3f5a',
-            accent:    '#00B3FF',
-            highlight: '#00FFC5',
+            primary:   '#1e293b',
+            'primary-dark': '#ffffff',
+            'primary-light': '#f8fafc',
+            accent:    '#0ea5e9',
+            highlight: '#10b981',
           },
           fontFamily: { sans: ['Inter', 'sans-serif'] },
         }
@@ -28,22 +28,22 @@
   <style>
     [x-cloak] { display: none !important; }
     .scrollbar-thin::-webkit-scrollbar { height: 6px; width: 6px; }
-    .scrollbar-thin::-webkit-scrollbar-track { background: #1e3f5a; border-radius: 3px; }
-    .scrollbar-thin::-webkit-scrollbar-thumb { background: #00B3FF44; border-radius: 3px; }
-    .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #00B3FF88; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 3px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #0ea5e944; border-radius: 3px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #0ea5e988; }
     .kanban-col { min-width: 300px; max-width: 300px; }
     .email-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
-    .email-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,179,255,0.15); }
+    .email-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(14,165,233,0.12); }
     .fade-in { animation: fadeIn 0.25s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .prose-email { white-space: pre-wrap; font-family: 'Inter', sans-serif; font-size: 0.9rem; line-height: 1.7; }
-    .step-active { border-color: #00B3FF; background-color: #00B3FF; color: #fff; }
-    .step-done { border-color: #00FFC5; background-color: #00FFC5; color: #132A3E; }
-    .step-idle { border-color: #1e3f5a; background-color: #1e3f5a; color: #6b8aab; }
+    .step-active { border-color: #0ea5e9; background-color: #0ea5e9; color: #fff; }
+    .step-done { border-color: #10b981; background-color: #10b981; color: #fff; }
+    .step-idle { border-color: #cbd5e1; background-color: #fff; color: #94a3b8; }
   </style>
 </head>
 
-<body class="bg-primary font-sans text-white min-h-screen" x-data="app()" x-init="init()" x-cloak>
+<body class="bg-slate-50 font-sans text-slate-800 min-h-screen" x-data="app()" x-init="init()" x-cloak>
 
 <!-- ══════════════════════════════════════════════════════════
      NOTIFICATION TOAST
@@ -56,8 +56,8 @@
   x-transition:leave="transition ease-in duration-200"
   x-transition:leave-start="opacity-100"
   x-transition:leave-end="opacity-0"
-  class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl text-sm font-medium shadow-2xl flex items-center gap-3"
-  :class="notification?.type === 'error' ? 'bg-red-600 text-white' : 'bg-highlight text-primary'"
+  class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl text-sm font-medium shadow-lg flex items-center gap-3"
+  :class="notification?.type === 'error' ? 'bg-red-500 text-white' : 'bg-emerald-500 text-white'"
 >
   <span x-text="notification?.msg"></span>
 </div>
@@ -71,91 +71,90 @@
   x-transition:enter-start="opacity-0"
   x-transition:enter-end="opacity-100"
   class="fixed inset-0 z-40 flex items-center justify-center p-4"
-  style="background: rgba(13,31,45,0.85);"
+  style="background: rgba(15,23,42,0.45);"
 >
   <div
     @click.away="closeEditModal()"
-    class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden fade-in"
+    class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden fade-in border border-slate-200"
   >
     <!-- Modal header -->
-    <div class="px-6 py-4 flex items-center justify-between" style="background:#132A3E;">
+    <div class="px-6 py-4 flex items-center justify-between bg-white border-b border-slate-200">
       <div>
         <div class="flex items-center gap-3">
-          <span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background:#00B3FF22;color:#00B3FF;"
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-50 text-sky-600 border border-sky-100"
             x-text="'Touchpoint ' + (editingSequence?.touchpoint_num || '')"></span>
-          <span class="text-xs text-gray-400" x-text="editingLead?.company || ''"></span>
+          <span class="text-xs text-slate-400" x-text="editingLead?.company || ''"></span>
         </div>
-        <p class="text-white font-semibold mt-1" x-text="editPreview ? 'E-Mail Vorschau' : 'E-Mail bearbeiten'"></p>
+        <p class="text-slate-800 font-semibold mt-1" x-text="editPreview ? 'E-Mail Vorschau' : 'E-Mail bearbeiten'"></p>
       </div>
       <div class="flex items-center gap-2">
         <button @click="editPreview = !editPreview"
           class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
-          :class="editPreview ? 'bg-accent text-primary' : 'bg-primary-light text-accent border border-accent/30'">
+          :class="editPreview ? 'bg-sky-500 text-white' : 'bg-slate-100 text-sky-600 border border-sky-200'">
           <span x-text="editPreview ? 'Bearbeiten' : 'Vorschau'"></span>
         </button>
-        <button @click="closeEditModal()" class="text-gray-400 hover:text-white transition p-1">
+        <button @click="closeEditModal()" class="text-slate-400 hover:text-slate-600 transition p-1">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
     </div>
 
     <!-- Edit mode -->
-    <div x-show="!editPreview" class="p-6 space-y-4">
+    <div x-show="!editPreview" class="p-6 space-y-4 bg-white">
       <div>
-        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Betreff</label>
+        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Betreff</label>
         <input
           type="text"
           x-model="editForm.subject"
-          class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40"
+          class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
           placeholder="E-Mail Betreff..."
         />
       </div>
       <div>
-        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Inhalt</label>
+        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Inhalt</label>
         <textarea
           x-model="editForm.body"
           rows="14"
-          class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 resize-none"
+          class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 resize-none"
           placeholder="E-Mail Text..."
         ></textarea>
       </div>
     </div>
 
     <!-- Preview mode -->
-    <div x-show="editPreview" class="p-6">
-      <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-        <div class="border-b border-gray-200 pb-4 mb-4 space-y-2">
+    <div x-show="editPreview" class="p-6 bg-white">
+      <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+        <div class="border-b border-slate-200 pb-4 mb-4 space-y-2">
           <div class="flex gap-3 text-sm">
-            <span class="text-gray-400 w-14 shrink-0">Von:</span>
-            <span class="text-gray-700" x-text="currentCampaign?.sender_name + ' &lt;' + currentCampaign?.sender_email + '&gt;'"></span>
+            <span class="text-slate-400 w-14 shrink-0">Von:</span>
+            <span class="text-slate-700" x-text="currentCampaign?.sender_name + ' &lt;' + currentCampaign?.sender_email + '&gt;'"></span>
           </div>
           <div class="flex gap-3 text-sm">
-            <span class="text-gray-400 w-14 shrink-0">An:</span>
-            <span class="text-gray-700" x-text="(editingLead?.contact || editingLead?.company || '') + ' &lt;' + (editingLead?.email || '') + '&gt;'"></span>
+            <span class="text-slate-400 w-14 shrink-0">An:</span>
+            <span class="text-slate-700" x-text="(editingLead?.contact || editingLead?.company || '') + ' &lt;' + (editingLead?.email || '') + '&gt;'"></span>
           </div>
           <div class="flex gap-3 text-sm">
-            <span class="text-gray-400 w-14 shrink-0">Betreff:</span>
-            <span class="text-gray-700 font-medium" x-text="editForm.subject"></span>
+            <span class="text-slate-400 w-14 shrink-0">Betreff:</span>
+            <span class="text-slate-700 font-medium" x-text="editForm.subject"></span>
           </div>
           <div class="flex gap-3 text-sm">
-            <span class="text-gray-400 w-14 shrink-0">Tag:</span>
-            <span class="text-gray-700" x-text="'Tag ' + (editingSequence?.scheduled_day || 1)"></span>
+            <span class="text-slate-400 w-14 shrink-0">Tag:</span>
+            <span class="text-slate-700" x-text="'Tag ' + (editingSequence?.scheduled_day || 1)"></span>
           </div>
         </div>
-        <div class="prose-email text-gray-800" x-text="editForm.body"></div>
+        <div class="prose-email text-slate-800" x-text="editForm.body"></div>
       </div>
     </div>
 
     <!-- Modal footer -->
-    <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
-      <button @click="closeEditModal()" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition">
+    <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 bg-white">
+      <button @click="closeEditModal()" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
         Abbrechen
       </button>
       <button
         @click="saveEdit()"
         :disabled="savingEdit"
-        class="px-5 py-2 rounded-lg text-sm font-semibold text-primary transition flex items-center gap-2"
-        style="background:#00B3FF;"
+        class="px-5 py-2 rounded-lg text-sm font-semibold text-white transition flex items-center gap-2 bg-sky-500 hover:bg-sky-600 disabled:opacity-50"
       >
         <svg x-show="savingEdit" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -173,58 +172,56 @@
 <div
   x-show="globalLoading"
   class="fixed inset-0 z-30 flex items-center justify-center"
-  style="background: rgba(13,31,45,0.7);"
+  style="background: rgba(15,23,42,0.3);"
 >
-  <div class="text-center">
-    <svg class="w-12 h-12 animate-spin mx-auto mb-4" style="color:#00B3FF" fill="none" viewBox="0 0 24 24">
+  <div class="text-center bg-white rounded-2xl p-8 shadow-xl border border-slate-200">
+    <svg class="w-12 h-12 animate-spin mx-auto mb-4 text-sky-500" fill="none" viewBox="0 0 24 24">
       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
     </svg>
-    <p class="text-white font-medium" x-text="loadingMsg || 'Laden...'"></p>
+    <p class="text-slate-700 font-medium" x-text="loadingMsg || 'Laden...'"></p>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════
      LOGIN PAGE
 ══════════════════════════════════════════════════════════ -->
-<div x-show="view === 'login'" class="min-h-screen flex items-center justify-center p-4">
+<div x-show="view === 'login'" class="min-h-screen flex items-center justify-center p-4 bg-slate-50">
   <div class="w-full max-w-md">
     <!-- Logo -->
     <div class="text-center mb-8">
       <div class="inline-flex items-center gap-3 mb-4">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:#00B3FF;">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-sky-500">
           <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
           </svg>
         </div>
         <div class="text-left">
-          <div class="font-bold text-xl text-white">KI Katapult</div>
-          <div class="text-xs text-gray-400 -mt-0.5">Engine 2: Outbound Prospecting</div>
+          <div class="font-bold text-xl text-slate-800">KI Katapult</div>
+          <div class="text-xs text-slate-500 -mt-0.5">Engine 2: Outbound Prospecting</div>
         </div>
       </div>
     </div>
 
-    <div class="bg-primary-light rounded-2xl p-8 shadow-2xl border border-white/10">
-      <h2 class="text-lg font-semibold text-white mb-6">Anmelden</h2>
+    <div class="bg-white rounded-2xl p-8 shadow-md border border-slate-200">
+      <h2 class="text-lg font-semibold text-slate-800 mb-6">Anmelden</h2>
       <form @submit.prevent="login()">
         <div class="mb-4">
-          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Passwort</label>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Passwort</label>
           <input
             type="password"
             x-model="loginPassword"
             @keydown.enter="login()"
             autofocus
-            class="w-full rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 border border-white/10"
-            style="background:#132A3E;"
+            class="w-full bg-white rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 border border-slate-300"
             placeholder="••••••••••••"
           />
         </div>
-        <div x-show="loginError" class="mb-4 p-3 rounded-lg bg-red-500/20 border border-red-500/30 text-red-300 text-sm" x-text="loginError"></div>
+        <div x-show="loginError" class="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm" x-text="loginError"></div>
         <button
           type="submit"
           :disabled="loginLoading"
-          class="w-full py-3 rounded-xl font-semibold text-primary transition hover:opacity-90 flex items-center justify-center gap-2"
-          style="background:#00B3FF;"
+          class="w-full py-3 rounded-xl font-semibold text-white transition hover:opacity-90 flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-600 disabled:opacity-50"
         >
           <svg x-show="loginLoading" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -234,7 +231,7 @@
         </button>
       </form>
     </div>
-    <p class="text-center text-xs text-gray-600 mt-6">Standard-Passwort: <code class="text-gray-400">brainlancer2026</code></p>
+    <p class="text-center text-xs text-slate-500 mt-6">Standard-Passwort: <code class="text-slate-400">brainlancer2026</code></p>
   </div>
 </div>
 
@@ -244,23 +241,23 @@
 <div x-show="view !== 'login'" class="min-h-screen flex flex-col">
 
   <!-- ── Top Nav ── -->
-  <nav class="border-b border-white/10 px-6 py-3 flex items-center justify-between sticky top-0 z-20" style="background:#0d1f2d;">
+  <nav class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-20 shadow-sm">
     <div class="flex items-center gap-4">
       <button @click="goTo('dashboard')" class="flex items-center gap-2.5 hover:opacity-80 transition">
-        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#00B3FF;">
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-sky-500">
           <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
           </svg>
         </div>
-        <span class="font-bold text-white text-sm hidden sm:block">KI Katapult</span>
-        <span class="text-gray-500 text-xs hidden md:block">/ Engine 2</span>
+        <span class="font-bold text-slate-800 text-sm hidden sm:block">KI Katapult</span>
+        <span class="text-slate-400 text-xs hidden md:block">/ Engine 2</span>
       </button>
 
       <!-- Breadcrumb -->
       <div class="flex items-center gap-2 text-sm" x-show="view !== 'dashboard'">
-        <span class="text-gray-600">/</span>
-        <span class="text-gray-300" x-show="view === 'new-campaign'">Neue Kampagne</span>
-        <span class="text-gray-300" x-show="view === 'campaign-view'" x-text="currentCampaign?.name || 'Kampagne'"></span>
+        <span class="text-slate-400">/</span>
+        <span class="text-slate-600" x-show="view === 'new-campaign'">Neue Kampagne</span>
+        <span class="text-slate-600" x-show="view === 'campaign-view'" x-text="currentCampaign?.name || 'Kampagne'"></span>
       </div>
     </div>
 
@@ -268,8 +265,7 @@
       <button
         @click="goTo('new-campaign')"
         x-show="view === 'dashboard'"
-        class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-primary text-sm font-semibold transition hover:opacity-90"
-        style="background:#00B3FF;"
+        class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-semibold transition hover:bg-sky-600 bg-sky-500"
       >
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
         Kampagne
@@ -277,11 +273,11 @@
       <button
         @click="loadDemo()"
         x-show="view === 'dashboard'"
-        class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-gray-300 border border-white/10 hover:border-highlight/50 hover:text-highlight transition"
+        class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 border border-slate-300 hover:border-emerald-300 hover:text-emerald-600 transition"
       >
         Demo laden
       </button>
-      <button @click="logout()" class="text-gray-500 hover:text-white transition p-1.5 rounded-lg hover:bg-white/10">
+      <button @click="logout()" class="text-slate-400 hover:text-slate-600 transition p-1.5 rounded-lg hover:bg-slate-100">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
         </svg>
@@ -296,15 +292,14 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-2xl font-bold text-white">Kampagnen-Übersicht</h1>
-        <p class="text-gray-400 text-sm mt-1">Verwalten Sie Ihre Outbound-Kampagnen</p>
+        <h1 class="text-2xl font-bold text-slate-800">Kampagnen-Übersicht</h1>
+        <p class="text-slate-500 text-sm mt-1">Verwalten Sie Ihre Outbound-Kampagnen</p>
       </div>
       <div class="flex items-center gap-3">
-        <button @click="loadDemo()" class="sm:hidden px-3 py-2 rounded-lg text-xs font-medium text-gray-300 border border-white/10 hover:border-highlight/50 hover:text-highlight transition">Demo</button>
+        <button @click="loadDemo()" class="sm:hidden px-3 py-2 rounded-lg text-xs font-medium text-slate-600 border border-slate-300 hover:border-emerald-300 hover:text-emerald-600 transition">Demo</button>
         <button
           @click="goTo('new-campaign')"
-          class="flex items-center gap-2 px-4 py-2 rounded-xl text-primary text-sm font-semibold transition hover:opacity-90"
-          style="background:#00B3FF;"
+          class="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-semibold transition bg-sky-500 hover:bg-sky-600"
         >
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
           Neue Kampagne
@@ -314,18 +309,18 @@
 
     <!-- Empty state -->
     <div x-show="campaigns.length === 0" class="text-center py-20">
-      <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background:#1e3f5a;">
-        <svg class="w-8 h-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center bg-slate-100">
+        <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
         </svg>
       </div>
-      <h3 class="text-lg font-semibold text-white mb-2">Noch keine Kampagnen</h3>
-      <p class="text-gray-500 text-sm mb-6">Erstellen Sie Ihre erste Kampagne oder laden Sie Demo-Daten.</p>
+      <h3 class="text-lg font-semibold text-slate-800 mb-2">Noch keine Kampagnen</h3>
+      <p class="text-slate-500 text-sm mb-6">Erstellen Sie Ihre erste Kampagne oder laden Sie Demo-Daten.</p>
       <div class="flex items-center justify-center gap-3">
-        <button @click="goTo('new-campaign')" class="px-5 py-2.5 rounded-xl text-primary font-semibold text-sm hover:opacity-90" style="background:#00B3FF;">
+        <button @click="goTo('new-campaign')" class="px-5 py-2.5 rounded-xl text-white font-semibold text-sm bg-sky-500 hover:bg-sky-600 transition">
           Kampagne erstellen
         </button>
-        <button @click="loadDemo()" class="px-5 py-2.5 rounded-xl font-semibold text-sm border border-white/20 text-white hover:bg-white/10 transition">
+        <button @click="loadDemo()" class="px-5 py-2.5 rounded-xl font-semibold text-sm border border-slate-300 text-slate-600 hover:bg-slate-50 transition">
           Demo laden
         </button>
       </div>
@@ -334,37 +329,37 @@
     <!-- Campaign grid -->
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <template x-for="c in campaigns" :key="c.id">
-        <div class="rounded-2xl border border-white/10 overflow-hidden hover:border-accent/30 transition cursor-pointer group" style="background:#1e3f5a;">
+        <div class="rounded-2xl border border-slate-200 overflow-hidden hover:border-sky-300 transition cursor-pointer group bg-white shadow-sm hover:shadow-md">
           <!-- Card header -->
           <div class="p-5 pb-4">
             <div class="flex items-start justify-between mb-3">
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1">
-                  <span x-show="c.is_demo" class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:#00FFC522;color:#00FFC5;">DEMO</span>
+                  <span x-show="c.is_demo" class="text-xs px-2 py-0.5 rounded-full font-medium bg-emerald-50 text-emerald-600 border border-emerald-200">DEMO</span>
                   <span
                     class="text-xs px-2 py-0.5 rounded-full font-medium"
                     :class="statusBadgeClass(c.status)"
                     x-text="statusLabel(c.status)"
                   ></span>
                 </div>
-                <h3 class="font-semibold text-white text-base leading-tight truncate" x-text="c.name"></h3>
-                <p class="text-xs text-gray-400 mt-0.5" x-text="c.sender_name + ' · ' + c.sender_email"></p>
+                <h3 class="font-semibold text-slate-800 text-base leading-tight truncate" x-text="c.name"></h3>
+                <p class="text-xs text-slate-500 mt-0.5" x-text="c.sender_name + ' · ' + c.sender_email"></p>
               </div>
             </div>
 
             <!-- Stats row -->
             <div class="grid grid-cols-3 gap-2 mt-4">
-              <div class="rounded-lg p-2 text-center" style="background:#132A3E;">
-                <div class="text-lg font-bold" style="color:#00B3FF;" x-text="c.stats?.total_leads || 0"></div>
-                <div class="text-xs text-gray-500">Leads</div>
+              <div class="rounded-lg p-2 text-center bg-slate-50 border border-slate-100">
+                <div class="text-lg font-bold text-sky-500" x-text="c.stats?.total_leads || 0"></div>
+                <div class="text-xs text-slate-500">Leads</div>
               </div>
-              <div class="rounded-lg p-2 text-center" style="background:#132A3E;">
-                <div class="text-lg font-bold" style="color:#00FFC5;" x-text="c.stats?.sequences_count || 0"></div>
-                <div class="text-xs text-gray-500">E-Mails</div>
+              <div class="rounded-lg p-2 text-center bg-slate-50 border border-slate-100">
+                <div class="text-lg font-bold text-emerald-500" x-text="c.stats?.sequences_count || 0"></div>
+                <div class="text-xs text-slate-500">E-Mails</div>
               </div>
-              <div class="rounded-lg p-2 text-center" style="background:#132A3E;">
-                <div class="text-lg font-bold text-white" x-text="c.num_touchpoints"></div>
-                <div class="text-xs text-gray-500">Touchpoints</div>
+              <div class="rounded-lg p-2 text-center bg-slate-50 border border-slate-100">
+                <div class="text-lg font-bold text-slate-800" x-text="c.num_touchpoints"></div>
+                <div class="text-xs text-slate-500">Touchpoints</div>
               </div>
             </div>
 
@@ -379,17 +374,16 @@
           </div>
 
           <!-- Card footer -->
-          <div class="px-5 py-3 border-t border-white/5 flex items-center justify-between">
-            <span class="text-xs text-gray-500" x-text="formatDate(c.created_at)"></span>
+          <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50">
+            <span class="text-xs text-slate-400" x-text="formatDate(c.created_at)"></span>
             <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition">
               <button
                 @click.stop="goTo('campaign-view', { id: c.id })"
-                class="text-xs px-3 py-1.5 rounded-lg font-medium text-primary transition"
-                style="background:#00B3FF;"
+                class="text-xs px-3 py-1.5 rounded-lg font-medium text-white transition bg-sky-500 hover:bg-sky-600"
               >Öffnen</button>
               <button
                 @click.stop="confirmDelete(c)"
-                class="text-xs px-2 py-1.5 rounded-lg text-red-400 border border-red-500/20 hover:bg-red-500/20 transition"
+                class="text-xs px-2 py-1.5 rounded-lg text-red-500 border border-red-200 hover:bg-red-50 transition"
               >
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
               </button>
@@ -417,46 +411,46 @@
               <span x-show="wizardStep <= i+1" x-text="i+1"></span>
               <svg x-show="wizardStep > i+1" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
             </div>
-            <span class="text-xs mt-1 font-medium" :class="wizardStep === i+1 ? 'text-accent' : wizardStep > i+1 ? 'text-highlight' : 'text-gray-600'" x-text="label"></span>
+            <span class="text-xs mt-1 font-medium" :class="wizardStep === i+1 ? 'text-sky-500' : wizardStep > i+1 ? 'text-emerald-500' : 'text-slate-400'" x-text="label"></span>
           </div>
-          <div x-show="i < wizardStepLabels.length - 1" class="h-0.5 w-12 sm:w-20 mb-4 mx-1" :class="wizardStep > i+1 ? 'bg-highlight' : 'bg-white/10'"></div>
+          <div x-show="i < wizardStepLabels.length - 1" class="h-0.5 w-12 sm:w-20 mb-4 mx-1" :class="wizardStep > i+1 ? 'bg-emerald-400' : 'bg-slate-200'"></div>
         </div>
       </template>
     </div>
 
     <!-- STEP 1: Campaign Settings -->
     <div x-show="wizardStep === 1" class="fade-in">
-      <h2 class="text-xl font-bold text-white mb-1">Kampagne einrichten</h2>
-      <p class="text-gray-400 text-sm mb-6">Definieren Sie Absender, Ton und Ziel der Kampagne.</p>
+      <h2 class="text-xl font-bold text-slate-800 mb-1">Kampagne einrichten</h2>
+      <p class="text-slate-500 text-sm mb-6">Definieren Sie Absender, Ton und Ziel der Kampagne.</p>
 
-      <div class="space-y-5 rounded-2xl p-6 border border-white/10" style="background:#1e3f5a;">
+      <div class="space-y-5 rounded-2xl p-6 border border-slate-200 bg-white shadow-sm">
         <div class="grid sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Kampagnen-Name *</label>
-            <input x-model="wizardForm.name" type="text" class="w-full rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 border border-white/10" style="background:#132A3E;" placeholder="z.B. Q2 Outreach SaaS" />
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Kampagnen-Name *</label>
+            <input x-model="wizardForm.name" type="text" class="w-full rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 border border-slate-300 bg-white" placeholder="z.B. Q2 Outreach SaaS" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Absender-Name *</label>
-            <input x-model="wizardForm.sender_name" type="text" class="w-full rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 border border-white/10" style="background:#132A3E;" placeholder="Max Müller" />
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Absender-Name *</label>
+            <input x-model="wizardForm.sender_name" type="text" class="w-full rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 border border-slate-300 bg-white" placeholder="Max Müller" />
           </div>
           <div class="sm:col-span-2">
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Absender-E-Mail *</label>
-            <input x-model="wizardForm.sender_email" type="email" class="w-full rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 border border-white/10" style="background:#132A3E;" placeholder="max@ihr-unternehmen.de" />
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Absender-E-Mail *</label>
+            <input x-model="wizardForm.sender_email" type="email" class="w-full rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 border border-slate-300 bg-white" placeholder="max@ihr-unternehmen.de" />
           </div>
         </div>
 
         <div class="grid sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Anzahl Touchpoints</label>
-            <select x-model="wizardForm.num_touchpoints" class="w-full rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none border border-white/10 cursor-pointer" style="background:#132A3E;">
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Anzahl Touchpoints</label>
+            <select x-model="wizardForm.num_touchpoints" class="w-full rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none border border-slate-300 bg-white cursor-pointer">
               <option value="3">3 E-Mails</option>
               <option value="4" selected>4 E-Mails</option>
               <option value="5">5 E-Mails</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Kadenz (Tage)</label>
-            <select x-model="wizardForm.cadence" class="w-full rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none border border-white/10 cursor-pointer" style="background:#132A3E;">
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Kadenz (Tage)</label>
+            <select x-model="wizardForm.cadence" class="w-full rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none border border-slate-300 bg-white cursor-pointer">
               <option value="1,3,7">Tag 1, 3, 7</option>
               <option value="1,3,7,14" selected>Tag 1, 3, 7, 14</option>
               <option value="1,3,7,14,21">Tag 1, 3, 7, 14, 21</option>
@@ -467,14 +461,13 @@
 
         <!-- Tone -->
         <div>
-          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ton</label>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Ton</label>
           <div class="grid grid-cols-3 gap-2">
             <template x-for="t in toneOptions" :key="t.value">
               <button
                 @click="wizardForm.tone = t.value"
-                class="p-3 rounded-xl border text-center transition"
-                :class="wizardForm.tone === t.value ? 'border-accent text-accent' : 'border-white/10 text-gray-400 hover:border-white/30'"
-                style="background:#132A3E;"
+                class="p-3 rounded-xl border text-center transition bg-slate-50"
+                :class="wizardForm.tone === t.value ? 'border-sky-500 text-sky-600 bg-sky-50' : 'border-slate-200 text-slate-500 hover:border-slate-300'"
               >
                 <div class="text-sm font-semibold" x-text="t.label"></div>
                 <div class="text-xs mt-0.5 opacity-70" x-text="t.desc"></div>
@@ -485,14 +478,13 @@
 
         <!-- Goal -->
         <div>
-          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ziel</label>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Ziel</label>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <template x-for="g in goalOptions" :key="g.value">
               <button
                 @click="wizardForm.goal = g.value"
-                class="p-3 rounded-xl border text-center transition"
-                :class="wizardForm.goal === g.value ? 'border-accent text-accent' : 'border-white/10 text-gray-400 hover:border-white/30'"
-                style="background:#132A3E;"
+                class="p-3 rounded-xl border text-center transition bg-slate-50"
+                :class="wizardForm.goal === g.value ? 'border-sky-500 text-sky-600 bg-sky-50' : 'border-slate-200 text-slate-500 hover:border-slate-300'"
               >
                 <div class="text-lg mb-1" x-text="g.icon"></div>
                 <div class="text-xs font-semibold" x-text="g.label"></div>
@@ -503,12 +495,11 @@
       </div>
 
       <div class="mt-6 flex justify-between">
-        <button @click="goTo('dashboard')" class="px-4 py-2 rounded-xl text-sm text-gray-400 hover:text-white transition">Abbrechen</button>
+        <button @click="goTo('dashboard')" class="px-4 py-2 rounded-xl text-sm text-slate-500 hover:text-slate-800 transition">Abbrechen</button>
         <button
           @click="createCampaignStep()"
           :disabled="!wizardForm.name || !wizardForm.sender_name || !wizardForm.sender_email"
-          class="px-6 py-2.5 rounded-xl text-primary font-semibold text-sm transition hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
-          style="background:#00B3FF;"
+          class="px-6 py-2.5 rounded-xl text-white font-semibold text-sm transition bg-sky-500 hover:bg-sky-600 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
         >
           Weiter: Leads importieren
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
@@ -518,83 +509,83 @@
 
     <!-- STEP 2: Import Leads -->
     <div x-show="wizardStep === 2" class="fade-in">
-      <h2 class="text-xl font-bold text-white mb-1">Leads importieren</h2>
-      <p class="text-gray-400 text-sm mb-6">CSV hochladen oder Leads manuell eingeben.</p>
+      <h2 class="text-xl font-bold text-slate-800 mb-1">Leads importieren</h2>
+      <p class="text-slate-500 text-sm mb-6">CSV hochladen oder Leads manuell eingeben.</p>
 
       <!-- CSV Upload -->
-      <div class="rounded-2xl p-6 border border-white/10 mb-4" style="background:#1e3f5a;">
-        <h3 class="font-semibold text-white mb-4 flex items-center gap-2">
-          <svg class="w-4 h-4" style="color:#00B3FF" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+      <div class="rounded-2xl p-6 border border-slate-200 bg-white shadow-sm mb-4">
+        <h3 class="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+          <svg class="w-4 h-4 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
           CSV hochladen
         </h3>
         <div
           class="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition"
-          :class="csvDragOver ? 'border-accent bg-accent/5' : 'border-white/20 hover:border-white/40'"
+          :class="csvDragOver ? 'border-sky-500 bg-sky-50' : 'border-slate-300 hover:border-slate-400'"
           @dragover.prevent="csvDragOver = true"
           @dragleave="csvDragOver = false"
           @drop.prevent="handleCsvDrop($event)"
           @click="$refs.csvInput.click()"
         >
-          <svg class="w-10 h-10 mx-auto mb-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-10 h-10 mx-auto mb-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
           </svg>
-          <p class="text-sm text-gray-300 font-medium">CSV hier ablegen oder klicken</p>
-          <p class="text-xs text-gray-500 mt-1">Spalten: email, company, contact, website, notes</p>
+          <p class="text-sm text-slate-600 font-medium">CSV hier ablegen oder klicken</p>
+          <p class="text-xs text-slate-400 mt-1">Spalten: email, company, contact, website, notes</p>
           <input type="file" x-ref="csvInput" accept=".csv,.txt" @change="handleCsvFile($event)" class="hidden" />
         </div>
-        <div x-show="csvFileName" class="mt-3 flex items-center gap-2 text-sm text-gray-300">
-          <svg class="w-4 h-4 text-highlight" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <div x-show="csvFileName" class="mt-3 flex items-center gap-2 text-sm text-slate-600">
+          <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
           <span x-text="csvFileName"></span>
         </div>
         <div x-show="csvErrors.length > 0" class="mt-3 space-y-1">
           <template x-for="err in csvErrors" :key="err">
-            <p class="text-xs text-yellow-400" x-text="'⚠ ' + err"></p>
+            <p class="text-xs text-yellow-600" x-text="'⚠ ' + err"></p>
           </template>
         </div>
       </div>
 
       <!-- Manual entry -->
-      <div class="rounded-2xl p-6 border border-white/10 mb-4" style="background:#1e3f5a;">
-        <h3 class="font-semibold text-white mb-4 flex items-center gap-2">
-          <svg class="w-4 h-4" style="color:#00B3FF" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      <div class="rounded-2xl p-6 border border-slate-200 bg-white shadow-sm mb-4">
+        <h3 class="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+          <svg class="w-4 h-4 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
           Manuell eingeben
         </h3>
         <div class="grid sm:grid-cols-2 gap-3 mb-3">
-          <input x-model="manualLeadForm.email" type="email" class="rounded-xl px-3 py-2 text-white text-sm border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent/40" style="background:#132A3E;" placeholder="E-Mail *" />
-          <input x-model="manualLeadForm.company" type="text" class="rounded-xl px-3 py-2 text-white text-sm border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent/40" style="background:#132A3E;" placeholder="Unternehmen" />
-          <input x-model="manualLeadForm.contact" type="text" class="rounded-xl px-3 py-2 text-white text-sm border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent/40" style="background:#132A3E;" placeholder="Ansprechpartner" />
-          <input x-model="manualLeadForm.website" type="text" class="rounded-xl px-3 py-2 text-white text-sm border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent/40" style="background:#132A3E;" placeholder="Website" />
-          <input x-model="manualLeadForm.notes" type="text" class="sm:col-span-2 rounded-xl px-3 py-2 text-white text-sm border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent/40" style="background:#132A3E;" placeholder="Notizen (optional)" />
+          <input x-model="manualLeadForm.email" type="email" class="rounded-xl px-3 py-2 text-slate-800 text-sm border border-slate-300 bg-white focus:outline-none focus:ring-1 focus:ring-sky-500/20 focus:border-sky-500" placeholder="E-Mail *" />
+          <input x-model="manualLeadForm.company" type="text" class="rounded-xl px-3 py-2 text-slate-800 text-sm border border-slate-300 bg-white focus:outline-none focus:ring-1 focus:ring-sky-500/20 focus:border-sky-500" placeholder="Unternehmen" />
+          <input x-model="manualLeadForm.contact" type="text" class="rounded-xl px-3 py-2 text-slate-800 text-sm border border-slate-300 bg-white focus:outline-none focus:ring-1 focus:ring-sky-500/20 focus:border-sky-500" placeholder="Ansprechpartner" />
+          <input x-model="manualLeadForm.website" type="text" class="rounded-xl px-3 py-2 text-slate-800 text-sm border border-slate-300 bg-white focus:outline-none focus:ring-1 focus:ring-sky-500/20 focus:border-sky-500" placeholder="Website" />
+          <input x-model="manualLeadForm.notes" type="text" class="sm:col-span-2 rounded-xl px-3 py-2 text-slate-800 text-sm border border-slate-300 bg-white focus:outline-none focus:ring-1 focus:ring-sky-500/20 focus:border-sky-500" placeholder="Notizen (optional)" />
         </div>
-        <button @click="addManualLead()" :disabled="!manualLeadForm.email" class="px-4 py-2 rounded-xl text-sm font-medium transition disabled:opacity-40 border border-accent/40 text-accent hover:bg-accent/10">
+        <button @click="addManualLead()" :disabled="!manualLeadForm.email" class="px-4 py-2 rounded-xl text-sm font-medium transition disabled:opacity-40 border border-sky-300 text-sky-600 hover:bg-sky-50">
           Lead hinzufügen
         </button>
       </div>
 
       <!-- Lead preview table -->
-      <div x-show="importedLeads.length > 0" class="rounded-2xl border border-white/10 overflow-hidden mb-4" style="background:#1e3f5a;">
-        <div class="px-5 py-3 border-b border-white/10 flex items-center justify-between">
-          <span class="text-sm font-semibold text-white" x-text="importedLeads.length + ' Lead(s) bereit'"></span>
-          <button @click="importedLeads = []" class="text-xs text-red-400 hover:text-red-300 transition">Alle entfernen</button>
+      <div x-show="importedLeads.length > 0" class="rounded-2xl border border-slate-200 overflow-hidden bg-white shadow-sm mb-4">
+        <div class="px-5 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+          <span class="text-sm font-semibold text-slate-700" x-text="importedLeads.length + ' Lead(s) bereit'"></span>
+          <button @click="importedLeads = []" class="text-xs text-red-500 hover:text-red-700 transition">Alle entfernen</button>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-xs">
             <thead>
-              <tr class="border-b border-white/5">
-                <th class="text-left px-4 py-2 text-gray-500 font-medium">E-Mail</th>
-                <th class="text-left px-4 py-2 text-gray-500 font-medium">Unternehmen</th>
-                <th class="text-left px-4 py-2 text-gray-500 font-medium">Kontakt</th>
+              <tr class="border-b border-slate-100 bg-slate-50">
+                <th class="text-left px-4 py-2 text-slate-500 font-medium">E-Mail</th>
+                <th class="text-left px-4 py-2 text-slate-500 font-medium">Unternehmen</th>
+                <th class="text-left px-4 py-2 text-slate-500 font-medium">Kontakt</th>
                 <th class="px-4 py-2"></th>
               </tr>
             </thead>
             <tbody>
               <template x-for="(lead, idx) in importedLeads" :key="idx">
-                <tr class="border-b border-white/5 hover:bg-white/5">
-                  <td class="px-4 py-2 text-gray-300" x-text="lead.email"></td>
-                  <td class="px-4 py-2 text-gray-400" x-text="lead.company || '—'"></td>
-                  <td class="px-4 py-2 text-gray-400" x-text="lead.contact || '—'"></td>
+                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                  <td class="px-4 py-2 text-slate-700" x-text="lead.email"></td>
+                  <td class="px-4 py-2 text-slate-500" x-text="lead.company || '—'"></td>
+                  <td class="px-4 py-2 text-slate-500" x-text="lead.contact || '—'"></td>
                   <td class="px-4 py-2 text-right">
-                    <button @click="importedLeads.splice(idx, 1)" class="text-red-400 hover:text-red-300 transition">
+                    <button @click="importedLeads.splice(idx, 1)" class="text-red-400 hover:text-red-600 transition">
                       <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                   </td>
@@ -606,12 +597,11 @@
       </div>
 
       <div class="mt-4 flex justify-between">
-        <button @click="wizardStep = 1" class="px-4 py-2 rounded-xl text-sm text-gray-400 hover:text-white transition">Zurück</button>
+        <button @click="wizardStep = 1" class="px-4 py-2 rounded-xl text-sm text-slate-500 hover:text-slate-800 transition">Zurück</button>
         <button
           @click="saveLeadsAndGenerate()"
           :disabled="importedLeads.length === 0"
-          class="px-6 py-2.5 rounded-xl text-primary font-semibold text-sm transition hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
-          style="background:#00B3FF;"
+          class="px-6 py-2.5 rounded-xl text-white font-semibold text-sm transition bg-sky-500 hover:bg-sky-600 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
         >
           Weiter: Sequenzen generieren
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
@@ -621,43 +611,43 @@
 
     <!-- STEP 3: Generate -->
     <div x-show="wizardStep === 3" class="fade-in">
-      <h2 class="text-xl font-bold text-white mb-1">KI-Sequenzen generieren</h2>
-      <p class="text-gray-400 text-sm mb-6">Gemini Flash schreibt personalisierte E-Mail-Sequenzen.</p>
+      <h2 class="text-xl font-bold text-slate-800 mb-1">KI-Sequenzen generieren</h2>
+      <p class="text-slate-500 text-sm mb-6">Gemini Flash schreibt personalisierte E-Mail-Sequenzen.</p>
 
       <!-- Campaign summary -->
-      <div class="rounded-2xl p-5 border border-white/10 mb-6" style="background:#1e3f5a;">
+      <div class="rounded-2xl p-5 border border-slate-200 bg-white shadow-sm mb-6">
         <div class="grid sm:grid-cols-2 gap-3 text-sm">
-          <div><span class="text-gray-500">Kampagne:</span> <span class="text-white font-medium" x-text="wizardForm.name"></span></div>
-          <div><span class="text-gray-500">Absender:</span> <span class="text-white" x-text="wizardForm.sender_name"></span></div>
-          <div><span class="text-gray-500">Leads:</span> <span class="text-white" x-text="importedLeads.length + ' Unternehmen'"></span></div>
-          <div><span class="text-gray-500">Touchpoints:</span> <span class="text-white" x-text="wizardForm.num_touchpoints + ' E-Mails'"></span></div>
-          <div><span class="text-gray-500">Ton:</span> <span class="text-white" x-text="toneLabel(wizardForm.tone)"></span></div>
-          <div><span class="text-gray-500">Ziel:</span> <span class="text-white" x-text="goalLabel(wizardForm.goal)"></span></div>
+          <div><span class="text-slate-500">Kampagne:</span> <span class="text-slate-800 font-medium" x-text="wizardForm.name"></span></div>
+          <div><span class="text-slate-500">Absender:</span> <span class="text-slate-800" x-text="wizardForm.sender_name"></span></div>
+          <div><span class="text-slate-500">Leads:</span> <span class="text-slate-800" x-text="importedLeads.length + ' Unternehmen'"></span></div>
+          <div><span class="text-slate-500">Touchpoints:</span> <span class="text-slate-800" x-text="wizardForm.num_touchpoints + ' E-Mails'"></span></div>
+          <div><span class="text-slate-500">Ton:</span> <span class="text-slate-800" x-text="toneLabel(wizardForm.tone)"></span></div>
+          <div><span class="text-slate-500">Ziel:</span> <span class="text-slate-800" x-text="goalLabel(wizardForm.goal)"></span></div>
         </div>
       </div>
 
       <!-- Generating state -->
       <div x-show="generating" class="text-center py-12">
-        <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center animate-pulse" style="background:#1e3f5a;">
-          <svg class="w-8 h-8 animate-spin" style="color:#00B3FF" fill="none" viewBox="0 0 24 24">
+        <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center animate-pulse bg-slate-100">
+          <svg class="w-8 h-8 animate-spin text-sky-500" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
           </svg>
         </div>
-        <p class="text-white font-semibold mb-2">Gemini schreibt E-Mails...</p>
-        <p class="text-gray-400 text-sm">Personalisiert für jeden Lead. Das kann 20–60 Sekunden dauern.</p>
+        <p class="text-slate-800 font-semibold mb-2">Gemini schreibt E-Mails...</p>
+        <p class="text-slate-500 text-sm">Personalisiert für jeden Lead. Das kann 20–60 Sekunden dauern.</p>
       </div>
 
       <!-- Generate results -->
       <div x-show="generateResults.length > 0 && !generating" class="space-y-2 mb-6">
         <template x-for="r in generateResults" :key="r.lead_id">
-          <div class="flex items-center gap-3 p-3 rounded-xl border" :class="r.success ? 'border-highlight/30 bg-highlight/5' : 'border-red-500/30 bg-red-500/5'">
-            <svg x-show="r.success" class="w-4 h-4 shrink-0" style="color:#00FFC5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-            <svg x-show="!r.success" class="w-4 h-4 shrink-0 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          <div class="flex items-center gap-3 p-3 rounded-xl border" :class="r.success ? 'border-emerald-200 bg-emerald-50' : 'border-red-200 bg-red-50'">
+            <svg x-show="r.success" class="w-4 h-4 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <svg x-show="!r.success" class="w-4 h-4 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             <div class="flex-1 min-w-0">
-              <span class="text-sm font-medium text-white" x-text="r.company"></span>
-              <span x-show="r.success" class="text-xs text-gray-400 ml-2" x-text="r.count + ' E-Mails generiert'"></span>
-              <span x-show="!r.success" class="text-xs text-red-300 ml-2" x-text="r.error"></span>
+              <span class="text-sm font-medium text-slate-800" x-text="r.company"></span>
+              <span x-show="r.success" class="text-xs text-slate-500 ml-2" x-text="r.count + ' E-Mails generiert'"></span>
+              <span x-show="!r.success" class="text-xs text-red-600 ml-2" x-text="r.error"></span>
             </div>
           </div>
         </template>
@@ -667,30 +657,28 @@
       <div x-show="!generating && generateResults.length === 0">
         <button
           @click="runGenerate()"
-          class="w-full py-3.5 rounded-xl font-semibold text-primary text-sm transition hover:opacity-90 flex items-center justify-center gap-3"
-          style="background:#00B3FF;"
+          class="w-full py-3.5 rounded-xl font-semibold text-white text-sm transition bg-sky-500 hover:bg-sky-600 flex items-center justify-center gap-3"
         >
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
           </svg>
           Mit Gemini AI generieren
         </button>
-        <p class="text-center text-xs text-gray-500 mt-3">Benötigt GOOGLE_API_KEY in der Umgebung</p>
+        <p class="text-center text-xs text-slate-400 mt-3">Benötigt GOOGLE_API_KEY in der Umgebung</p>
       </div>
 
       <div x-show="!generating && generateResults.length > 0" class="flex gap-3 mt-2">
-        <button @click="runGenerate()" class="flex-1 py-2.5 rounded-xl text-sm font-medium border border-white/20 text-gray-300 hover:bg-white/10 transition">
+        <button @click="runGenerate()" class="flex-1 py-2.5 rounded-xl text-sm font-medium border border-slate-300 text-slate-600 hover:bg-slate-50 transition">
           Erneut generieren
         </button>
         <button
           @click="goTo('campaign-view', { id: wizardCampaignId })"
-          class="flex-1 py-2.5 rounded-xl font-semibold text-primary text-sm transition hover:opacity-90"
-          style="background:#00FFC5;"
+          class="flex-1 py-2.5 rounded-xl font-semibold text-white text-sm transition bg-emerald-500 hover:bg-emerald-600"
         >
           Sequenzen ansehen
         </button>
       </div>
-      <button x-show="!generating" @click="goTo('campaign-view', { id: wizardCampaignId })" class="w-full mt-3 py-2 text-xs text-gray-500 hover:text-gray-300 transition">
+      <button x-show="!generating" @click="goTo('campaign-view', { id: wizardCampaignId })" class="w-full mt-3 py-2 text-xs text-slate-400 hover:text-slate-600 transition">
         Ohne KI-Generierung weiter (manuell bearbeiten)
       </button>
     </div>
@@ -702,30 +690,30 @@
   <div x-show="view === 'campaign-view'" class="flex-1 flex flex-col overflow-hidden fade-in">
 
     <!-- Campaign header bar -->
-    <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between" style="background:#0d1f2d;">
+    <div class="px-6 py-4 border-b border-slate-200 bg-white flex items-center justify-between shadow-sm">
       <div class="flex items-center gap-4">
-        <button @click="goTo('dashboard')" class="text-gray-500 hover:text-white transition">
+        <button @click="goTo('dashboard')" class="text-slate-400 hover:text-slate-600 transition">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </button>
         <div>
           <div class="flex items-center gap-2">
-            <h2 class="font-bold text-white text-base" x-text="currentCampaign?.name || 'Kampagne'"></h2>
-            <span x-show="currentCampaign?.is_demo" class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:#00FFC522;color:#00FFC5;">DEMO</span>
+            <h2 class="font-bold text-slate-800 text-base" x-text="currentCampaign?.name || 'Kampagne'"></h2>
+            <span x-show="currentCampaign?.is_demo" class="text-xs px-2 py-0.5 rounded-full font-medium bg-emerald-50 text-emerald-600 border border-emerald-200">DEMO</span>
           </div>
-          <p class="text-xs text-gray-500 mt-0.5" x-text="(currentCampaign?.sender_name || '') + ' · ' + (currentCampaign?.cadence || '') + ' · ' + toneLabel(currentCampaign?.tone) + ' · Ziel: ' + goalLabel(currentCampaign?.goal)"></p>
+          <p class="text-xs text-slate-500 mt-0.5" x-text="(currentCampaign?.sender_name || '') + ' · ' + (currentCampaign?.cadence || '') + ' · ' + toneLabel(currentCampaign?.tone) + ' · Ziel: ' + goalLabel(currentCampaign?.goal)"></p>
         </div>
       </div>
 
       <!-- Stats pills -->
       <div class="hidden md:flex items-center gap-3">
         <div class="flex items-center gap-2 text-sm">
-          <div class="px-3 py-1.5 rounded-lg text-xs font-medium" style="background:#1e3f5a;">
-            <span class="font-bold" style="color:#00B3FF;" x-text="campaignLeads.length"></span>
-            <span class="text-gray-400 ml-1">Leads</span>
+          <div class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-50 border border-slate-200">
+            <span class="font-bold text-sky-500" x-text="campaignLeads.length"></span>
+            <span class="text-slate-500 ml-1">Leads</span>
           </div>
-          <div class="px-3 py-1.5 rounded-lg text-xs font-medium" style="background:#1e3f5a;">
-            <span class="font-bold" style="color:#00FFC5;" x-text="totalSequences"></span>
-            <span class="text-gray-400 ml-1">E-Mails</span>
+          <div class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-50 border border-slate-200">
+            <span class="font-bold text-emerald-500" x-text="totalSequences"></span>
+            <span class="text-slate-500 ml-1">E-Mails</span>
           </div>
         </div>
 
@@ -733,14 +721,14 @@
         <div class="flex items-center gap-2">
           <button
             @click="exportCSV()"
-            class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-white/20 text-gray-300 hover:border-highlight/50 hover:text-highlight transition"
+            class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-slate-300 text-slate-600 hover:border-emerald-300 hover:text-emerald-600 transition"
           >
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
             CSV
           </button>
           <button
             @click="exportEML()"
-            class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-white/20 text-gray-300 hover:border-accent/50 hover:text-accent transition"
+            class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-slate-300 text-slate-600 hover:border-sky-300 hover:text-sky-600 transition"
           >
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
             .EML
@@ -751,8 +739,7 @@
         <button
           @click="generateForCampaign()"
           :disabled="generatingCampaign"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg text-primary text-xs font-semibold transition hover:opacity-90 disabled:opacity-50"
-          style="background:#00B3FF;"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-xs font-semibold transition bg-sky-500 hover:bg-sky-600 disabled:opacity-50"
         >
           <svg x-show="generatingCampaign" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -765,13 +752,12 @@
     </div>
 
     <!-- Status filter tabs -->
-    <div class="px-6 py-3 border-b border-white/5 flex items-center gap-1 overflow-x-auto scrollbar-thin" style="background:#0d1f2d;">
+    <div class="px-6 py-3 border-b border-slate-200 bg-white flex items-center gap-1 overflow-x-auto scrollbar-thin">
       <template x-for="f in statusFilters" :key="f.value">
         <button
           @click="statusFilter = f.value"
           class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition"
-          :class="statusFilter === f.value ? 'text-primary' : 'text-gray-400 hover:text-gray-200'"
-          :style="statusFilter === f.value ? 'background:#00B3FF;' : ''"
+          :class="statusFilter === f.value ? 'bg-sky-500 text-white' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'"
         >
           <span x-text="f.label"></span>
           <span x-show="f.value !== 'all'" class="ml-1 opacity-70" x-text="'(' + leadsCountByStatus(f.value) + ')'"></span>
@@ -785,33 +771,32 @@
       class="flex-1 flex items-center justify-center text-center p-12"
     >
       <div>
-        <div class="w-14 h-14 rounded-xl mx-auto mb-3 flex items-center justify-center" style="background:#1e3f5a;">
-          <svg class="w-7 h-7 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <div class="w-14 h-14 rounded-xl mx-auto mb-3 flex items-center justify-center bg-slate-100">
+          <svg class="w-7 h-7 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
         </div>
-        <p class="text-white font-medium mb-1" x-text="campaignLeads.length === 0 ? 'Keine Leads in dieser Kampagne' : 'Keine Leads mit diesem Status'"></p>
-        <p class="text-gray-500 text-sm" x-show="campaignLeads.length === 0">Gehen Sie zurück und importieren Sie Leads.</p>
+        <p class="text-slate-700 font-medium mb-1" x-text="campaignLeads.length === 0 ? 'Keine Leads in dieser Kampagne' : 'Keine Leads mit diesem Status'"></p>
+        <p class="text-slate-500 text-sm" x-show="campaignLeads.length === 0">Gehen Sie zurück und importieren Sie Leads.</p>
       </div>
     </div>
 
     <!-- ── Kanban Board ── -->
-    <div class="flex-1 overflow-x-auto overflow-y-auto scrollbar-thin p-6 pb-8">
+    <div class="flex-1 overflow-x-auto overflow-y-auto scrollbar-thin p-6 pb-8 bg-slate-50">
       <div class="flex gap-4 h-full" style="min-width: max-content;">
         <template x-for="lead in filteredLeads" :key="lead.id">
           <div class="kanban-col flex flex-col">
 
             <!-- Lead column header -->
-            <div class="rounded-t-2xl px-4 pt-4 pb-3 border border-b-0 border-white/10" style="background:#1e3f5a;">
+            <div class="rounded-t-2xl px-4 pt-4 pb-3 border border-b-0 border-slate-200 bg-white">
               <div class="flex items-start justify-between mb-2">
                 <div class="flex-1 min-w-0">
-                  <h4 class="font-semibold text-white text-sm leading-tight truncate" x-text="lead.company || lead.email"></h4>
-                  <p class="text-xs text-gray-400 truncate mt-0.5" x-text="lead.contact || ''"></p>
+                  <h4 class="font-semibold text-slate-800 text-sm leading-tight truncate" x-text="lead.company || lead.email"></h4>
+                  <p class="text-xs text-slate-500 truncate mt-0.5" x-text="lead.contact || ''"></p>
                 </div>
                 <div>
                   <select
                     :value="lead.status"
                     @change="updateLeadStatus(lead.id, $event.target.value)"
-                    class="text-xs rounded-lg px-2 py-1 border border-white/10 cursor-pointer focus:outline-none ml-2"
-                    style="background:#132A3E;"
+                    class="text-xs rounded-lg px-2 py-1 border border-slate-200 bg-white cursor-pointer focus:outline-none ml-2"
                     :class="leadStatusSelectClass(lead.status)"
                   >
                     <option value="draft">Entwurf</option>
@@ -821,30 +806,29 @@
                   </select>
                 </div>
               </div>
-              <p class="text-xs truncate" style="color:#00B3FF;" x-text="lead.email"></p>
-              <p x-show="lead.website" class="text-xs text-gray-600 truncate" x-text="lead.website"></p>
-              <div class="mt-2 pt-2 border-t border-white/5 flex items-center justify-between">
-                <span class="text-xs text-gray-500" x-text="(campaignSequences[lead.id] || []).length + ' E-Mails'"></span>
-                <span class="text-xs text-gray-500" x-text="'Tag ' + (currentCampaign?.cadence?.split(',')[0] || 1) + '–' + (currentCampaign?.cadence?.split(',').slice(-1)[0] || 14)"></span>
+              <p class="text-xs truncate text-sky-500" x-text="lead.email"></p>
+              <p x-show="lead.website" class="text-xs text-slate-400 truncate" x-text="lead.website"></p>
+              <div class="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between">
+                <span class="text-xs text-slate-400" x-text="(campaignSequences[lead.id] || []).length + ' E-Mails'"></span>
+                <span class="text-xs text-slate-400" x-text="'Tag ' + (currentCampaign?.cadence?.split(',')[0] || 1) + '–' + (currentCampaign?.cadence?.split(',').slice(-1)[0] || 14)"></span>
               </div>
             </div>
 
             <!-- Email cards stack -->
-            <div class="flex-1 space-y-2.5 overflow-y-auto scrollbar-thin px-0.5 py-2 rounded-b-2xl border border-t-0 border-white/10 px-3 pb-3" style="background:#1a3650; max-height: calc(100vh - 280px);">
+            <div class="flex-1 space-y-2.5 overflow-y-auto scrollbar-thin px-0.5 py-2 rounded-b-2xl border border-t-0 border-slate-200 px-3 pb-3 bg-slate-50" style="max-height: calc(100vh - 280px);">
               <template x-for="seq in (campaignSequences[lead.id] || [])" :key="seq.id">
                 <div
-                  class="email-card rounded-xl border border-white/10 p-4 cursor-pointer group"
-                  style="background:#132A3E;"
+                  class="email-card rounded-xl border border-slate-200 p-4 cursor-pointer group bg-white hover:border-sky-200"
                   @click="openEditModal(lead, seq)"
                 >
                   <!-- Card meta row -->
                   <div class="flex items-center justify-between mb-2.5">
                     <div class="flex items-center gap-2">
-                      <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold text-primary shrink-0" style="background:#00B3FF;" x-text="seq.touchpoint_num"></span>
-                      <span class="text-xs font-medium px-2 py-0.5 rounded-full border border-white/10 text-gray-400" x-text="'Tag ' + seq.scheduled_day"></span>
+                      <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0 bg-sky-500" x-text="seq.touchpoint_num"></span>
+                      <span class="text-xs font-medium px-2 py-0.5 rounded-full border border-slate-200 text-slate-500 bg-slate-50" x-text="'Tag ' + seq.scheduled_day"></span>
                     </div>
                     <button
-                      class="opacity-0 group-hover:opacity-100 transition p-1 rounded-lg hover:bg-accent/20 text-accent"
+                      class="opacity-0 group-hover:opacity-100 transition p-1 rounded-lg hover:bg-sky-50 text-sky-500"
                       @click.stop="openEditModal(lead, seq)"
                       title="Bearbeiten"
                     >
@@ -853,14 +837,14 @@
                   </div>
 
                   <!-- Subject -->
-                  <p class="text-white text-xs font-semibold leading-tight mb-2 line-clamp-2" x-text="seq.subject || '(kein Betreff)'"></p>
+                  <p class="text-slate-800 text-xs font-semibold leading-tight mb-2 line-clamp-2" x-text="seq.subject || '(kein Betreff)'"></p>
 
                   <!-- Body preview -->
-                  <p class="text-gray-500 text-xs leading-relaxed line-clamp-3" x-text="seq.body ? seq.body.replace(/\n/g, ' ').substring(0, 140) + '...' : '(kein Inhalt)'"></p>
+                  <p class="text-slate-500 text-xs leading-relaxed line-clamp-3" x-text="seq.body ? seq.body.replace(/\n/g, ' ').substring(0, 140) + '...' : '(kein Inhalt)'"></p>
 
                   <!-- Angle badge -->
-                  <div class="mt-2.5 pt-2 border-t border-white/5">
-                    <span class="text-xs text-gray-600 italic" x-text="emailAngleLabel(seq.touchpoint_num)"></span>
+                  <div class="mt-2.5 pt-2 border-t border-slate-100">
+                    <span class="text-xs text-slate-400 italic" x-text="emailAngleLabel(seq.touchpoint_num)"></span>
                   </div>
                 </div>
               </template>
@@ -868,7 +852,7 @@
               <!-- Empty sequences placeholder -->
               <div
                 x-show="!campaignSequences[lead.id] || campaignSequences[lead.id].length === 0"
-                class="text-center py-8 text-gray-600 text-xs"
+                class="text-center py-8 text-slate-400 text-xs"
               >
                 <svg class="w-8 h-8 mx-auto mb-2 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                 Noch keine Sequenz.<br/>Klicken Sie auf "(Re-)generieren".
@@ -880,10 +864,10 @@
     </div>
 
     <!-- Mobile export bar -->
-    <div class="md:hidden border-t border-white/10 px-4 py-3 flex gap-2" style="background:#0d1f2d;">
-      <button @click="exportCSV()" class="flex-1 py-2 rounded-lg text-xs font-medium border border-white/20 text-gray-300 text-center">CSV exportieren</button>
-      <button @click="exportEML()" class="flex-1 py-2 rounded-lg text-xs font-medium border border-white/20 text-gray-300 text-center">.EML exportieren</button>
-      <button @click="generateForCampaign()" :disabled="generatingCampaign" class="flex-1 py-2 rounded-lg text-xs font-semibold text-primary text-center disabled:opacity-50" style="background:#00B3FF;" x-text="generatingCampaign ? '...' : 'Generieren'"></button>
+    <div class="md:hidden border-t border-slate-200 bg-white px-4 py-3 flex gap-2">
+      <button @click="exportCSV()" class="flex-1 py-2 rounded-lg text-xs font-medium border border-slate-300 text-slate-600 text-center">CSV exportieren</button>
+      <button @click="exportEML()" class="flex-1 py-2 rounded-lg text-xs font-medium border border-slate-300 text-slate-600 text-center">.EML exportieren</button>
+      <button @click="generateForCampaign()" :disabled="generatingCampaign" class="flex-1 py-2 rounded-lg text-xs font-semibold text-white text-center disabled:opacity-50 bg-sky-500 hover:bg-sky-600" x-text="generatingCampaign ? '...' : 'Generieren'"></button>
     </div>
   </div>
 
@@ -1337,32 +1321,32 @@ function app() {
 
     statusBadgeClass(s) {
       const map = {
-        draft: 'bg-gray-700 text-gray-300',
-        active: 'bg-accent/20 text-accent',
-        completed: 'bg-highlight/20 text-highlight',
-        paused: 'bg-yellow-500/20 text-yellow-400',
+        draft: 'bg-slate-100 text-slate-500',
+        active: 'bg-sky-50 text-sky-600',
+        completed: 'bg-emerald-50 text-emerald-600',
+        paused: 'bg-yellow-50 text-yellow-600',
       };
-      return map[s] || 'bg-gray-700 text-gray-300';
+      return map[s] || 'bg-slate-100 text-slate-500';
     },
 
     leadStatusPill(s) {
       const map = {
-        draft: 'bg-gray-700 text-gray-400',
-        sent: 'bg-blue-500/20 text-blue-300',
-        replied: 'bg-yellow-500/20 text-yellow-300',
-        meeting_booked: 'bg-highlight/20 text-highlight',
+        draft: 'bg-slate-100 text-slate-500',
+        sent: 'bg-sky-50 text-sky-600',
+        replied: 'bg-yellow-50 text-yellow-600',
+        meeting_booked: 'bg-emerald-50 text-emerald-600',
       };
-      return map[s] || 'bg-gray-700 text-gray-400';
+      return map[s] || 'bg-slate-100 text-slate-500';
     },
 
     leadStatusSelectClass(s) {
       const map = {
-        draft: 'text-gray-400',
-        sent: 'text-blue-300',
-        replied: 'text-yellow-300',
-        meeting_booked: 'text-green-300',
+        draft: 'text-slate-500',
+        sent: 'text-sky-600',
+        replied: 'text-yellow-600',
+        meeting_booked: 'text-emerald-600',
       };
-      return map[s] || 'text-gray-400';
+      return map[s] || 'text-slate-500';
     },
   };
 }

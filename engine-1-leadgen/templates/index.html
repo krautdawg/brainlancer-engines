@@ -10,96 +10,87 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --navy: #132A3E;
-      --sky: #00B3FF;
-      --mint: #00FFC5;
+      --sky: #0ea5e9;
+      --mint: #10b981;
     }
     * { box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background: #0b1e2d; color: #e2e8f0; min-height: 100vh; }
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; min-height: 100vh; }
     .font-lexend { font-family: 'Lexend', sans-serif; }
-
-    /* Grid background */
-    .grid-bg {
-      background-image: linear-gradient(rgba(0,179,255,0.03) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0,179,255,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-    }
-
-    /* Glassmorphism */
-    .glass { background: rgba(19,42,62,0.75); backdrop-filter: blur(20px); border: 1px solid rgba(0,179,255,0.15); }
-    .glass-dark { background: rgba(11,30,45,0.85); backdrop-filter: blur(20px); border: 1px solid rgba(0,179,255,0.1); }
 
     /* Buttons */
     .btn-primary {
-      background: linear-gradient(135deg, #00B3FF, #0070cc);
+      background: #0ea5e9;
+      color: white;
+      font-weight: 600;
       transition: all 0.2s ease;
-      color: white; font-weight: 600;
     }
     .btn-primary:hover:not(:disabled) {
-      background: linear-gradient(135deg, #22ccff, #00B3FF);
-      box-shadow: 0 0 28px rgba(0,179,255,0.45);
+      background: #0284c7;
+      box-shadow: 0 4px 14px rgba(14,165,233,0.3);
       transform: translateY(-1px);
     }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     .btn-ghost {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: rgba(255,255,255,0.7);
+      background: transparent;
+      border: 1px solid #cbd5e1;
+      color: #64748b;
       transition: all 0.2s;
     }
-    .btn-ghost:hover { background: rgba(255,255,255,0.1); color: white; }
+    .btn-ghost:hover { background: #f8fafc; color: #1e293b; }
     .btn-mint {
-      background: linear-gradient(135deg, #00FFC5, #00cc9a);
-      color: #0b1e2d; font-weight: 700;
+      background: #10b981;
+      color: white;
+      font-weight: 700;
       transition: all 0.2s ease;
     }
-    .btn-mint:hover { box-shadow: 0 0 24px rgba(0,255,197,0.35); transform: translateY(-1px); }
+    .btn-mint:hover { background: #059669; box-shadow: 0 4px 14px rgba(16,185,129,0.25); transform: translateY(-1px); }
 
     /* Input fields */
     .field {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(0,179,255,0.2);
-      color: white; transition: border-color 0.2s, box-shadow 0.2s;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #1e293b;
+      transition: border-color 0.2s, box-shadow 0.2s;
       border-radius: 0.75rem;
     }
-    .field:focus { outline: none; border-color: #00B3FF; box-shadow: 0 0 0 3px rgba(0,179,255,0.12); }
-    .field::placeholder { color: rgba(255,255,255,0.25); }
-    .field-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 0.4rem; display: block; }
+    .field:focus { outline: none; border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.12); }
+    .field::placeholder { color: #94a3b8; }
+    .field-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; color: #64748b; text-transform: uppercase; margin-bottom: 0.4rem; display: block; }
 
     /* Stepper */
     .step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; transition: all 0.3s; }
-    .step-dot.active { background: #00B3FF; color: white; box-shadow: 0 0 14px rgba(0,179,255,0.5); }
-    .step-dot.done { background: #00FFC5; color: #0b1e2d; }
-    .step-dot.idle { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); }
+    .step-dot.active { background: #0ea5e9; color: white; box-shadow: 0 0 0 3px rgba(14,165,233,0.2); }
+    .step-dot.done { background: #10b981; color: white; }
+    .step-dot.idle { background: #e2e8f0; color: #94a3b8; border: 1px solid #cbd5e1; }
     .step-line { height: 1px; flex: 1; transition: background 0.4s; }
-    .step-line.done { background: #00FFC5; }
-    .step-line.idle { background: rgba(255,255,255,0.1); }
+    .step-line.done { background: #10b981; }
+    .step-line.idle { background: #e2e8f0; }
 
     /* Tags / chips */
     .chip {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 4px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 500;
     }
-    .chip-sky { background: rgba(0,179,255,0.12); border: 1px solid rgba(0,179,255,0.3); color: #00B3FF; }
-    .chip-mint { background: rgba(0,255,197,0.1); border: 1px solid rgba(0,255,197,0.3); color: #00FFC5; }
-    .chip-gray { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
+    .chip-sky { background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; }
+    .chip-mint { background: #f0fdf4; border: 1px solid #a7f3d0; color: #065f46; }
+    .chip-gray { background: #f1f5f9; border: 1px solid #e2e8f0; color: #64748b; }
 
     /* Table */
     .leads-table { width: 100%; border-collapse: collapse; }
-    .leads-table th { padding: 10px 16px; text-align: left; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); border-bottom: 1px solid rgba(255,255,255,0.06); }
-    .leads-table td { padding: 14px 16px; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+    .leads-table th { padding: 10px 16px; text-align: left; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+    .leads-table td { padding: 14px 16px; font-size: 0.85rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; color: #1e293b; }
     .leads-table tbody tr { transition: background 0.15s; }
-    .leads-table tbody tr:hover { background: rgba(0,179,255,0.04); cursor: pointer; }
+    .leads-table tbody tr:hover { background: #f8fafc; cursor: pointer; }
     .leads-table tbody tr:last-child td { border-bottom: none; }
 
     /* Loading spinner */
     @keyframes spin { to { transform: rotate(360deg); } }
     .spinner { animation: spin 0.8s linear infinite; }
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(0,179,255,0.3); }
-      50% { box-shadow: 0 0 0 8px rgba(0,179,255,0); }
+    @keyframes pulse-ring {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(14,165,233,0.2); }
+      50% { box-shadow: 0 0 0 8px rgba(14,165,233,0); }
     }
-    .pulse-glow { animation: pulse-glow 2s infinite; }
+    .pulse-glow { animation: pulse-ring 2s infinite; }
 
     /* Animated progress bar */
     @keyframes progress {
@@ -133,67 +124,60 @@
     /* Loading step list */
     .load-step { display: flex; align-items: center; gap: 12px; padding: 12px 0; }
     .load-step-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .load-step.waiting .load-step-icon { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
-    .load-step.running .load-step-icon { background: rgba(0,179,255,0.15); border: 1px solid rgba(0,179,255,0.3); }
-    .load-step.done .load-step-icon { background: rgba(0,255,197,0.12); border: 1px solid rgba(0,255,197,0.3); }
-
-    /* Glow orbs */
-    .glow-orb { position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.07; pointer-events: none; z-index: 0; }
+    .load-step.waiting .load-step-icon { background: #f1f5f9; border: 1px solid #e2e8f0; }
+    .load-step.running .load-step-icon { background: #eff6ff; border: 1px solid #bfdbfe; }
+    .load-step.done .load-step-icon { background: #f0fdf4; border: 1px solid #a7f3d0; }
 
     /* Modal */
-    .modal-backdrop { background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); }
+    .modal-backdrop { background: rgba(15,23,42,0.5); backdrop-filter: blur(4px); }
 
     /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(0,179,255,0.3); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 
     /* Tag input */
-    .tag-input-wrapper { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; border-radius: 0.75rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,179,255,0.2); min-height: 44px; align-items: center; }
-    .tag-input-wrapper:focus-within { border-color: #00B3FF; box-shadow: 0 0 0 3px rgba(0,179,255,0.12); }
-    .tag-input-wrapper input { background: transparent; border: none; outline: none; color: white; font-size: 0.85rem; flex: 1; min-width: 80px; }
-    .tag-input-wrapper input::placeholder { color: rgba(255,255,255,0.2); }
+    .tag-input-wrapper { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; border-radius: 0.75rem; background: #ffffff; border: 1px solid #cbd5e1; min-height: 44px; align-items: center; }
+    .tag-input-wrapper:focus-within { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.12); }
+    .tag-input-wrapper input { background: transparent; border: none; outline: none; color: #1e293b; font-size: 0.85rem; flex: 1; min-width: 80px; }
+    .tag-input-wrapper input::placeholder { color: #94a3b8; }
 
     /* Navbar */
-    .navbar { background: rgba(11,30,45,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,179,255,0.1); }
+    .navbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 
     /* Section card */
-    .section-card { background: rgba(19,42,62,0.6); border: 1px solid rgba(0,179,255,0.12); border-radius: 1.25rem; }
+    .section-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem; box-shadow: 0 1px 6px rgba(0,0,0,0.04); }
 
     /* Lead detail row */
-    .detail-row { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .detail-row { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
     .detail-row:last-child { border-bottom: none; }
-    .detail-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.35); width: 80px; flex-shrink: 0; padding-top: 2px; }
-    .detail-value { font-size: 0.85rem; color: rgba(255,255,255,0.85); flex: 1; }
+    .detail-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #94a3b8; width: 80px; flex-shrink: 0; padding-top: 2px; }
+    .detail-value { font-size: 0.85rem; color: #334155; flex: 1; }
 
-    /* Glow line */
-    .glow-line { height: 1px; background: linear-gradient(90deg, transparent, rgba(0,179,255,0.4), transparent); }
+    /* Divider line */
+    .glow-line { height: 1px; background: #f1f5f9; }
   </style>
 </head>
-<body class="grid-bg">
-
-  <!-- Background orbs -->
-  <div class="glow-orb w-[500px] h-[500px] -top-40 -left-40" style="background:#00B3FF;"></div>
-  <div class="glow-orb w-96 h-96 bottom-20 right-0" style="background:#00FFC5;"></div>
+<body>
 
   <!-- Navbar -->
   <nav class="navbar sticky top-0 z-30 px-6 py-3 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#00B3FF,#0060aa)">
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#0ea5e9,#0060aa)">
         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
         </svg>
       </div>
-      <span class="font-lexend text-white text-base tracking-tight">KI Katapult</span>
+      <span class="font-lexend text-slate-800 text-base tracking-tight">KI Katapult</span>
       <span class="chip chip-sky text-xs ml-2">Lead Generator</span>
     </div>
     <div class="flex items-center gap-4">
       <!-- Credits -->
-      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg" style="background:rgba(0,179,255,0.08); border:1px solid rgba(0,179,255,0.2)">
-        <svg class="w-3.5 h-3.5" style="color:#00B3FF" fill="currentColor" viewBox="0 0 20 20">
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg" style="background:#f0f9ff; border:1px solid #bae6fd">
+        <svg class="w-3.5 h-3.5 text-sky-500" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/>
         </svg>
-        <span class="text-xs font-semibold" style="color:#00B3FF">
+        <span class="text-xs font-semibold text-sky-600">
           <span x-text="credits"></span> Credits
         </span>
       </div>
@@ -221,7 +205,7 @@
           </svg>
           <span x-show="currentStep <= 1">1</span>
         </div>
-        <span class="text-xs font-medium whitespace-nowrap" :class="currentStep >= 1 ? 'text-white' : 'text-gray-600'">Website analysieren</span>
+        <span class="text-xs font-medium whitespace-nowrap" :class="currentStep >= 1 ? 'text-slate-700' : 'text-slate-400'">Website analysieren</span>
       </div>
       <div class="step-line mb-5" :class="currentStep > 1 ? 'done' : 'idle'"></div>
       <!-- Step 2 -->
@@ -232,7 +216,7 @@
           </svg>
           <span x-show="currentStep <= 2">2</span>
         </div>
-        <span class="text-xs font-medium whitespace-nowrap" :class="currentStep >= 2 ? 'text-white' : 'text-gray-600'">ICP prüfen</span>
+        <span class="text-xs font-medium whitespace-nowrap" :class="currentStep >= 2 ? 'text-slate-700' : 'text-slate-400'">ICP prüfen</span>
       </div>
       <div class="step-line mb-5" :class="currentStep > 2 ? 'done' : 'idle'"></div>
       <!-- Step 3 -->
@@ -243,7 +227,7 @@
           </svg>
           <span x-show="currentStep <= 3">3</span>
         </div>
-        <span class="text-xs font-medium whitespace-nowrap" :class="currentStep >= 3 ? 'text-white' : 'text-gray-600'">Leads finden</span>
+        <span class="text-xs font-medium whitespace-nowrap" :class="currentStep >= 3 ? 'text-slate-700' : 'text-slate-400'">Leads finden</span>
       </div>
     </div>
 
@@ -252,11 +236,11 @@
     ═══════════════════════════════════ -->
     <div x-show="view === 'input'" x-transition:enter="fade-up" class="max-w-2xl mx-auto">
       <div class="text-center mb-10">
-        <h1 class="font-lexend text-4xl text-white mb-3 leading-tight">
+        <h1 class="font-lexend text-4xl text-slate-800 mb-3 leading-tight">
           Ihre idealen Kunden –
-          <span style="background:linear-gradient(135deg,#00B3FF,#00FFC5);-webkit-background-clip:text;-webkit-text-fill-color:transparent">automatisch gefunden</span>
+          <span style="background:linear-gradient(135deg,#0ea5e9,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent">automatisch gefunden</span>
         </h1>
-        <p class="text-base" style="color:rgba(255,255,255,0.5)">
+        <p class="text-base text-slate-500">
           Geben Sie Ihre Website-URL ein. Die KI analysiert Ihr Angebot und erstellt ein Ideal Customer Profile.
         </p>
       </div>
@@ -282,21 +266,21 @@
 
         <!-- Example URLs -->
         <div class="mt-5 flex flex-wrap gap-2">
-          <span class="text-xs" style="color:rgba(255,255,255,0.3)">Beispiele:</span>
+          <span class="text-xs text-slate-400">Beispiele:</span>
           <button @click="url = 'https://www.haufe.de'" class="chip chip-gray text-xs cursor-pointer hover:opacity-80">haufe.de</button>
           <button @click="url = 'https://www.datev.de'" class="chip chip-gray text-xs cursor-pointer hover:opacity-80">datev.de</button>
           <button @click="url = 'https://www.wlw.de'" class="chip chip-gray text-xs cursor-pointer hover:opacity-80">wlw.de</button>
         </div>
 
         <!-- Info box -->
-        <div class="mt-6 p-4 rounded-xl" style="background:rgba(0,179,255,0.06); border:1px solid rgba(0,179,255,0.15)">
+        <div class="mt-6 p-4 rounded-xl" style="background:#f0f9ff; border:1px solid #bae6fd">
           <div class="flex gap-3">
-            <svg class="w-4 h-4 mt-0.5 flex-shrink-0" style="color:#00B3FF" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             <div>
-              <p class="text-xs font-semibold" style="color:#00B3FF">Wie es funktioniert</p>
-              <p class="text-xs mt-1" style="color:rgba(255,255,255,0.45)">
+              <p class="text-xs font-semibold text-sky-700">Wie es funktioniert</p>
+              <p class="text-xs mt-1 text-slate-500">
                 Die KI liest Ihre Website, versteht Ihr Angebot und erstellt automatisch ein ICP mit passenden Zielkunden, Jobtiteln und Schmerzpunkten. Anschließend werden passende Leads in der DACH-Region gefunden.
               </p>
             </div>
@@ -306,7 +290,7 @@
 
       <!-- Error -->
       <div x-show="error" class="mt-4 px-4 py-3 rounded-xl text-sm font-medium fade-in"
-           style="background:rgba(255,80,80,0.1); border:1px solid rgba(255,80,80,0.25); color:#ff9090;"
+           style="background:#fef2f2; border:1px solid #fecaca; color:#b91c1c;"
            x-text="error"></div>
     </div>
 
@@ -317,54 +301,54 @@
       <div class="section-card p-10 text-center">
         <!-- Animated icon -->
         <div class="w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center pulse-glow"
-             style="background:linear-gradient(135deg,rgba(0,179,255,0.2),rgba(0,179,255,0.05)); border:1px solid rgba(0,179,255,0.3)">
-          <svg class="w-7 h-7 spinner" style="color:#00B3FF" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             style="background:#f0f9ff; border:1px solid #bae6fd">
+          <svg class="w-7 h-7 spinner text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
         </div>
-        <h2 class="font-lexend text-xl text-white mb-1">Website wird analysiert</h2>
-        <p class="text-sm mb-8" style="color:rgba(255,255,255,0.45)" x-text="loadingUrl"></p>
+        <h2 class="font-lexend text-xl text-slate-800 mb-1">Website wird analysiert</h2>
+        <p class="text-sm text-slate-500 mb-8" x-text="loadingUrl"></p>
 
         <!-- Progress bar -->
-        <div class="w-full rounded-full h-1 mb-6" style="background:rgba(255,255,255,0.06)">
-          <div class="progress-bar h-1 rounded-full" style="background:linear-gradient(90deg,#00B3FF,#00FFC5)"></div>
+        <div class="w-full rounded-full h-1.5 mb-6 bg-slate-100">
+          <div class="progress-bar h-1.5 rounded-full" style="background:linear-gradient(90deg,#0ea5e9,#10b981)"></div>
         </div>
 
         <!-- Steps list -->
         <div class="text-left space-y-0">
           <div class="load-step" :class="analyzeStep >= 1 ? (analyzeStep > 1 ? 'done' : 'running') : 'waiting'">
             <div class="load-step-icon">
-              <svg x-show="analyzeStep > 1" class="w-4 h-4" style="color:#00FFC5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg x-show="analyzeStep > 1" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
               </svg>
-              <svg x-show="analyzeStep === 1" class="w-4 h-4 spinner" style="color:#00B3FF" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg x-show="analyzeStep === 1" class="w-4 h-4 spinner text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
               </svg>
-              <div x-show="analyzeStep < 1" class="w-1.5 h-1.5 rounded-full" style="background:rgba(255,255,255,0.2)"></div>
+              <div x-show="analyzeStep < 1" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="analyzeStep >= 1 ? 'text-white' : 'text-gray-600'">Website-Inhalt lesen</span>
+            <span class="text-sm" :class="analyzeStep >= 1 ? 'text-slate-700' : 'text-slate-400'">Website-Inhalt lesen</span>
           </div>
           <div class="load-step" :class="analyzeStep >= 2 ? (analyzeStep > 2 ? 'done' : 'running') : 'waiting'">
             <div class="load-step-icon">
-              <svg x-show="analyzeStep > 2" class="w-4 h-4" style="color:#00FFC5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg x-show="analyzeStep > 2" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
               </svg>
-              <svg x-show="analyzeStep === 2" class="w-4 h-4 spinner" style="color:#00B3FF" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg x-show="analyzeStep === 2" class="w-4 h-4 spinner text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
               </svg>
-              <div x-show="analyzeStep < 2" class="w-1.5 h-1.5 rounded-full" style="background:rgba(255,255,255,0.2)"></div>
+              <div x-show="analyzeStep < 2" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="analyzeStep >= 2 ? 'text-white' : 'text-gray-600'">KI analysiert Angebot & Zielgruppe</span>
+            <span class="text-sm" :class="analyzeStep >= 2 ? 'text-slate-700' : 'text-slate-400'">KI analysiert Angebot &amp; Zielgruppe</span>
           </div>
           <div class="load-step" :class="analyzeStep >= 3 ? 'done' : 'waiting'">
             <div class="load-step-icon">
-              <svg x-show="analyzeStep >= 3" class="w-4 h-4" style="color:#00FFC5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg x-show="analyzeStep >= 3" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
               </svg>
-              <div x-show="analyzeStep < 3" class="w-1.5 h-1.5 rounded-full" style="background:rgba(255,255,255,0.2)"></div>
+              <div x-show="analyzeStep < 3" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="analyzeStep >= 3 ? 'text-white' : 'text-gray-600'">ICP erstellt</span>
+            <span class="text-sm" :class="analyzeStep >= 3 ? 'text-slate-700' : 'text-slate-400'">ICP erstellt</span>
           </div>
         </div>
       </div>
@@ -378,10 +362,10 @@
       <div class="flex items-start justify-between mb-6">
         <div>
           <div class="flex items-center gap-3 mb-1">
-            <h2 class="font-lexend text-2xl text-white">Ideal Customer Profile</h2>
+            <h2 class="font-lexend text-2xl text-slate-800">Ideal Customer Profile</h2>
             <div x-show="icp && icp.is_demo" class="chip chip-mint text-xs">Demo-Daten</div>
           </div>
-          <p class="text-sm" style="color:rgba(255,255,255,0.45)">
+          <p class="text-sm text-slate-500">
             Prüfen und bearbeiten Sie das KI-generierte Profil, bevor die Leads gesucht werden.
           </p>
         </div>
@@ -418,7 +402,7 @@
                 <label class="field-label">MITARBEITER</label>
                 <div class="flex gap-2 items-center">
                   <input x-model.number="icp.company_size_min" class="field w-full px-3 py-3 text-sm text-center" type="number" min="1" />
-                  <span class="text-xs" style="color:rgba(255,255,255,0.3)">–</span>
+                  <span class="text-xs text-slate-400">–</span>
                   <input x-model.number="icp.company_size_max" class="field w-full px-3 py-3 text-sm text-center" type="number" min="1" />
                 </div>
               </div>
@@ -451,7 +435,7 @@
                 @keydown.tab.prevent="addTitle($event)"
               />
             </div>
-            <p class="text-xs mt-2" style="color:rgba(255,255,255,0.25)">Enter drücken zum Hinzufügen</p>
+            <p class="text-xs mt-2 text-slate-400">Enter drücken zum Hinzufügen</p>
           </div>
 
           <!-- Pain signals -->
@@ -460,7 +444,7 @@
             <div class="space-y-2 mb-3">
               <template x-for="(pain, index) in icp.pain_signals" :key="index">
                 <div class="flex gap-2 items-center group">
-                  <div class="w-1.5 h-1.5 rounded-full flex-shrink-0 mt-0.5" style="background:#00B3FF"></div>
+                  <div class="w-1.5 h-1.5 rounded-full flex-shrink-0 mt-0.5 bg-sky-400"></div>
                   <input
                     x-model="icp.pain_signals[index]"
                     class="field flex-1 px-3 py-2.5 text-sm"
@@ -468,7 +452,7 @@
                     placeholder="Schmerzpunkt..."
                   />
                   <button @click="icp.pain_signals.splice(index, 1)"
-                    class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-red-500/10">
+                    class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-red-50">
                     <svg class="w-3.5 h-3.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -477,8 +461,7 @@
               </template>
             </div>
             <button @click="icp.pain_signals.push('')"
-              class="text-xs font-medium flex items-center gap-1.5 hover:opacity-80 transition-opacity"
-              style="color:#00B3FF">
+              class="text-xs font-medium flex items-center gap-1.5 hover:opacity-80 transition-opacity text-sky-600">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
               </svg>
@@ -492,33 +475,33 @@
           <!-- ICP summary card -->
           <div class="section-card p-6">
             <div class="flex items-center gap-2 mb-4">
-              <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(0,255,197,0.1); border:1px solid rgba(0,255,197,0.25)">
-                <svg class="w-4 h-4" style="color:#00FFC5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:#f0fdf4; border:1px solid #a7f3d0">
+                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
                 </svg>
               </div>
-              <span class="font-semibold text-sm text-white">ICP Zusammenfassung</span>
+              <span class="font-semibold text-sm text-slate-700">ICP Zusammenfassung</span>
             </div>
             <div class="space-y-3 text-xs">
               <div>
-                <span class="text-xs font-semibold uppercase tracking-wider" style="color:rgba(255,255,255,0.35)">Unternehmen</span>
-                <p class="text-white mt-0.5 font-medium" x-text="icp?.company_name || '—'"></p>
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Unternehmen</span>
+                <p class="text-slate-800 mt-0.5 font-medium" x-text="icp?.company_name || '—'"></p>
               </div>
               <div class="glow-line"></div>
               <div>
-                <span class="text-xs font-semibold uppercase tracking-wider" style="color:rgba(255,255,255,0.35)">Branche</span>
-                <p class="mt-0.5" style="color:rgba(255,255,255,0.8)" x-text="icp?.industry || '—'"></p>
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Branche</span>
+                <p class="mt-0.5 text-slate-700" x-text="icp?.industry || '—'"></p>
               </div>
               <div class="glow-line"></div>
               <div>
-                <span class="text-xs font-semibold uppercase tracking-wider" style="color:rgba(255,255,255,0.35)">Größe</span>
-                <p class="mt-0.5" style="color:rgba(255,255,255,0.8)">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Größe</span>
+                <p class="mt-0.5 text-slate-700">
                   <span x-text="icp?.company_size_min"></span>–<span x-text="icp?.company_size_max"></span> MA
                 </p>
               </div>
               <div class="glow-line"></div>
               <div>
-                <span class="text-xs font-semibold uppercase tracking-wider" style="color:rgba(255,255,255,0.35)">Jobtitel</span>
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Jobtitel</span>
                 <div class="mt-1.5 flex flex-wrap gap-1.5">
                   <template x-for="t in (icp?.titles || []).slice(0, 4)" :key="t">
                     <span class="chip chip-sky py-0.5 text-xs" x-text="t"></span>
@@ -539,7 +522,7 @@
             </svg>
             10 Leads finden
           </button>
-          <p class="text-xs text-center mt-2" style="color:rgba(255,255,255,0.25)">
+          <p class="text-xs text-center mt-2 text-slate-400">
             Sucht passende Unternehmen in der DACH-Region
           </p>
         </div>
@@ -552,65 +535,65 @@
     <div x-show="view === 'finding'" x-transition:enter="fade-up" class="max-w-lg mx-auto">
       <div class="section-card p-10 text-center">
         <div class="w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center pulse-glow"
-             style="background:linear-gradient(135deg,rgba(0,255,197,0.15),rgba(0,255,197,0.03)); border:1px solid rgba(0,255,197,0.25)">
-          <svg class="w-7 h-7 spinner" style="color:#00FFC5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             style="background:#f0fdf4; border:1px solid #a7f3d0">
+          <svg class="w-7 h-7 spinner text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
         </div>
-        <h2 class="font-lexend text-xl text-white mb-1">Leads werden gesucht</h2>
-        <p class="text-sm mb-8" style="color:rgba(255,255,255,0.45)">
+        <h2 class="font-lexend text-xl text-slate-800 mb-1">Leads werden gesucht</h2>
+        <p class="text-sm text-slate-500 mb-8">
           KI durchsucht DACH-Unternehmensverzeichnisse...
         </p>
 
-        <div class="w-full rounded-full h-1 mb-6" style="background:rgba(255,255,255,0.06)">
-          <div class="progress-bar-fast h-1 rounded-full" style="background:linear-gradient(90deg,#00FFC5,#00B3FF)"></div>
+        <div class="w-full rounded-full h-1.5 mb-6 bg-slate-100">
+          <div class="progress-bar-fast h-1.5 rounded-full" style="background:linear-gradient(90deg,#10b981,#0ea5e9)"></div>
         </div>
 
         <div class="text-left space-y-0">
           <div class="load-step" :class="leadStep >= 1 ? (leadStep > 1 ? 'done' : 'running') : 'waiting'">
             <div class="load-step-icon">
-              <svg x-show="leadStep > 1" class="w-4 h-4" style="color:#00FFC5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg x-show="leadStep > 1" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
               </svg>
-              <svg x-show="leadStep === 1" class="w-4 h-4 spinner" style="color:#00FFC5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg x-show="leadStep === 1" class="w-4 h-4 spinner text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
               </svg>
-              <div x-show="leadStep < 1" class="w-1.5 h-1.5 rounded-full" style="background:rgba(255,255,255,0.2)"></div>
+              <div x-show="leadStep < 1" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="leadStep >= 1 ? 'text-white' : 'text-gray-600'">ICP an KI übergeben</span>
+            <span class="text-sm" :class="leadStep >= 1 ? 'text-slate-700' : 'text-slate-400'">ICP an KI übergeben</span>
           </div>
           <div class="load-step" :class="leadStep >= 2 ? (leadStep > 2 ? 'done' : 'running') : 'waiting'">
             <div class="load-step-icon">
-              <svg x-show="leadStep > 2" class="w-4 h-4" style="color:#00FFC5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg x-show="leadStep > 2" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
               </svg>
-              <svg x-show="leadStep === 2" class="w-4 h-4 spinner" style="color:#00FFC5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg x-show="leadStep === 2" class="w-4 h-4 spinner text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
               </svg>
-              <div x-show="leadStep < 2" class="w-1.5 h-1.5 rounded-full" style="background:rgba(255,255,255,0.2)"></div>
+              <div x-show="leadStep < 2" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="leadStep >= 2 ? 'text-white' : 'text-gray-600'">Unternehmensverzeichnisse durchsuchen</span>
+            <span class="text-sm" :class="leadStep >= 2 ? 'text-slate-700' : 'text-slate-400'">Unternehmensverzeichnisse durchsuchen</span>
           </div>
           <div class="load-step" :class="leadStep >= 3 ? (leadStep > 3 ? 'done' : 'running') : 'waiting'">
             <div class="load-step-icon">
-              <svg x-show="leadStep > 3" class="w-4 h-4" style="color:#00FFC5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg x-show="leadStep > 3" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
               </svg>
-              <svg x-show="leadStep === 3" class="w-4 h-4 spinner" style="color:#00FFC5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg x-show="leadStep === 3" class="w-4 h-4 spinner text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
               </svg>
-              <div x-show="leadStep < 3" class="w-1.5 h-1.5 rounded-full" style="background:rgba(255,255,255,0.2)"></div>
+              <div x-show="leadStep < 3" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="leadStep >= 3 ? 'text-white' : 'text-gray-600'">Kontaktdaten anreichern</span>
+            <span class="text-sm" :class="leadStep >= 3 ? 'text-slate-700' : 'text-slate-400'">Kontaktdaten anreichern</span>
           </div>
           <div class="load-step" :class="leadStep >= 4 ? 'done' : 'waiting'">
             <div class="load-step-icon">
-              <svg x-show="leadStep >= 4" class="w-4 h-4" style="color:#00FFC5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg x-show="leadStep >= 4" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
               </svg>
-              <div x-show="leadStep < 4" class="w-1.5 h-1.5 rounded-full" style="background:rgba(255,255,255,0.2)"></div>
+              <div x-show="leadStep < 4" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="leadStep >= 4 ? 'text-white' : 'text-gray-600'">Lead-Liste fertig</span>
+            <span class="text-sm" :class="leadStep >= 4 ? 'text-slate-700' : 'text-slate-400'">Lead-Liste fertig</span>
           </div>
         </div>
       </div>
@@ -624,18 +607,18 @@
       <div class="flex items-center justify-between mb-6">
         <div>
           <div class="flex items-center gap-3 mb-1">
-            <h2 class="font-lexend text-2xl text-white">Lead-Liste</h2>
+            <h2 class="font-lexend text-2xl text-slate-800">Lead-Liste</h2>
             <span class="chip chip-mint text-xs" x-text="leads.length + ' Leads gefunden'"></span>
             <div x-show="isDemo" class="chip chip-gray text-xs">Demo-Daten</div>
           </div>
-          <p class="text-sm" style="color:rgba(255,255,255,0.45)">
-            Passende Unternehmen für <span class="text-white font-medium" x-text="icp?.company_name || 'Ihr Unternehmen'"></span>
+          <p class="text-sm text-slate-500">
+            Passende Unternehmen für <span class="text-slate-800 font-medium" x-text="icp?.company_name || 'Ihr Unternehmen'"></span>
           </p>
         </div>
         <div class="flex items-center gap-3">
           <!-- Search filter -->
           <div class="relative">
-            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2" style="color:rgba(255,255,255,0.3)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
             <input
@@ -667,15 +650,15 @@
       <div class="section-card p-5 mb-6 flex flex-wrap gap-6">
         <div>
           <span class="field-label">BRANCHE</span>
-          <span class="text-sm text-white font-medium" x-text="icp?.industry"></span>
+          <span class="text-sm text-slate-800 font-medium" x-text="icp?.industry"></span>
         </div>
         <div>
           <span class="field-label">REGION</span>
-          <span class="text-sm text-white font-medium" x-text="icp?.location"></span>
+          <span class="text-sm text-slate-800 font-medium" x-text="icp?.location"></span>
         </div>
         <div>
           <span class="field-label">UNTERNEHMENSGRÖSSE</span>
-          <span class="text-sm text-white font-medium"><span x-text="icp?.company_size_min"></span>–<span x-text="icp?.company_size_max"></span> MA</span>
+          <span class="text-sm text-slate-800 font-medium"><span x-text="icp?.company_size_min"></span>–<span x-text="icp?.company_size_max"></span> MA</span>
         </div>
         <div>
           <span class="field-label">ZIEL-JOBTITEL</span>
@@ -706,42 +689,41 @@
               <template x-for="(lead, index) in filteredLeads" :key="index">
                 <tr @click="openModal(lead)" class="cursor-pointer">
                   <td>
-                    <span class="text-xs font-mono" style="color:rgba(255,255,255,0.3)" x-text="index + 1"></span>
+                    <span class="text-xs font-mono text-slate-400" x-text="index + 1"></span>
                   </td>
                   <td>
-                    <div class="font-semibold text-white text-sm" x-text="lead.company_name"></div>
+                    <div class="font-semibold text-slate-800 text-sm" x-text="lead.company_name"></div>
                     <a
                       :href="lead.website || '#'"
                       target="_blank"
                       rel="noopener"
-                      class="text-xs hover:underline"
-                      style="color:#00B3FF"
+                      class="text-xs hover:underline text-sky-500"
                       x-text="lead.website?.replace('https://','').replace('http://','') || '—'"
                       @click.stop
                     ></a>
                   </td>
                   <td>
-                    <div class="text-sm text-white" x-text="lead.contact_name || '—'"></div>
-                    <div class="text-xs" style="color:rgba(255,255,255,0.4)" x-text="lead.role || ''"></div>
+                    <div class="text-sm text-slate-700" x-text="lead.contact_name || '—'"></div>
+                    <div class="text-xs text-slate-400" x-text="lead.role || ''"></div>
                   </td>
                   <td>
                     <span x-show="lead.email && lead.email !== 'N/A'"
-                      class="text-xs font-mono" style="color:#00FFC5" x-text="lead.email"></span>
+                      class="text-xs font-mono text-emerald-600" x-text="lead.email"></span>
                     <span x-show="!lead.email || lead.email === 'N/A'"
-                      class="text-xs" style="color:rgba(255,255,255,0.2)">—</span>
+                      class="text-xs text-slate-300">—</span>
                   </td>
                   <td>
                     <span x-show="lead.phone && lead.phone !== 'N/A'"
-                      class="text-xs font-mono text-white" x-text="lead.phone"></span>
+                      class="text-xs font-mono text-slate-700" x-text="lead.phone"></span>
                     <span x-show="!lead.phone || lead.phone === 'N/A'"
-                      class="text-xs" style="color:rgba(255,255,255,0.2)">—</span>
+                      class="text-xs text-slate-300">—</span>
                   </td>
                   <td>
                     <span class="chip chip-gray text-xs" x-text="lead.source || '—'"></span>
                   </td>
                   <td>
                     <div class="flex justify-end">
-                      <svg class="w-4 h-4" style="color:rgba(255,255,255,0.2)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                       </svg>
                     </div>
@@ -750,7 +732,7 @@
               </template>
               <!-- Empty state -->
               <tr x-show="filteredLeads.length === 0">
-                <td colspan="7" class="text-center py-10 text-sm" style="color:rgba(255,255,255,0.3)">
+                <td colspan="7" class="text-center py-10 text-sm text-slate-400">
                   Keine Leads gefunden – bitte Filter anpassen.
                 </td>
               </tr>
@@ -771,17 +753,17 @@
     class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop"
     @click.self="selectedLead = null"
   >
-    <div class="glass-dark rounded-2xl w-full max-w-lg p-0 overflow-hidden" @click.stop>
+    <div class="bg-white rounded-2xl w-full max-w-lg p-0 overflow-hidden shadow-xl border border-slate-200" @click.stop>
       <!-- Modal header -->
-      <div class="px-6 py-5 flex items-start justify-between" style="border-bottom:1px solid rgba(255,255,255,0.07)">
+      <div class="px-6 py-5 flex items-start justify-between border-b border-slate-100">
         <div>
-          <h3 class="font-lexend text-lg text-white" x-text="selectedLead?.company_name"></h3>
+          <h3 class="font-lexend text-lg text-slate-800" x-text="selectedLead?.company_name"></h3>
           <a :href="selectedLead?.website || '#'" target="_blank" rel="noopener"
-             class="text-xs hover:underline" style="color:#00B3FF"
+             class="text-xs hover:underline text-sky-500"
              x-text="selectedLead?.website?.replace('https://','').replace('http://','') || ''"></a>
         </div>
-        <button @click="selectedLead = null" class="p-2 rounded-lg hover:bg-white/5 transition-colors">
-          <svg class="w-4 h-4" style="color:rgba(255,255,255,0.4)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button @click="selectedLead = null" class="p-2 rounded-lg hover:bg-slate-100 transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
@@ -791,7 +773,7 @@
       <div class="px-6 py-5 space-y-1">
         <div class="detail-row">
           <span class="detail-label">Kontakt</span>
-          <span class="detail-value font-medium text-white" x-text="selectedLead?.contact_name || '—'"></span>
+          <span class="detail-value font-medium text-slate-800" x-text="selectedLead?.contact_name || '—'"></span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Rolle</span>
@@ -801,19 +783,19 @@
           <span class="detail-label">E-Mail</span>
           <a x-show="selectedLead?.email && selectedLead?.email !== 'N/A'"
              :href="'mailto:' + selectedLead?.email"
-             class="detail-value font-mono text-sm hover:underline" style="color:#00FFC5"
+             class="detail-value font-mono text-sm hover:underline text-emerald-600"
              x-text="selectedLead?.email"></a>
           <span x-show="!selectedLead?.email || selectedLead?.email === 'N/A'"
-                class="detail-value" style="color:rgba(255,255,255,0.25)">Nicht verfügbar</span>
+                class="detail-value text-slate-300">Nicht verfügbar</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Telefon</span>
           <a x-show="selectedLead?.phone && selectedLead?.phone !== 'N/A'"
              :href="'tel:' + selectedLead?.phone"
-             class="detail-value font-mono text-sm hover:underline text-white"
+             class="detail-value font-mono text-sm hover:underline text-slate-700"
              x-text="selectedLead?.phone"></a>
           <span x-show="!selectedLead?.phone || selectedLead?.phone === 'N/A'"
-                class="detail-value" style="color:rgba(255,255,255,0.25)">Nicht verfügbar</span>
+                class="detail-value text-slate-300">Nicht verfügbar</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Quelle</span>
@@ -822,9 +804,9 @@
       </div>
 
       <!-- Notes section -->
-      <div x-show="selectedLead?.notes" class="mx-6 mb-5 p-4 rounded-xl" style="background:rgba(0,179,255,0.05); border:1px solid rgba(0,179,255,0.15)">
-        <p class="text-xs font-semibold uppercase tracking-wider mb-2" style="color:#00B3FF">KI-Analyse: Warum dieser Lead?</p>
-        <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.75)" x-text="selectedLead?.notes"></p>
+      <div x-show="selectedLead?.notes" class="mx-6 mb-5 p-4 rounded-xl" style="background:#f0f9ff; border:1px solid #bae6fd">
+        <p class="text-xs font-semibold uppercase tracking-wider mb-2 text-sky-700">KI-Analyse: Warum dieser Lead?</p>
+        <p class="text-sm leading-relaxed text-slate-600" x-text="selectedLead?.notes"></p>
       </div>
 
       <!-- Modal footer -->
@@ -987,6 +969,7 @@
               const d = await res.json().catch(() => ({}));
               throw new Error(d.detail || 'Lead-Suche fehlgeschlagen');
             }
+
 
             const data = await res.json();
             clearTimeout(t2); clearTimeout(t3); clearTimeout(t4);

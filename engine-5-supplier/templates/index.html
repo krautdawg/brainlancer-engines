@@ -11,68 +11,68 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --primary: #132A3E;
-      --accent: #00B3FF;
-      --highlight: #00FFC5;
+      --primary: #f8fafc;
+      --accent: #0ea5e9;
+      --highlight: #10b981;
     }
-    body { font-family: 'Inter', sans-serif; background: #0e1f2e; color: #e2e8f0; }
-    .sidebar { background: #132A3E; width: 240px; min-height: 100vh; flex-shrink: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; }
+    .sidebar { background: #ffffff; border-right: 1px solid #e2e8f0; width: 240px; min-height: 100vh; flex-shrink: 0; }
     .nav-item { transition: all .15s; }
-    .nav-item:hover, .nav-item.active { background: rgba(0,179,255,.15); color: #00B3FF; }
-    .nav-item.active { border-left: 3px solid #00B3FF; }
-    .card { background: #1a3347; border: 1px solid rgba(0,179,255,.12); border-radius: 10px; }
-    .btn-primary { background: #00B3FF; color: #132A3E; font-weight: 600; transition: opacity .15s; }
-    .btn-primary:hover { opacity: .85; }
-    .btn-ghost { border: 1px solid rgba(0,179,255,.3); color: #00B3FF; transition: all .15s; }
-    .btn-ghost:hover { background: rgba(0,179,255,.1); }
+    .nav-item:hover, .nav-item.active { background: #f1f5f9; color: #0ea5e9; }
+    .nav-item.active { border-left: 3px solid #0ea5e9; }
+    .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; }
+    .btn-primary { background: #0ea5e9; color: #ffffff; font-weight: 600; transition: background .15s; }
+    .btn-primary:hover { background: #0284c7; }
+    .btn-ghost { border: 1px solid #cbd5e1; color: #475569; transition: all .15s; }
+    .btn-ghost:hover { background: #f8fafc; }
     .btn-danger { background: #ef4444; color: white; font-weight: 600; }
-    .badge-green  { background: rgba(0,255,197,.15); color: #00FFC5; border: 1px solid rgba(0,255,197,.3); }
-    .badge-yellow { background: rgba(234,179,8,.15);  color: #eab308; border: 1px solid rgba(234,179,8,.3); }
-    .badge-red    { background: rgba(239,68,68,.15);   color: #ef4444; border: 1px solid rgba(239,68,68,.3); }
-    .badge-blue   { background: rgba(0,179,255,.15);  color: #00B3FF; border: 1px solid rgba(0,179,255,.3); }
-    .badge-gray   { background: rgba(148,163,184,.1); color: #94a3b8; border: 1px solid rgba(148,163,184,.2); }
+    .badge-green  { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+    .badge-yellow { background: #fefce8; color: #ca8a04; border: 1px solid #fde68a; }
+    .badge-red    { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .badge-blue   { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+    .badge-gray   { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
     .input {
-      background: #0e1f2e; border: 1px solid rgba(0,179,255,.2); color: #e2e8f0;
+      background: #ffffff; border: 1px solid #cbd5e1; color: #1e293b;
       border-radius: 6px; padding: 8px 12px; width: 100%;
-      transition: border-color .15s;
+      transition: border-color .15s, box-shadow .15s;
     }
-    .input:focus { outline: none; border-color: #00B3FF; }
-    select.input option { background: #1a3347; }
-    .kanban-col { background: #112235; border: 1px solid rgba(0,179,255,.1); border-radius: 10px; min-height: 300px; flex: 1; }
-    .kanban-card { background: #1a3347; border: 1px solid rgba(0,179,255,.15); border-radius: 8px; transition: transform .15s, border-color .15s; cursor: pointer; }
-    .kanban-card:hover { transform: translateY(-2px); border-color: rgba(0,179,255,.4); }
-    .kanban-card.overdue { border-color: rgba(239,68,68,.5); }
+    .input:focus { outline: none; border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.15); }
+    select.input option { background: #ffffff; color: #1e293b; }
+    .kanban-col { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 10px; min-height: 300px; flex: 1; }
+    .kanban-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; transition: transform .15s, box-shadow .15s; cursor: pointer; }
+    .kanban-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .kanban-card.overdue { border-color: #fca5a5; }
     .score-ring { border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-    .modal-overlay { background: rgba(0,0,0,.7); backdrop-filter: blur(4px); }
-    .modal-box { background: #1a3347; border: 1px solid rgba(0,179,255,.2); border-radius: 12px; max-height: 90vh; overflow-y: auto; }
+    .modal-overlay { background: rgba(15,23,42,0.5); }
+    .modal-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; max-height: 90vh; overflow-y: auto; }
     .deviation-bar { height: 8px; border-radius: 4px; transition: width .5s ease; }
     [x-cloak] { display: none !important; }
     .scrollbar-thin::-webkit-scrollbar { width: 4px; }
     .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-    .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(0,179,255,.3); border-radius: 2px; }
-    .tab-active { background: #00B3FF; color: #132A3E; }
-    .level-1 { color: #94a3b8; }
-    .level-2 { color: #eab308; }
-    .level-3 { color: #ef4444; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+    .tab-active { background: #0ea5e9; color: #ffffff; }
+    .level-1 { color: #64748b; }
+    .level-2 { color: #ca8a04; }
+    .level-3 { color: #dc2626; }
   </style>
 </head>
 
 <body x-cloak>
 
 <!-- LOGIN -->
-<div x-show="!authenticated" class="fixed inset-0 flex items-center justify-center z-50" style="background:#0e1f2e">
-  <div class="card p-10 w-full max-w-md text-center">
+<div x-show="!authenticated" class="fixed inset-0 flex items-center justify-center z-50" style="background:#f8fafc">
+  <div class="card shadow-xl p-10 w-full max-w-md text-center">
     <div class="mb-6">
       <div class="inline-flex items-center gap-2 mb-2">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:#00B3FF">
-          <svg class="w-5 h-5" style="color:#132A3E" fill="currentColor" viewBox="0 0 24 24">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-sky-500">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
             <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10z"/>
           </svg>
         </div>
-        <span class="font-bold text-lg" style="color:#00B3FF">KI Katapult</span>
+        <span class="font-bold text-lg text-sky-500">KI Katapult</span>
       </div>
-      <h1 class="text-2xl font-bold text-white">Lieferanten-Monitor</h1>
-      <p class="text-slate-400 mt-1 text-sm">Engine 5 — Supplier &amp; PO Tracking</p>
+      <h1 class="text-2xl font-bold text-slate-800">Lieferanten-Monitor</h1>
+      <p class="text-slate-500 mt-1 text-sm">Engine 5 — Supplier &amp; PO Tracking</p>
     </div>
     <div class="space-y-4">
       <input type="password" x-model="loginPassword" @keydown.enter="doLogin()"
@@ -80,7 +80,7 @@
       <button @click="doLogin()" class="btn-primary w-full py-3 rounded-lg">
         Anmelden
       </button>
-      <p x-show="loginError" class="text-red-400 text-sm" x-text="loginError"></p>
+      <p x-show="loginError" class="text-red-500 text-sm" x-text="loginError"></p>
     </div>
   </div>
 </div>
@@ -92,21 +92,21 @@
   <div class="sidebar flex flex-col py-6">
     <div class="px-5 mb-8">
       <div class="flex items-center gap-2 mb-1">
-        <div class="w-7 h-7 rounded flex items-center justify-center" style="background:#00B3FF">
-          <svg class="w-4 h-4" style="color:#132A3E" fill="currentColor" viewBox="0 0 24 24">
+        <div class="w-7 h-7 rounded flex items-center justify-center bg-sky-500">
+          <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
             <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10z"/>
           </svg>
         </div>
-        <span class="font-bold text-sm" style="color:#00B3FF">KI Katapult</span>
+        <span class="font-bold text-sm text-sky-500">KI Katapult</span>
       </div>
-      <p class="text-xs text-slate-400">Engine 5 — Lieferanten</p>
+      <p class="text-xs text-slate-500">Engine 5 — Lieferanten</p>
     </div>
 
     <nav class="flex-1 space-y-1 px-3">
       <template x-for="item in navItems" :key="item.id">
         <button @click="setView(item.id)"
                 :class="['nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-left',
-                         currentView === item.id ? 'active text-blue-300' : 'text-slate-300']">
+                         currentView === item.id ? 'active text-sky-600' : 'text-slate-600']">
           <span x-html="item.icon"></span>
           <span x-text="item.label"></span>
           <template x-if="item.badge > 0">
@@ -120,7 +120,7 @@
       <button @click="loadDemo()" class="btn-ghost w-full py-2 rounded-lg text-sm">
         Demo-Daten laden
       </button>
-      <button @click="doLogout()" class="w-full py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 transition-colors">
+      <button @click="doLogout()" class="w-full py-2 rounded-lg text-sm text-slate-500 hover:text-slate-800 transition-colors">
         Abmelden
       </button>
     </div>
@@ -130,17 +130,17 @@
   <div class="flex-1 flex flex-col overflow-hidden">
 
     <!-- TOPBAR -->
-    <div class="flex items-center justify-between px-6 py-4 border-b" style="border-color:rgba(0,179,255,.1); background:#132A3E">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white">
       <div>
-        <h1 class="font-bold text-lg text-white" x-text="currentViewLabel"></h1>
-        <p class="text-xs text-slate-400" x-text="currentViewSub"></p>
+        <h1 class="font-bold text-lg text-slate-800" x-text="currentViewLabel"></h1>
+        <p class="text-xs text-slate-500" x-text="currentViewSub"></p>
       </div>
       <div class="flex items-center gap-3">
         <div x-show="summary.overdue_count > 0" class="flex items-center gap-1.5 badge-red px-3 py-1.5 rounded-lg text-xs font-semibold">
           <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
           <span x-text="summary.overdue_count + ' überfällig'"></span>
         </div>
-        <div class="text-xs text-slate-400" x-text="new Date().toLocaleDateString('de-DE', {day:'2-digit',month:'long',year:'numeric'})"></div>
+        <div class="text-xs text-slate-500" x-text="new Date().toLocaleDateString('de-DE', {day:'2-digit',month:'long',year:'numeric'})"></div>
       </div>
     </div>
 
@@ -150,54 +150,54 @@
       <div x-show="currentView === 'dashboard'" class="space-y-6">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div class="card p-5">
-            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">Gesamt-Bestellungen</p>
-            <p class="text-3xl font-bold text-white" x-text="summary.total_pos || 0"></p>
-            <p class="text-xs text-slate-400 mt-1" x-text="(summary.supplier_count||0) + ' Lieferanten'"></p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Gesamt-Bestellungen</p>
+            <p class="text-3xl font-bold text-slate-800" x-text="summary.total_pos || 0"></p>
+            <p class="text-xs text-slate-500 mt-1" x-text="(summary.supplier_count||0) + ' Lieferanten'"></p>
           </div>
           <div class="card p-5">
-            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">Gesamtvolumen</p>
-            <p class="text-3xl font-bold" style="color:#00FFC5" x-text="formatCurrency(summary.total_spend||0)"></p>
-            <p class="text-xs text-slate-400 mt-1">Bestellwert gesamt</p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Gesamtvolumen</p>
+            <p class="text-3xl font-bold text-emerald-600" x-text="formatCurrency(summary.total_spend||0)"></p>
+            <p class="text-xs text-slate-500 mt-1">Bestellwert gesamt</p>
           </div>
           <div class="card p-5">
-            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">Überfällig</p>
-            <p class="text-3xl font-bold text-red-400" x-text="summary.overdue_count || 0"></p>
-            <p class="text-xs text-slate-400 mt-1">Bestellungen überfällig</p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Überfällig</p>
+            <p class="text-3xl font-bold text-red-500" x-text="summary.overdue_count || 0"></p>
+            <p class="text-xs text-slate-500 mt-1">Bestellungen überfällig</p>
           </div>
           <div class="card p-5">
-            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">Preisabweichungen</p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Preisabweichungen</p>
             <div class="flex items-end gap-2">
-              <p class="text-3xl font-bold text-yellow-400" x-text="(summary.yellow_flags||0)+(summary.red_flags||0)"></p>
+              <p class="text-3xl font-bold text-amber-500" x-text="(summary.yellow_flags||0)+(summary.red_flags||0)"></p>
             </div>
-            <p class="text-xs text-slate-400 mt-1" x-text="(summary.red_flags||0) + ' kritisch (rot)'"></p>
+            <p class="text-xs text-slate-500 mt-1" x-text="(summary.red_flags||0) + ' kritisch (rot)'"></p>
           </div>
         </div>
 
         <!-- Quick status overview -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="card p-5">
-            <h3 class="font-semibold text-slate-200 mb-4">PO-Status Übersicht</h3>
+            <h3 class="font-semibold text-slate-700 mb-4">PO-Status Übersicht</h3>
             <div class="space-y-3">
               <template x-for="st in statusSummary" :key="st.status">
                 <div class="flex items-center gap-3">
-                  <span class="text-xs w-20 text-slate-400" x-text="st.label"></span>
-                  <div class="flex-1 bg-slate-800 rounded-full h-2">
+                  <span class="text-xs w-20 text-slate-500" x-text="st.label"></span>
+                  <div class="flex-1 bg-slate-100 rounded-full h-2">
                     <div class="h-2 rounded-full transition-all duration-500"
                          :style="{width: (st.count/(summary.total_pos||1)*100)+'%', background: st.color}"></div>
                   </div>
-                  <span class="text-sm font-semibold text-white w-6 text-right" x-text="st.count"></span>
+                  <span class="text-sm font-semibold text-slate-800 w-6 text-right" x-text="st.count"></span>
                 </div>
               </template>
             </div>
           </div>
 
           <div class="card p-5">
-            <h3 class="font-semibold text-slate-200 mb-4">Letzte Aktivität</h3>
+            <h3 class="font-semibold text-slate-700 mb-4">Letzte Aktivität</h3>
             <div class="space-y-2 text-sm">
               <template x-for="po in recentPos.slice(0,6)" :key="po.id">
-                <div class="flex items-center justify-between py-1.5 border-b" style="border-color:rgba(0,179,255,.08)">
+                <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
                   <div>
-                    <span class="font-medium text-white" x-text="po.po_number"></span>
+                    <span class="font-medium text-slate-800" x-text="po.po_number"></span>
                     <span class="text-slate-400 ml-2 text-xs" x-text="po.supplier_name"></span>
                   </div>
                   <span class="text-xs px-2 py-0.5 rounded-full" :class="statusBadge(po.status, po.is_overdue)" x-text="statusLabel(po.status, po.is_overdue)"></span>
@@ -233,7 +233,7 @@
             CSV hochladen
             <input type="file" accept=".csv" @change="uploadCSV($event)" class="hidden" />
           </label>
-          <a href="#" @click.prevent="downloadCSVTemplate()" class="text-xs text-slate-400 hover:text-blue-300 underline">CSV-Vorlage herunterladen</a>
+          <a href="#" @click.prevent="downloadCSVTemplate()" class="text-xs text-slate-500 hover:text-sky-600 underline">CSV-Vorlage herunterladen</a>
         </div>
 
         <!-- Kanban Board -->
@@ -248,18 +248,17 @@
                 <template x-for="po in filteredKanbanCards(col.status)" :key="po.id">
                   <div class="kanban-card p-3" :class="po.is_overdue ? 'overdue' : ''" @click="openPODetail(po)">
                     <div class="flex items-start justify-between mb-1">
-                      <span class="text-xs font-bold text-white" x-text="po.po_number"></span>
+                      <span class="text-xs font-bold text-slate-800" x-text="po.po_number"></span>
                       <span x-show="po.is_overdue" class="text-red-400 text-xs font-bold">!</span>
                     </div>
-                    <p class="text-xs text-slate-300 mb-1.5" x-text="po.supplier_name"></p>
-                    <p class="text-xs font-semibold" style="color:#00FFC5" x-text="formatCurrency(po.total_value)"></p>
+                    <p class="text-xs text-slate-500 mb-1.5" x-text="po.supplier_name"></p>
+                    <p class="text-xs font-semibold text-emerald-600" x-text="formatCurrency(po.total_value)"></p>
                     <p x-show="po.expected_delivery" class="text-xs text-slate-400 mt-1" x-text="'Bis: ' + formatDate(po.expected_delivery)"></p>
                     <p x-show="po.is_overdue" class="text-xs text-red-400 mt-0.5 font-medium">Überfällig</p>
                     <div class="flex gap-1 mt-2 flex-wrap">
                       <template x-for="nextStatus in nextStatuses(po.status)" :key="nextStatus.s">
                         <button @click.stop="moveStatus(po, nextStatus.s)"
-                                class="text-xs px-2 py-0.5 rounded border transition-colors"
-                                style="border-color:rgba(0,179,255,.3); color:#00B3FF"
+                                class="text-xs px-2 py-0.5 rounded border border-sky-200 text-sky-600 hover:bg-sky-50 transition-colors"
                                 :title="'→ ' + nextStatus.l"
                                 x-text="'→ ' + nextStatus.l"></button>
                       </template>
@@ -287,7 +286,7 @@
             <div class="card p-5 cursor-pointer hover:border-blue-400 transition-colors" @click="openSupplierDetail(s)">
               <div class="flex items-start justify-between mb-3">
                 <div>
-                  <h3 class="font-semibold text-white" x-text="s.name"></h3>
+                  <h3 class="font-semibold text-slate-800" x-text="s.name"></h3>
                   <p class="text-xs text-slate-400 mt-0.5" x-text="s.category || 'Allgemein'"></p>
                 </div>
                 <div class="score-ring w-12 h-12 text-sm font-bold border-2"
@@ -296,7 +295,7 @@
                   <span x-text="s.on_time_pct + '%'"></span>
                 </div>
               </div>
-              <div class="space-y-1.5 text-xs text-slate-300">
+              <div class="space-y-1.5 text-xs text-slate-600">
                 <div class="flex items-center gap-1.5" x-show="s.contact_name">
                   <svg class="w-3.5 h-3.5 text-slate-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
                   <span x-text="s.contact_name"></span>
@@ -310,9 +309,9 @@
                   <span x-text="s.phone || '—'"></span>
                 </div>
               </div>
-              <div class="mt-3 pt-3 border-t flex justify-between text-xs" style="border-color:rgba(0,179,255,.1)">
-                <span class="text-slate-400"><span class="font-semibold text-white" x-text="s.total_orders"></span> Bestellungen</span>
-                <span style="color:#00FFC5" class="font-semibold" x-text="formatCurrency(s.total_spend)"></span>
+              <div class="mt-3 pt-3 border-t border-slate-200 flex justify-between text-xs">
+                <span class="text-slate-500"><span class="font-semibold text-slate-800" x-text="s.total_orders"></span> Bestellungen</span>
+                <span class="font-semibold text-emerald-600" x-text="formatCurrency(s.total_spend)"></span>
               </div>
             </div>
           </template>
@@ -334,7 +333,7 @@
         </div>
 
         <div class="card overflow-hidden">
-          <div class="p-4 border-b text-xs font-semibold text-slate-400 uppercase tracking-wider grid grid-cols-12 gap-2" style="border-color:rgba(0,179,255,.1)">
+          <div class="p-4 border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider grid grid-cols-12 gap-2">
             <span class="col-span-2">Bestellung</span>
             <span class="col-span-3">Artikel</span>
             <span class="col-span-2">Lieferant</span>
@@ -344,17 +343,17 @@
             <span class="col-span-1 text-right">Aktion</span>
           </div>
           <template x-for="rec in deviations" :key="rec.id">
-            <div class="p-4 border-b grid grid-cols-12 gap-2 items-center hover:bg-white/5 transition-colors" style="border-color:rgba(0,179,255,.06)">
-              <span class="col-span-2 text-xs font-mono text-blue-300" x-text="rec.po_number || '—'"></span>
-              <span class="col-span-3 text-xs text-slate-200" x-text="rec.item_description"></span>
-              <span class="col-span-2 text-xs text-slate-400" x-text="rec.supplier_name"></span>
-              <span class="col-span-1 text-xs text-right text-slate-300" x-text="formatCurrency(rec.approved_price)"></span>
-              <span class="col-span-1 text-xs text-right text-slate-200 font-medium" x-text="formatCurrency(rec.invoice_price)"></span>
+            <div class="p-4 border-b border-slate-100 grid grid-cols-12 gap-2 items-center hover:bg-slate-50 transition-colors">
+              <span class="col-span-2 text-xs font-mono text-sky-600" x-text="rec.po_number || '—'"></span>
+              <span class="col-span-3 text-xs text-slate-700" x-text="rec.item_description"></span>
+              <span class="col-span-2 text-xs text-slate-500" x-text="rec.supplier_name"></span>
+              <span class="col-span-1 text-xs text-right text-slate-600" x-text="formatCurrency(rec.approved_price)"></span>
+              <span class="col-span-1 text-xs text-right text-slate-800 font-medium" x-text="formatCurrency(rec.invoice_price)"></span>
               <div class="col-span-2 flex flex-col items-center gap-1">
                 <span class="text-xs font-bold px-2 py-0.5 rounded-full"
                       :class="{'badge-green': rec.status==='green','badge-yellow': rec.status==='yellow','badge-red': rec.status==='red'}"
                       x-text="(rec.deviation_pct > 0 ? '+' : '') + rec.deviation_pct.toFixed(1) + '%'"></span>
-                <div class="w-full bg-slate-800 rounded-full h-1.5">
+                <div class="w-full bg-slate-100 rounded-full h-1.5">
                   <div class="deviation-bar h-1.5"
                        :style="{width: Math.min(Math.abs(rec.deviation_pct),20)/20*100+'%',
                                 background: rec.status==='green'?'#00FFC5':rec.status==='yellow'?'#eab308':'#ef4444'}"></div>
@@ -365,7 +364,7 @@
               </div>
             </div>
           </template>
-          <div x-show="deviations.length === 0" class="p-12 text-center text-slate-500 text-sm">
+          <div x-show="deviations.length === 0" class="p-12 text-center text-slate-400 text-sm">
             Keine Preisabweichungen erfasst
           </div>
         </div>
@@ -375,7 +374,7 @@
       <div x-show="currentView === 'chase'" class="space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
           <div class="card p-4 text-center">
-            <p class="text-2xl font-bold text-slate-300" x-text="overduePOs.length"></p>
+            <p class="text-2xl font-bold text-slate-700" x-text="overduePOs.length"></p>
             <p class="text-xs text-slate-400 mt-1">Überfällige Bestellungen</p>
           </div>
           <div class="card p-4 text-center">
@@ -383,26 +382,26 @@
             <p class="text-xs text-slate-400 mt-1">Ausstehende Genehmigungen</p>
           </div>
           <div class="card p-4 text-center">
-            <p class="text-2xl font-bold" style="color:#00FFC5" x-text="chaseEmails.filter(e=>e.approved).length"></p>
+            <p class="text-2xl font-bold text-emerald-600" x-text="chaseEmails.filter(e=>e.approved).length"></p>
             <p class="text-xs text-slate-400 mt-1">Genehmigte E-Mails</p>
           </div>
         </div>
 
         <!-- Overdue POs needing chase -->
         <div x-show="overduePOs.length > 0">
-          <h3 class="font-semibold text-slate-200 mb-3">Überfällige Bestellungen</h3>
+          <h3 class="font-semibold text-slate-700 mb-3">Überfällige Bestellungen</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
             <template x-for="po in overduePOs" :key="po.id">
               <div class="card p-4 border-l-4" style="border-left-color:#ef4444">
                 <div class="flex items-start justify-between">
                   <div>
-                    <p class="font-semibold text-white" x-text="po.po_number"></p>
-                    <p class="text-xs text-slate-400" x-text="po.supplier_name"></p>
-                    <p class="text-xs text-red-400 mt-1 font-medium" x-text="po.days_overdue + ' Tage überfällig'"></p>
+                    <p class="font-semibold text-slate-800" x-text="po.po_number"></p>
+                    <p class="text-xs text-slate-500" x-text="po.supplier_name"></p>
+                    <p class="text-xs text-red-500 mt-1 font-medium" x-text="po.days_overdue + ' Tage überfällig'"></p>
                   </div>
                   <div class="text-right">
-                    <p class="text-sm font-bold" style="color:#00FFC5" x-text="formatCurrency(po.total_value)"></p>
-                    <p class="text-xs text-slate-400 mt-1" x-text="'Bis: ' + formatDate(po.expected_delivery)"></p>
+                    <p class="text-sm font-bold text-emerald-600" x-text="formatCurrency(po.total_value)"></p>
+                    <p class="text-xs text-slate-500 mt-1" x-text="'Bis: ' + formatDate(po.expected_delivery)"></p>
                   </div>
                 </div>
                 <div class="flex gap-2 mt-3">
@@ -422,7 +421,7 @@
         </div>
 
         <!-- Generated emails -->
-        <h3 class="font-semibold text-slate-200 mb-3">Generierte E-Mails</h3>
+        <h3 class="font-semibold text-slate-700 mb-3">Generierte E-Mails</h3>
         <div class="space-y-3">
           <template x-for="email in chaseEmails" :key="email.id">
             <div class="card p-4">
@@ -432,11 +431,11 @@
                     <span class="text-xs font-bold px-2 py-0.5 rounded"
                           :class="{'level-1 badge-gray': email.level===1, 'level-2 badge-yellow': email.level===2, 'level-3 badge-red': email.level===3}"
                           x-text="'Stufe ' + email.level"></span>
-                    <span class="text-xs text-slate-400" x-text="email.po_number + ' · ' + email.supplier_name"></span>
+                    <span class="text-xs text-slate-500" x-text="email.po_number + ' · ' + email.supplier_name"></span>
                     <span x-show="email.approved" class="badge-green text-xs px-2 py-0.5 rounded">Genehmigt</span>
                   </div>
-                  <p class="text-sm font-semibold text-white" x-text="email.subject"></p>
-                  <p class="text-xs text-slate-400 mt-0.5" x-text="'An: ' + (email.supplier_email || 'E-Mail nicht hinterlegt')"></p>
+                  <p class="text-sm font-semibold text-slate-800" x-text="email.subject"></p>
+                  <p class="text-xs text-slate-500 mt-0.5" x-text="'An: ' + (email.supplier_email || 'E-Mail nicht hinterlegt')"></p>
                 </div>
                 <div class="flex items-center gap-2 ml-4">
                   <button @click="previewChaseEmail(email)" class="btn-ghost text-xs px-3 py-1.5 rounded-lg">
@@ -452,7 +451,7 @@
               </div>
             </div>
           </template>
-          <div x-show="chaseEmails.length === 0" class="card p-12 text-center text-slate-500 text-sm">
+          <div x-show="chaseEmails.length === 0" class="card p-12 text-center text-slate-400 text-sm">
             Keine Chase-E-Mails generiert. Wählen Sie oben eine überfällige Bestellung aus.
           </div>
         </div>
@@ -462,27 +461,27 @@
       <div x-show="currentView === 'spend'" class="space-y-6">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div class="card p-5">
-            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">Gesamtausgaben</p>
-            <p class="text-2xl font-bold" style="color:#00FFC5" x-text="formatCurrency(summary.total_spend||0)"></p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Gesamtausgaben</p>
+            <p class="text-2xl font-bold text-emerald-600" x-text="formatCurrency(summary.total_spend||0)"></p>
           </div>
           <div class="card p-5">
-            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">Bezahlt</p>
-            <p class="text-2xl font-bold text-white" x-text="formatCurrency(summary.paid_spend||0)"></p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Bezahlt</p>
+            <p class="text-2xl font-bold text-slate-800" x-text="formatCurrency(summary.paid_spend||0)"></p>
           </div>
           <div class="card p-5">
-            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">Lieferanten</p>
-            <p class="text-2xl font-bold text-white" x-text="summary.supplier_count||0"></p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Lieferanten</p>
+            <p class="text-2xl font-bold text-slate-800" x-text="summary.supplier_count||0"></p>
           </div>
           <div class="card p-5">
-            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">Bestellungen</p>
-            <p class="text-2xl font-bold text-white" x-text="summary.total_pos||0"></p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Bestellungen</p>
+            <p class="text-2xl font-bold text-slate-800" x-text="summary.total_pos||0"></p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <!-- Bar: spend by supplier -->
           <div class="card p-5 lg:col-span-2">
-            <h3 class="font-semibold text-slate-200 mb-4">Ausgaben nach Lieferant</h3>
+            <h3 class="font-semibold text-slate-700 mb-4">Ausgaben nach Lieferant</h3>
             <div style="height:280px; position:relative">
               <canvas id="chartSupplier"></canvas>
             </div>
@@ -490,7 +489,7 @@
 
           <!-- Pie: spend by category -->
           <div class="card p-5">
-            <h3 class="font-semibold text-slate-200 mb-4">Ausgaben nach Kategorie</h3>
+            <h3 class="font-semibold text-slate-700 mb-4">Ausgaben nach Kategorie</h3>
             <div style="height:280px; position:relative">
               <canvas id="chartCategory"></canvas>
             </div>
@@ -499,7 +498,7 @@
 
         <!-- Line: trend -->
         <div class="card p-5">
-          <h3 class="font-semibold text-slate-200 mb-4">Ausgaben-Trend (monatlich)</h3>
+          <h3 class="font-semibold text-slate-700 mb-4">Ausgaben-Trend (monatlich)</h3>
           <div style="height:240px; position:relative">
             <canvas id="chartTrend"></canvas>
           </div>
@@ -507,22 +506,22 @@
 
         <!-- Anomalies -->
         <div class="card p-5">
-          <h3 class="font-semibold text-slate-200 mb-4">Top Preisanomalien</h3>
+          <h3 class="font-semibold text-slate-700 mb-4">Top Preisanomalien</h3>
           <div class="space-y-2">
             <template x-for="a in anomalies" :key="a.id">
-              <div class="flex items-center justify-between py-2 border-b text-sm" style="border-color:rgba(0,179,255,.08)">
+              <div class="flex items-center justify-between py-2 border-b border-slate-100 text-sm">
                 <div class="flex items-center gap-3">
                   <span class="text-xs px-2 py-0.5 rounded font-bold"
                         :class="{'badge-yellow': a.status==='yellow','badge-red': a.status==='red'}"
                         x-text="a.status==='red' ? 'KRITISCH' : 'WARNUNG'"></span>
-                  <span class="text-slate-200" x-text="a.item_description"></span>
-                  <span class="text-slate-400 text-xs" x-text="a.supplier_name + ' · ' + (a.po_number||'')"></span>
+                  <span class="text-slate-700" x-text="a.item_description"></span>
+                  <span class="text-slate-500 text-xs" x-text="a.supplier_name + ' · ' + (a.po_number||'')"></span>
                 </div>
                 <span class="font-bold" :class="a.status==='red'?'text-red-400':'text-yellow-400'"
                       x-text="(a.deviation_pct>0?'+':'') + a.deviation_pct.toFixed(1) + '%'"></span>
               </div>
             </template>
-            <div x-show="anomalies.length === 0" class="text-center py-6 text-slate-500 text-sm">
+            <div x-show="anomalies.length === 0" class="text-center py-6 text-slate-400 text-sm">
               Keine Anomalien – alle Preise im Rahmen
             </div>
           </div>
@@ -538,34 +537,34 @@
 
 <!-- PO Detail Modal -->
 <div x-show="modal.poDetail" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" @click.self="modal.poDetail=false">
-  <div class="modal-box w-full max-w-2xl mx-4 p-6">
+  <div class="modal-box shadow-xl w-full max-w-2xl mx-4 p-6">
     <div class="flex items-start justify-between mb-5">
       <div>
-        <h2 class="text-xl font-bold text-white" x-text="selectedPO?.po_number"></h2>
-        <p class="text-sm text-slate-400" x-text="selectedPO?.supplier_name"></p>
+        <h2 class="text-xl font-bold text-slate-800" x-text="selectedPO?.po_number"></h2>
+        <p class="text-sm text-slate-500" x-text="selectedPO?.supplier_name"></p>
       </div>
-      <button @click="modal.poDetail=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+      <button @click="modal.poDetail=false" class="text-slate-400 hover:text-slate-700 text-xl leading-none">✕</button>
     </div>
     <template x-if="selectedPO">
       <div class="space-y-4">
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <p class="text-slate-400 text-xs">Status</p>
+            <p class="text-slate-500 text-xs">Status</p>
             <span class="text-sm px-2 py-0.5 rounded-full mt-1 inline-block"
                   :class="statusBadge(selectedPO.status, selectedPO.is_overdue)"
                   x-text="statusLabel(selectedPO.status, selectedPO.is_overdue)"></span>
           </div>
           <div>
-            <p class="text-slate-400 text-xs">Kategorie</p>
-            <p class="text-white" x-text="selectedPO.category || '—'"></p>
+            <p class="text-slate-500 text-xs">Kategorie</p>
+            <p class="text-slate-800" x-text="selectedPO.category || '—'"></p>
           </div>
           <div>
-            <p class="text-slate-400 text-xs">Erw. Lieferung</p>
-            <p class="text-white" x-text="formatDate(selectedPO.expected_delivery)"></p>
+            <p class="text-slate-500 text-xs">Erw. Lieferung</p>
+            <p class="text-slate-800" x-text="formatDate(selectedPO.expected_delivery)"></p>
           </div>
           <div>
-            <p class="text-slate-400 text-xs">Gesamtwert</p>
-            <p class="font-bold" style="color:#00FFC5" x-text="formatCurrency(selectedPO.total_value)"></p>
+            <p class="text-slate-500 text-xs">Gesamtwert</p>
+            <p class="font-bold text-emerald-600" x-text="formatCurrency(selectedPO.total_value)"></p>
           </div>
         </div>
 
@@ -573,9 +572,9 @@
           <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Artikel</p>
           <div class="space-y-1">
             <template x-for="item in selectedPO.items" :key="item.id">
-              <div class="flex justify-between text-sm py-1.5 border-b" style="border-color:rgba(0,179,255,.08)">
-                <span class="text-slate-200" x-text="item.description"></span>
-                <span class="text-slate-400" x-text="item.quantity + ' × ' + formatCurrency(item.unit_price)"></span>
+              <div class="flex justify-between text-sm py-1.5 border-b border-slate-100">
+                <span class="text-slate-700" x-text="item.description"></span>
+                <span class="text-slate-500" x-text="item.quantity + ' × ' + formatCurrency(item.unit_price)"></span>
               </div>
             </template>
           </div>
@@ -583,14 +582,13 @@
 
         <div x-show="selectedPO.notes">
           <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Notizen</p>
-          <p class="text-sm text-slate-300" x-text="selectedPO.notes"></p>
+          <p class="text-sm text-slate-600" x-text="selectedPO.notes"></p>
         </div>
 
         <div class="flex gap-2 mt-2">
           <template x-for="st in kanbanColumns.filter(c => c.status !== selectedPO.status)" :key="st.status">
             <button @click="moveStatus(selectedPO, st.status); modal.poDetail=false"
-                    class="text-xs px-3 py-1.5 rounded-lg border transition-colors"
-                    style="border-color:rgba(0,179,255,.3);color:#00B3FF"
+                    class="text-xs px-3 py-1.5 rounded-lg border border-sky-200 text-sky-600 hover:bg-sky-50 transition-colors"
                     x-text="'→ ' + st.label"></button>
           </template>
           <button @click="deletePO(selectedPO); modal.poDetail=false" class="ml-auto text-xs text-red-400 hover:text-red-300">
@@ -604,19 +602,19 @@
 
 <!-- Add PO Modal -->
 <div x-show="modal.addPO" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" @click.self="modal.addPO=false">
-  <div class="modal-box w-full max-w-xl mx-4 p-6">
+  <div class="modal-box shadow-xl w-full max-w-xl mx-4 p-6">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="text-xl font-bold text-white">Neue Bestellung</h2>
-      <button @click="modal.addPO=false" class="text-slate-400 hover:text-white text-xl">✕</button>
+      <h2 class="text-xl font-bold text-slate-800">Neue Bestellung</h2>
+      <button @click="modal.addPO=false" class="text-slate-400 hover:text-slate-700 text-xl">✕</button>
     </div>
     <div class="space-y-4">
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Bestellnummer *</label>
+          <label class="text-xs text-slate-500 block mb-1">Bestellnummer *</label>
           <input type="text" x-model="newPO.po_number" class="input" placeholder="PO-2026-XXX" />
         </div>
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Lieferant *</label>
+          <label class="text-xs text-slate-500 block mb-1">Lieferant *</label>
           <select x-model="newPO.supplier_id" class="input">
             <option value="">Bitte wählen…</option>
             <template x-for="s in suppliers" :key="s.id">
@@ -625,22 +623,22 @@
           </select>
         </div>
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Erw. Lieferdatum</label>
+          <label class="text-xs text-slate-500 block mb-1">Erw. Lieferdatum</label>
           <input type="date" x-model="newPO.expected_delivery" class="input" />
         </div>
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Kategorie</label>
+          <label class="text-xs text-slate-500 block mb-1">Kategorie</label>
           <input type="text" x-model="newPO.category" class="input" placeholder="z.B. Elektronik" />
         </div>
       </div>
       <div>
-        <label class="text-xs text-slate-400 block mb-1">Notizen</label>
+        <label class="text-xs text-slate-500 block mb-1">Notizen</label>
         <textarea x-model="newPO.notes" class="input h-16 resize-none" placeholder="Optionale Notizen…"></textarea>
       </div>
       <div>
         <div class="flex items-center justify-between mb-2">
           <label class="text-xs text-slate-400">Artikel</label>
-          <button @click="newPO.items.push({description:'',quantity:1,unit_price:0})" class="text-xs text-blue-300 hover:underline">+ Artikel</button>
+          <button @click="newPO.items.push({description:'',quantity:1,unit_price:0})" class="text-xs text-sky-600 hover:underline">+ Artikel</button>
         </div>
         <template x-for="(item, idx) in newPO.items" :key="idx">
           <div class="flex gap-2 mb-2 items-center">
@@ -661,40 +659,40 @@
 
 <!-- Add Supplier Modal -->
 <div x-show="modal.addSupplier" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" @click.self="modal.addSupplier=false">
-  <div class="modal-box w-full max-w-lg mx-4 p-6">
+  <div class="modal-box shadow-xl w-full max-w-lg mx-4 p-6">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="text-xl font-bold text-white">Neuer Lieferant</h2>
-      <button @click="modal.addSupplier=false" class="text-slate-400 hover:text-white text-xl">✕</button>
+      <h2 class="text-xl font-bold text-slate-800">Neuer Lieferant</h2>
+      <button @click="modal.addSupplier=false" class="text-slate-400 hover:text-slate-700 text-xl">✕</button>
     </div>
     <div class="space-y-3">
       <div>
-        <label class="text-xs text-slate-400 block mb-1">Firmenname *</label>
+        <label class="text-xs text-slate-500 block mb-1">Firmenname *</label>
         <input type="text" x-model="newSupplier.name" class="input" placeholder="Mustermann GmbH" />
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Ansprechpartner</label>
+          <label class="text-xs text-slate-500 block mb-1">Ansprechpartner</label>
           <input type="text" x-model="newSupplier.contact_name" class="input" />
         </div>
         <div>
-          <label class="text-xs text-slate-400 block mb-1">E-Mail</label>
+          <label class="text-xs text-slate-500 block mb-1">E-Mail</label>
           <input type="email" x-model="newSupplier.email" class="input" />
         </div>
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Telefon</label>
+          <label class="text-xs text-slate-500 block mb-1">Telefon</label>
           <input type="text" x-model="newSupplier.phone" class="input" />
         </div>
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Zahlungsbedingungen</label>
+          <label class="text-xs text-slate-500 block mb-1">Zahlungsbedingungen</label>
           <input type="text" x-model="newSupplier.payment_terms" class="input" placeholder="30 Tage netto" />
         </div>
       </div>
       <div>
-        <label class="text-xs text-slate-400 block mb-1">Kategorie</label>
+        <label class="text-xs text-slate-500 block mb-1">Kategorie</label>
         <input type="text" x-model="newSupplier.category" class="input" placeholder="z.B. Elektronik & Komponenten" />
       </div>
       <div>
-        <label class="text-xs text-slate-400 block mb-1">Adresse</label>
+        <label class="text-xs text-slate-500 block mb-1">Adresse</label>
         <input type="text" x-model="newSupplier.address" class="input" />
       </div>
       <div class="flex gap-3 pt-2">
@@ -707,13 +705,13 @@
 
 <!-- Supplier Detail Modal -->
 <div x-show="modal.supplierDetail" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" @click.self="modal.supplierDetail=false">
-  <div class="modal-box w-full max-w-2xl mx-4 p-6">
+  <div class="modal-box shadow-xl w-full max-w-2xl mx-4 p-6">
     <div class="flex items-start justify-between mb-5">
       <div>
-        <h2 class="text-xl font-bold text-white" x-text="selectedSupplier?.name"></h2>
-        <p class="text-sm text-slate-400" x-text="selectedSupplier?.category"></p>
+        <h2 class="text-xl font-bold text-slate-800" x-text="selectedSupplier?.name"></h2>
+        <p class="text-sm text-slate-500" x-text="selectedSupplier?.category"></p>
       </div>
-      <button @click="modal.supplierDetail=false" class="text-slate-400 hover:text-white text-xl">✕</button>
+      <button @click="modal.supplierDetail=false" class="text-slate-400 hover:text-slate-700 text-xl">✕</button>
     </div>
     <template x-if="selectedSupplier">
       <div class="space-y-5">
@@ -721,19 +719,19 @@
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p class="text-xs text-slate-400">Ansprechpartner</p>
-            <p class="text-white" x-text="selectedSupplier.contact_name || '—'"></p>
+            <p class="text-slate-800" x-text="selectedSupplier.contact_name || '—'"></p>
           </div>
           <div>
             <p class="text-xs text-slate-400">E-Mail</p>
-            <p class="text-blue-300" x-text="selectedSupplier.email || '—'"></p>
+            <p class="text-sky-600" x-text="selectedSupplier.email || '—'"></p>
           </div>
           <div>
             <p class="text-xs text-slate-400">Telefon</p>
-            <p class="text-white" x-text="selectedSupplier.phone || '—'"></p>
+            <p class="text-slate-800" x-text="selectedSupplier.phone || '—'"></p>
           </div>
           <div>
             <p class="text-xs text-slate-400">Zahlungsbedingungen</p>
-            <p class="text-white" x-text="selectedSupplier.payment_terms || '—'"></p>
+            <p class="text-slate-800" x-text="selectedSupplier.payment_terms || '—'"></p>
           </div>
         </div>
 
@@ -752,37 +750,37 @@
               <p class="text-xs text-slate-400 mt-1">Preiskonformität</p>
             </div>
             <div class="card p-3 text-center">
-              <p class="text-2xl font-bold" style="color:#00FFC5"
+              <p class="text-2xl font-bold text-emerald-600"
                  x-text="(selectedSupplier.scorecard?.score||0).toFixed(0)"></p>
               <p class="text-xs text-slate-400 mt-1">Gesamtscore</p>
             </div>
           </div>
           <div class="mt-3 grid grid-cols-3 gap-3 text-center text-sm">
             <div>
-              <p class="text-xl font-bold text-white" x-text="selectedSupplier.scorecard?.total_orders||0"></p>
-              <p class="text-xs text-slate-400">Bestellungen</p>
+              <p class="text-xl font-bold text-slate-800" x-text="selectedSupplier.scorecard?.total_orders||0"></p>
+              <p class="text-xs text-slate-500">Bestellungen</p>
             </div>
             <div>
-              <p class="text-xl font-bold" style="color:#00FFC5" x-text="formatCurrency(selectedSupplier.scorecard?.total_spend||0)"></p>
-              <p class="text-xs text-slate-400">Gesamt</p>
+              <p class="text-xl font-bold text-emerald-600" x-text="formatCurrency(selectedSupplier.scorecard?.total_spend||0)"></p>
+              <p class="text-xs text-slate-500">Gesamt</p>
             </div>
             <div>
-              <p class="text-xl font-bold text-white" x-text="selectedSupplier.scorecard?.completed||0"></p>
-              <p class="text-xs text-slate-400">Abgeschlossen</p>
+              <p class="text-xl font-bold text-slate-800" x-text="selectedSupplier.scorecard?.completed||0"></p>
+              <p class="text-xs text-slate-500">Abgeschlossen</p>
             </div>
           </div>
         </div>
 
         <!-- Recent orders -->
         <div x-show="selectedSupplier.orders?.length > 0">
-          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Letzte Bestellungen</p>
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Letzte Bestellungen</p>
           <div class="space-y-1.5 max-h-48 overflow-y-auto scrollbar-thin">
             <template x-for="po in (selectedSupplier.orders||[]).slice(0,8)" :key="po.id">
-              <div class="flex items-center justify-between text-xs py-1.5 border-b" style="border-color:rgba(0,179,255,.08)">
-                <span class="font-mono text-blue-300" x-text="po.po_number"></span>
-                <span class="text-slate-400" x-text="formatDate(po.expected_delivery)"></span>
+              <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-100">
+                <span class="font-mono text-sky-600" x-text="po.po_number"></span>
+                <span class="text-slate-500" x-text="formatDate(po.expected_delivery)"></span>
                 <span class="px-2 py-0.5 rounded-full" :class="statusBadge(po.status, 0)" x-text="statusLabel(po.status, 0)"></span>
-                <span class="font-semibold text-white" x-text="formatCurrency(po.total_value)"></span>
+                <span class="font-semibold text-slate-800" x-text="formatCurrency(po.total_value)"></span>
               </div>
             </template>
           </div>
@@ -794,7 +792,7 @@
 
 <!-- Chase Email Preview Modal -->
 <div x-show="modal.chasePreview" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" @click.self="modal.chasePreview=false">
-  <div class="modal-box w-full max-w-2xl mx-4 p-6">
+  <div class="modal-box shadow-xl w-full max-w-2xl mx-4 p-6">
     <div class="flex items-start justify-between mb-4">
       <div>
         <div class="flex items-center gap-2 mb-1">
@@ -803,12 +801,12 @@
                 x-text="'Eskalationsstufe ' + selectedEmail?.level"></span>
           <span x-show="selectedEmail?.approved" class="badge-green text-xs px-2 py-0.5 rounded">Genehmigt</span>
         </div>
-        <h2 class="text-lg font-bold text-white" x-text="selectedEmail?.subject"></h2>
-        <p class="text-sm text-slate-400 mt-0.5" x-text="'An: ' + (selectedEmail?.supplier_email || 'E-Mail nicht hinterlegt')"></p>
+        <h2 class="text-lg font-bold text-slate-800" x-text="selectedEmail?.subject"></h2>
+        <p class="text-sm text-slate-500 mt-0.5" x-text="'An: ' + (selectedEmail?.supplier_email || 'E-Mail nicht hinterlegt')"></p>
       </div>
-      <button @click="modal.chasePreview=false" class="text-slate-400 hover:text-white text-xl ml-4">✕</button>
+      <button @click="modal.chasePreview=false" class="text-slate-400 hover:text-slate-700 text-xl ml-4">✕</button>
     </div>
-    <div class="bg-slate-900 rounded-lg p-4 text-sm text-slate-200 whitespace-pre-wrap font-mono leading-relaxed" x-text="selectedEmail?.body" style="max-height:400px;overflow-y:auto"></div>
+    <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-700 whitespace-pre-wrap font-mono leading-relaxed" x-text="selectedEmail?.body" style="max-height:400px;overflow-y:auto"></div>
     <div class="flex gap-3 mt-4">
       <button x-show="!selectedEmail?.approved" @click="approveChase(selectedEmail?.id); modal.chasePreview=false"
               class="btn-primary flex-1 py-2.5 rounded-lg">
@@ -826,14 +824,14 @@
 
 <!-- Add Price Deviation Modal -->
 <div x-show="modal.addDeviation" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" @click.self="modal.addDeviation=false">
-  <div class="modal-box w-full max-w-md mx-4 p-6">
+  <div class="modal-box shadow-xl w-full max-w-md mx-4 p-6">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="text-xl font-bold text-white">Preischeck hinzufügen</h2>
-      <button @click="modal.addDeviation=false" class="text-slate-400 hover:text-white text-xl">✕</button>
+      <h2 class="text-xl font-bold text-slate-800">Preischeck hinzufügen</h2>
+      <button @click="modal.addDeviation=false" class="text-slate-400 hover:text-slate-700 text-xl">✕</button>
     </div>
     <div class="space-y-4">
       <div>
-        <label class="text-xs text-slate-400 block mb-1">Lieferant *</label>
+        <label class="text-xs text-slate-500 block mb-1">Lieferant *</label>
         <select x-model="newDeviation.supplier_id" class="input">
           <option value="">Bitte wählen…</option>
           <template x-for="s in suppliers" :key="s.id">
@@ -842,7 +840,7 @@
         </select>
       </div>
       <div>
-        <label class="text-xs text-slate-400 block mb-1">Bestellung (optional)</label>
+        <label class="text-xs text-slate-500 block mb-1">Bestellung (optional)</label>
         <select x-model="newDeviation.po_id" class="input">
           <option value="">Keine Verknüpfung</option>
           <template x-for="po in allPOs" :key="po.id">
@@ -851,16 +849,16 @@
         </select>
       </div>
       <div>
-        <label class="text-xs text-slate-400 block mb-1">Artikel / Beschreibung *</label>
+        <label class="text-xs text-slate-500 block mb-1">Artikel / Beschreibung *</label>
         <input type="text" x-model="newDeviation.item_description" class="input" placeholder="z.B. Stahlplatten 10mm" />
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Genehmigter Preis (€)</label>
+          <label class="text-xs text-slate-500 block mb-1">Genehmigter Preis (€)</label>
           <input type="number" x-model="newDeviation.approved_price" class="input" step="0.01" />
         </div>
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Rechnungspreis (€)</label>
+          <label class="text-xs text-slate-500 block mb-1">Rechnungspreis (€)</label>
           <input type="number" x-model="newDeviation.invoice_price" class="input" step="0.01" />
         </div>
       </div>
@@ -1292,7 +1290,7 @@ function app() {
 
       const accent = '#00B3FF';
       const highlight = '#00FFC5';
-      const gridColor = 'rgba(255,255,255,0.06)';
+      const gridColor = 'rgba(0,0,0,0.06)';
       const tickColor = '#64748b';
 
       const commonOptions = {
@@ -1342,7 +1340,7 @@ function app() {
             datasets: [{
               data: byCategory.map(d => d.total_spend),
               backgroundColor: colors,
-              borderColor: '#1a3347',
+              borderColor: '#ffffff',
               borderWidth: 3,
             }]
           },
@@ -1373,7 +1371,7 @@ function app() {
               fill: true,
               tension: 0.4,
               pointBackgroundColor: highlight,
-              pointBorderColor: '#1a3347',
+              pointBorderColor: '#ffffff',
               pointBorderWidth: 2,
               pointRadius: 5,
             }]
