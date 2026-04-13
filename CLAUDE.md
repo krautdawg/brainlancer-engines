@@ -144,6 +144,35 @@ engine-X/
 - Progress bars (styling by status: todo, in-progress, done, overdue)
 - Notifications bell with dropdown (counts unread items)
 
+### Fake Integration Patterns (Engine 3 & 4)
+
+**Engine 3: Fake Google Sign-In**
+- Located in `engine-3-vat/templates/index.html`
+- Click "Sign in with Google" → displays animated spinner with bouncing colored dots
+- After 1.8s delay, auto-authenticates using `/api/auth/login` endpoint with default password
+- Sets `googleUser` state variable to a randomly selected fake email
+- Displays user avatar with first letter in navbar when logged in via Google
+- No actual OAuth flow — pure UX simulation for demo purposes
+
+**Engine 4: Fake Slack Environment**
+- Full-screen overlay modal (`fixed inset-0 z-[60]`) with authentic Slack styling
+- Left sidebar: Slack purple (`#3F0F3F`) with 5 channels + 3 DMs
+- Messages are data-driven computed getters that read live `employees` and `currentTasks` state
+- OpenClaw bot (@🦞) posts:
+  - Per-employee progress summaries with Unicode progress bars
+  - Overdue task warnings with escalation indicators
+  - Task status updates when you interact with the board
+  - Different messages per channel (#onboarding shows task updates, #it-setup shows IT tasks, #hr-team shows HR summary, etc.)
+- User messages stored in `slackUserMessages` array with `channel` property
+- Message composer with auto-reply from OpenClaw in its DM (simulates bot response after 1.1s delay)
+- Unread badges on channels reset when you click them
+
+**Design Approach:**
+- These are read-only demo features — no backend changes needed
+- Use full-screen overlays to preserve main UI underneath
+- Generate realistic-looking content from actual app data (not hardcoded filler)
+- Include subtle animations (spinners, transitions) for polish
+
 ### Design System Notes
 
 **Typography:**
@@ -243,18 +272,30 @@ Currently no test framework configured. For validation:
 
 ## Recent Work & Themes
 
-**Latest commits focus on:**
-- Translating UI from German to English (engines 2, 3, 5 fully translated)
-- Converting dark theme to light theme for video demos
-- Adding fake OAuth / Slack-like integrations (engine 3 Google Sign-In, engine 4 Slack simulation)
-- Landing page with password auth + FastAPI
+**Completed since project init:**
+- ✅ Full stack deployment (docker-compose + nginx reverse proxy with `.htpasswd` auth)
+- ✅ Landing page with password auth and links to all 5 engines
+- ✅ UI translation from German to English (engines 2, 3, 5)
+- ✅ Frontend design improvements (readability, spacing, typography) across all engines
+- ✅ Font migration: Inter → Outfit + DM Mono for consistency
+- ✅ Light theme conversion (white/light gray backgrounds, dark text)
+- ✅ Engine 3 (VAT) fake Google Sign-In with simulated login flow (bouncing dot spinner, auto-auth after 1.8s)
+- ✅ Engine 3 (VAT) Elmar.Tax integration (document upload links via https://elmar.tax/)
+- ✅ Engine 4 (Onboarding) fake Slack environment with OpenClaw bot
+  - Slack-authentic sidebar with Acme Corp workspace (#general, #onboarding, #new-hire-alerts, #it-setup, #hr-team channels)
+  - OpenClaw bot (@🦞) posts automated task status updates, progress summaries, and overdue alerts
+  - DM channels with OpenClaw assistant and HR Team
+  - Message composer with formatting toolbar and auto-reply
+  - Data-driven messages sourced from live `employees` and `currentTasks` state
 
 **Current UI philosophy:**
-- Light theme backgrounds (white/light gray) with dark text
-- Outfit font for all text (no Inter)
-- DM Mono for monospace code/IDs
-- Authentic-looking integrations (Google Sign-In spinner, Slack-branded sidebar)
-- Full-screen overlay modals for complex interactions
+- Light theme backgrounds (white/light gray) with dark text for video demo readability
+- Outfit font for all text (no Inter — consistent across all engines)
+- DM Mono for monospace code/IDs and data display
+- Authentic-looking integrations (Google Sign-In spinner, Slack-branded sidebar, realistic message formatting)
+- Full-screen overlay modals (z-50+) for complex interactions
+- Subtle shadows (`shadow-sm`) and rounded corners (`rounded-2xl`) for modern feel
+- Data-driven UI: components reflect live state from backend (no hardcoded demo content except static messages)
 
 ## Reference Links
 
