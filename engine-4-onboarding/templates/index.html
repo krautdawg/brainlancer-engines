@@ -154,6 +154,21 @@
         <span class="flex-1 text-left">Slack — OpenClaw</span>
         <span class="bg-red-500 text-white text-xs rounded-full px-1.5 leading-4 font-bold">4</span>
       </button>
+      <button
+        @click="alert('Syncing onboarding checklists to Notion database...')"
+        class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-slate-900"
+      >
+        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4.459 4.208c.739.043 1.207.245 1.765.348 1.458.261 2.916.522 4.374.783.504.088.941.16 1.344.209.682.083 1.25.12 1.93.12 1.159 0 2.317-.05 3.476-.1 1.054-.045 1.549-.241 1.938-.72.333-.414.47-.962.47-1.549 0-.256-.011-.512-.032-.767-.042-.501-.132-.821-.47-1.159-.319-.319-.711-.47-1.159-.47-.192 0-.384.032-.576.096-.192.064-.384.192-.512.384-.128.192-.192.384-.192.576 0 .192.064.384.192.512.128.128.32.192.512.192.192 0 .384-.064.512-.192.128-.128.192-.32.192-.512 0-.192-.064-.384-.192-.512-.128-.128-.32-.192-.512-.192-.192 0-.384.064-.512.192s-.192.32-.192.512c0 .192.064.384.192.512.128.128.32.192.512.192 1.124 0 2.112-.641 2.56-1.6.448-.959.448-2.08 0-3.039-.448-.959-1.436-1.6-2.56-1.6-1.124 0-2.112.641-2.56 1.6-.448.959-.448 2.08 0 3.039.448.959 1.436 1.6 2.56 1.6 1.124 0 2.112-.641 2.56-1.6.448-.959.448-2.08 0-3.039z"/><path d="M4.459 4.208V20.84c0 .546.223 1.052.593 1.419.37.367.886.581 1.442.581h13.298c1.124 0 2.035-.911 2.035-2.035V4.208c0-1.124-.911-2.035-2.035-2.035H6.494c-1.124 0-2.035.911-2.035 2.035zm2.864 1.938h10.354v14.694H7.323V6.146zm2.302 2.302v10.09h1.938V8.448H9.625zm4.481 0v10.09h1.938V8.448h-1.938z"/></svg>
+        Notion Workspaces
+      </button>
+      <button
+        @click="alert('Syncing employee records with SAP SuccessFactors...')"
+        class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-slate-900"
+      >
+        <div class="w-4 h-4 rounded-sm bg-blue-600 flex items-center justify-center text-[8px] text-white font-bold shrink-0">SAP</div>
+        SAP SuccessFactors
+      </button>
     </nav>
 
     <!-- Employee List -->

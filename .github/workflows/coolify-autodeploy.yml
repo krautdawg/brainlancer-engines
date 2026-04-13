@@ -1,0 +1,39 @@
+name: Coolify Auto Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy-brainlancer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Coolify deployments
+        env:
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          COOLIFY_BASE_URL: ${{ secrets.COOLIFY_BASE_URL }}
+          APP_UUIDS: >-
+            yws80c08kwcckw40s04sco8c
+            i8ggok0s00c0gs44sw4kko8c
+            nowskss0o0coosk88wgokkso
+            yc4ocsok4cwkscsw88ooo8ws
+            f4owwcw08wcsoko8csgw4g0g
+            ccgww8wsskg44sg04k8sw04g
+        run: |
+          set -euo pipefail
+          if [ -z "${COOLIFY_TOKEN:-}" ] || [ -z "${COOLIFY_BASE_URL:-}" ]; then
+            echo "Missing COOLIFY_TOKEN or COOLIFY_BASE_URL secret"
+            exit 1
+          fi
+
+          for uuid in $APP_UUIDS; do
+            echo "Triggering deploy for $uuid"
+            curl --fail --silent --show-error \
+              -X POST "${COOLIFY_BASE_URL%/}/api/v1/deploy" \
+              -H "Authorization: Bearer $COOLIFY_TOKEN" \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/json" \
+              -d "{\"uuid\":\"$uuid\"}"
+            echo
+          done

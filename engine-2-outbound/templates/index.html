@@ -30,6 +30,15 @@
   <style>
     [x-cloak] { display: none !important; }
 
+    /* Nickelodeon Slime Mode */
+    .slime-bg { background-color: #92d050 !important; } /* Slime Green */
+    .slime-text { color: #92d050 !important; }
+    .slime-border { border-color: #92d050 !important; }
+    .slime-btn { background-color: #ff6600 !important; color: white !important; border-radius: 9999px !important; box-shadow: 0 4px 0 #cc5200 !important; transition: transform 0.1s !important; }
+    .slime-btn:active { transform: translateY(2px) !important; box-shadow: 0 2px 0 #cc5200 !important; }
+    .slime-card { border: 4px solid #92d050 !important; border-radius: 20px !important; }
+    .splat-icon { filter: drop-shadow(0 0 8px #92d050); }
+
     /* Scrollbar */
     .scrollbar-thin::-webkit-scrollbar { height: 6px; width: 6px; }
     .scrollbar-thin::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 3px; }
@@ -290,6 +299,23 @@
     </div>
 
     <div class="flex items-center gap-2.5">
+      <!-- Integrations -->
+      <div class="flex items-center gap-2.5 mr-2 border-r border-slate-100 pr-3.5">
+        <!-- Telegram -->
+        <div class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 border border-sky-100" title="Telegram Alerts Enabled">
+          <svg class="w-3.5 h-3.5 text-sky-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.35-.99.53-1.41.52-.46-.01-1.35-.26-2.01-.48-.81-.27-1.45-.42-1.39-.89.03-.24.37-.48 1.02-.73 4-1.74 6.67-2.88 8.01-3.43 3.81-1.56 4.6-1.83 5.12-1.84.12 0 .38.03.55.17.14.12.18.28.2.45-.02.07-.02.13-.03.19z"/></svg>
+          <span class="text-[10px] font-bold text-sky-600 uppercase tracking-wider">Alerts</span>
+        </div>
+        
+        <!-- Nickelodeon Toggle -->
+        <button @click="nickelodeon = !nickelodeon" 
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all"
+                :class="nickelodeon ? 'bg-[#92d050] border-[#92d050] text-white shadow-[0_0_15px_rgba(146,208,80,0.5)]' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'">
+          <span class="text-[10px] font-extrabold uppercase tracking-tighter" :class="nickelodeon ? 'animate-pulse' : ''">Creative Mode</span>
+          <div class="w-1.5 h-1.5 rounded-full" :class="nickelodeon ? 'bg-orange-500 animate-ping' : 'bg-slate-300'"></div>
+        </button>
+      </div>
+
       <button
         @click="goTo('new-campaign')"
         x-show="view === 'dashboard'"
@@ -408,6 +434,7 @@
               <button
                 @click.stop="goTo('campaign-view', { id: c.id })"
                 class="text-xs px-3 py-1.5 rounded-lg font-bold text-white transition bg-sky-500 hover:bg-sky-600 shadow-sm"
+                :class="nickelodeon ? 'slime-btn' : ''"
               >Open</button>
               <button
                 @click.stop="confirmDelete(c)"
@@ -1016,6 +1043,7 @@ function app() {
     view: 'loading',
     globalLoading: true,
     loadingMsg: 'Loading...',
+    nickelodeon: false,
 
     // Auth
     loginPassword: '',
