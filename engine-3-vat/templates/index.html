@@ -1193,13 +1193,14 @@ function vatApp() {
         this.loading = true
         this.loginError = ''
         try {
-          const res = await fetch('/api/auth/login', {
+          const res = await fetch('/api/auth/google-demo', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password: 'brainlancer2026' }),
+            body: JSON.stringify({ email: this.googleLoginEmail }),
           })
           if (res.ok) {
-            this.googleUser = this.googleLoginEmail
+            const data = await res.json()
+            this.googleUser = data.email || this.googleLoginEmail
             this.isLoggedIn = true
             await this.checkStats()
           } else {

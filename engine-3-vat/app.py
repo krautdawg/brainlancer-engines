@@ -38,6 +38,7 @@ SESSION_TTL_HOURS = 24
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 DEMO_QUARTER = int(os.environ.get("DEMO_QUARTER", "1"))
 DEMO_YEAR = int(os.environ.get("DEMO_YEAR", "2024"))
+ENABLE_FAKE_GOOGLE_SIGNIN = os.environ.get("ENABLE_FAKE_GOOGLE_SIGNIN", "true").lower() in {"1", "true", "yes", "on"}
 
 # In-memory session store: {token: expires_at}
 _sessions: dict[str, datetime] = {}
@@ -74,6 +75,10 @@ def require_auth(request: Request):
 
 class LoginRequest(BaseModel):
     password: str
+
+
+class GoogleDemoLoginRequest(BaseModel):
+    email: Optional[str] = None
 
 
 class StatusUpdateRequest(BaseModel):
@@ -117,6 +122,27 @@ async def login(body: LoginRequest, response: Response):
         max_age=SESSION_TTL_HOURS * 3600,
     )
     return {"ok": True, "message": "Angemeldet"}
+
+
+@app.post("/api/auth/google-demo")
+async def google_demo_login(body: GoogleDemoLoginRequest, response: Response):
+    if not ENABLE_FAKE_GOOGLE_SIGNIN:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    token = str(uuid.uuid4())
+    _sessions[token] = datetime.utcnow() + timedelta(hours=SESSION_TTL_HOURS)
+    response.set_cookie(
+        key="vat_session",
+        value=token,
+        httponly=True,
+        samesite="lax",
+        max_age=SESSION_TTL_HOURS * 3600,
+    )
+    return {
+        "ok": True,
+        "message": "Google demo sign-in successful",
+        "email": body.email or "demo.user@gmail.com",
+    }
 
 
 @app.post("/api/auth/logout")
