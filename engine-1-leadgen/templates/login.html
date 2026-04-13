@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -68,8 +68,8 @@
 
     <!-- Card -->
     <div class="card rounded-2xl p-8">
-      <h1 class="font-lexend text-2xl text-slate-800 mb-1">Willkommen zurück</h1>
-      <p class="text-sm text-slate-500 mb-6">Bitte melden Sie sich an, um fortzufahren.</p>
+      <h1 class="font-lexend text-2xl text-slate-800 mb-1">Welcome back</h1>
+      <p class="text-sm text-slate-500 mb-6">Sign in to continue.</p>
 
       {% if error %}
       <div class="mb-4 px-4 py-3 rounded-lg text-sm font-medium"
@@ -80,7 +80,7 @@
 
       <form method="POST" action="/login" class="space-y-5">
         <div>
-          <label class="block text-xs font-semibold mb-2 text-slate-500 uppercase tracking-wide">Passwort</label>
+          <label class="block text-xs font-semibold mb-2 text-slate-500 uppercase tracking-wide">Password</label>
           <input
             type="password"
             name="password"
@@ -91,7 +91,7 @@
           />
         </div>
         <button type="submit" class="btn-primary w-full py-3 px-6 rounded-xl text-sm">
-          Anmelden
+          Sign In
         </button>
       </form>
 

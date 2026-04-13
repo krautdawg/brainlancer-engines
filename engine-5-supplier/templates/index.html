@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="de" x-data="app()" x-init="init()">
+<html lang="en" x-data="app()" x-init="init()">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KI Katapult – Lieferanten &amp; Bestellungsmonitor</title>
+  <title>KI Katapult – Supplier &amp; Order Monitor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -15,7 +16,8 @@
       --accent: #0ea5e9;
       --highlight: #10b981;
     }
-    body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; }
+    body { font-family: 'Outfit', sans-serif; background: #f8fafc; color: #1e293b; }
+    .font-mono, code, pre { font-family: 'DM Mono', monospace; }
     .sidebar { background: #ffffff; border-right: 1px solid #e2e8f0; width: 240px; min-height: 100vh; flex-shrink: 0; }
     .nav-item { transition: all .15s; }
     .nav-item:hover, .nav-item.active { background: #f1f5f9; color: #0ea5e9; }
@@ -71,14 +73,14 @@
         </div>
         <span class="font-bold text-lg text-sky-500">KI Katapult</span>
       </div>
-      <h1 class="text-2xl font-bold text-slate-800">Lieferanten-Monitor</h1>
+      <h1 class="text-2xl font-extrabold text-slate-800">Supplier Monitor</h1>
       <p class="text-slate-500 mt-1 text-sm">Engine 5 — Supplier &amp; PO Tracking</p>
     </div>
     <div class="space-y-4">
       <input type="password" x-model="loginPassword" @keydown.enter="doLogin()"
-             class="input text-center" placeholder="Passwort eingeben" />
+             class="input text-center" placeholder="Enter password" />
       <button @click="doLogin()" class="btn-primary w-full py-3 rounded-lg">
-        Anmelden
+        Sign In
       </button>
       <p x-show="loginError" class="text-red-500 text-sm" x-text="loginError"></p>
     </div>
@@ -99,7 +101,7 @@
         </div>
         <span class="font-bold text-sm text-sky-500">KI Katapult</span>
       </div>
-      <p class="text-xs text-slate-500">Engine 5 — Lieferanten</p>
+      <p class="text-xs text-slate-500">Engine 5 — Suppliers</p>
     </div>
 
     <nav class="flex-1 space-y-1 px-3">
@@ -118,10 +120,10 @@
 
     <div class="px-3 mt-4 space-y-2">
       <button @click="loadDemo()" class="btn-ghost w-full py-2 rounded-lg text-sm">
-        Demo-Daten laden
+        Load Demo Data
       </button>
       <button @click="doLogout()" class="w-full py-2 rounded-lg text-sm text-slate-500 hover:text-slate-800 transition-colors">
-        Abmelden
+        Sign Out
       </button>
     </div>
   </div>
@@ -132,15 +134,15 @@
     <!-- TOPBAR -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white">
       <div>
-        <h1 class="font-bold text-lg text-slate-800" x-text="currentViewLabel"></h1>
+        <h1 class="font-extrabold text-lg text-slate-800" x-text="currentViewLabel"></h1>
         <p class="text-xs text-slate-500" x-text="currentViewSub"></p>
       </div>
       <div class="flex items-center gap-3">
         <div x-show="summary.overdue_count > 0" class="flex items-center gap-1.5 badge-red px-3 py-1.5 rounded-lg text-xs font-semibold">
           <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-          <span x-text="summary.overdue_count + ' überfällig'"></span>
+          <span x-text="summary.overdue_count + ' overdue'"></span>
         </div>
-        <div class="text-xs text-slate-500" x-text="new Date().toLocaleDateString('de-DE', {day:'2-digit',month:'long',year:'numeric'})"></div>
+        <div class="text-xs text-slate-500" x-text="new Date().toLocaleDateString('en-US', {day:'2-digit',month:'long',year:'numeric'})"></div>
       </div>
     </div>
 
@@ -150,33 +152,33 @@
       <div x-show="currentView === 'dashboard'" class="space-y-6">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div class="card p-5">
-            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Gesamt-Bestellungen</p>
-            <p class="text-3xl font-bold text-slate-800" x-text="summary.total_pos || 0"></p>
-            <p class="text-xs text-slate-500 mt-1" x-text="(summary.supplier_count||0) + ' Lieferanten'"></p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Total Orders</p>
+            <p class="text-3xl font-extrabold text-slate-800" x-text="summary.total_pos || 0"></p>
+            <p class="text-xs text-slate-500 mt-1" x-text="(summary.supplier_count||0) + ' suppliers'"></p>
           </div>
           <div class="card p-5">
-            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Gesamtvolumen</p>
-            <p class="text-3xl font-bold text-emerald-600" x-text="formatCurrency(summary.total_spend||0)"></p>
-            <p class="text-xs text-slate-500 mt-1">Bestellwert gesamt</p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Total Volume</p>
+            <p class="text-3xl font-extrabold text-emerald-600" x-text="formatCurrency(summary.total_spend||0)"></p>
+            <p class="text-xs text-slate-500 mt-1">Total order value</p>
           </div>
           <div class="card p-5">
-            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Überfällig</p>
-            <p class="text-3xl font-bold text-red-500" x-text="summary.overdue_count || 0"></p>
-            <p class="text-xs text-slate-500 mt-1">Bestellungen überfällig</p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Overdue</p>
+            <p class="text-3xl font-extrabold text-red-500" x-text="summary.overdue_count || 0"></p>
+            <p class="text-xs text-slate-500 mt-1">Orders overdue</p>
           </div>
           <div class="card p-5">
-            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Preisabweichungen</p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Price Deviations</p>
             <div class="flex items-end gap-2">
-              <p class="text-3xl font-bold text-amber-500" x-text="(summary.yellow_flags||0)+(summary.red_flags||0)"></p>
+              <p class="text-3xl font-extrabold text-amber-500" x-text="(summary.yellow_flags||0)+(summary.red_flags||0)"></p>
             </div>
-            <p class="text-xs text-slate-500 mt-1" x-text="(summary.red_flags||0) + ' kritisch (rot)'"></p>
+            <p class="text-xs text-slate-500 mt-1" x-text="(summary.red_flags||0) + ' critical (red)'"></p>
           </div>
         </div>
 
         <!-- Quick status overview -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="card p-5">
-            <h3 class="font-semibold text-slate-700 mb-4">PO-Status Übersicht</h3>
+            <h3 class="font-bold text-slate-700 mb-4">PO Status Overview</h3>
             <div class="space-y-3">
               <template x-for="st in statusSummary" :key="st.status">
                 <div class="flex items-center gap-3">
@@ -192,7 +194,7 @@
           </div>
 
           <div class="card p-5">
-            <h3 class="font-semibold text-slate-700 mb-4">Letzte Aktivität</h3>
+            <h3 class="font-bold text-slate-700 mb-4">Recent Activity</h3>
             <div class="space-y-2 text-sm">
               <template x-for="po in recentPos.slice(0,6)" :key="po.id">
                 <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
@@ -212,9 +214,9 @@
       <div x-show="currentView === 'kanban'" class="space-y-4">
         <div class="flex items-center justify-between">
           <div class="flex gap-2">
-            <input type="text" x-model="kanbanSearch" class="input w-56 text-sm" placeholder="Bestellung suchen..." />
+            <input type="text" x-model="kanbanSearch" class="input w-56 text-sm" placeholder="Search orders..." />
             <select x-model="kanbanSupplierFilter" class="input w-48 text-sm">
-              <option value="">Alle Lieferanten</option>
+              <option value="">All Suppliers</option>
               <template x-for="s in suppliers" :key="s.id">
                 <option :value="s.id" x-text="s.name"></option>
               </template>
@@ -222,7 +224,7 @@
           </div>
           <button @click="openAddPO()" class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            Bestellung anlegen
+            Create Order
           </button>
         </div>
 
@@ -230,10 +232,10 @@
         <div class="flex items-center gap-3">
           <label class="btn-ghost px-4 py-2 rounded-lg text-sm cursor-pointer flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-            CSV hochladen
+            Upload CSV
             <input type="file" accept=".csv" @change="uploadCSV($event)" class="hidden" />
           </label>
-          <a href="#" @click.prevent="downloadCSVTemplate()" class="text-xs text-slate-500 hover:text-sky-600 underline">CSV-Vorlage herunterladen</a>
+          <a href="#" @click.prevent="downloadCSVTemplate()" class="text-xs text-slate-500 hover:text-sky-600 underline">Download CSV Template</a>
         </div>
 
         <!-- Kanban Board -->
@@ -253,8 +255,8 @@
                     </div>
                     <p class="text-xs text-slate-500 mb-1.5" x-text="po.supplier_name"></p>
                     <p class="text-xs font-semibold text-emerald-600" x-text="formatCurrency(po.total_value)"></p>
-                    <p x-show="po.expected_delivery" class="text-xs text-slate-400 mt-1" x-text="'Bis: ' + formatDate(po.expected_delivery)"></p>
-                    <p x-show="po.is_overdue" class="text-xs text-red-400 mt-0.5 font-medium">Überfällig</p>
+                    <p x-show="po.expected_delivery" class="text-xs text-slate-400 mt-1" x-text="'Due: ' + formatDate(po.expected_delivery)"></p>
+                    <p x-show="po.is_overdue" class="text-xs text-red-400 mt-0.5 font-medium">Overdue</p>
                     <div class="flex gap-1 mt-2 flex-wrap">
                       <template x-for="nextStatus in nextStatuses(po.status)" :key="nextStatus.s">
                         <button @click.stop="moveStatus(po, nextStatus.s)"
@@ -274,10 +276,10 @@
       <!-- ===== SUPPLIER DIRECTORY ===== -->
       <div x-show="currentView === 'suppliers'" class="space-y-4">
         <div class="flex items-center justify-between">
-          <input type="text" x-model="supplierSearch" class="input w-64 text-sm" placeholder="Lieferant suchen..." />
+          <input type="text" x-model="supplierSearch" class="input w-64 text-sm" placeholder="Search suppliers..." />
           <button @click="openAddSupplier()" class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            Lieferant anlegen
+            Add Supplier
           </button>
         </div>
 
@@ -287,7 +289,7 @@
               <div class="flex items-start justify-between mb-3">
                 <div>
                   <h3 class="font-semibold text-slate-800" x-text="s.name"></h3>
-                  <p class="text-xs text-slate-400 mt-0.5" x-text="s.category || 'Allgemein'"></p>
+                  <p class="text-xs text-slate-400 mt-0.5" x-text="s.category || 'General'"></p>
                 </div>
                 <div class="score-ring w-12 h-12 text-sm font-bold border-2"
                      :class="scoreColor(s.on_time_pct)"
@@ -310,7 +312,7 @@
                 </div>
               </div>
               <div class="mt-3 pt-3 border-t border-slate-200 flex justify-between text-xs">
-                <span class="text-slate-500"><span class="font-semibold text-slate-800" x-text="s.total_orders"></span> Bestellungen</span>
+                <span class="text-slate-500"><span class="font-semibold text-slate-800" x-text="s.total_orders"></span> orders</span>
                 <span class="font-semibold text-emerald-600" x-text="formatCurrency(s.total_spend)"></span>
               </div>
             </div>
@@ -322,25 +324,25 @@
       <div x-show="currentView === 'price'" class="space-y-4">
         <div class="flex items-center justify-between">
           <div class="flex gap-3 text-sm">
-            <span class="badge-green px-3 py-1 rounded-lg" x-text="'Grün: ' + deviationCounts.green"></span>
-            <span class="badge-yellow px-3 py-1 rounded-lg" x-text="'Gelb: ' + deviationCounts.yellow"></span>
-            <span class="badge-red px-3 py-1 rounded-lg" x-text="'Rot: ' + deviationCounts.red"></span>
+            <span class="badge-green px-3 py-1 rounded-lg" x-text="'Green: ' + deviationCounts.green"></span>
+            <span class="badge-yellow px-3 py-1 rounded-lg" x-text="'Yellow: ' + deviationCounts.yellow"></span>
+            <span class="badge-red px-3 py-1 rounded-lg" x-text="'Red: ' + deviationCounts.red"></span>
           </div>
           <button @click="openAddDeviation()" class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            Preischeck hinzufügen
+            Add Price Check
           </button>
         </div>
 
         <div class="card overflow-hidden">
           <div class="p-4 border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider grid grid-cols-12 gap-2">
-            <span class="col-span-2">Bestellung</span>
-            <span class="col-span-3">Artikel</span>
-            <span class="col-span-2">Lieferant</span>
-            <span class="col-span-1 text-right">Genehmigt</span>
-            <span class="col-span-1 text-right">Rechnung</span>
-            <span class="col-span-2 text-center">Abweichung</span>
-            <span class="col-span-1 text-right">Aktion</span>
+            <span class="col-span-2">Order</span>
+            <span class="col-span-3">Item</span>
+            <span class="col-span-2">Supplier</span>
+            <span class="col-span-1 text-right">Approved</span>
+            <span class="col-span-1 text-right">Invoice</span>
+            <span class="col-span-2 text-center">Deviation</span>
+            <span class="col-span-1 text-right">Action</span>
           </div>
           <template x-for="rec in deviations" :key="rec.id">
             <div class="p-4 border-b border-slate-100 grid grid-cols-12 gap-2 items-center hover:bg-slate-50 transition-colors">
@@ -360,12 +362,12 @@
                 </div>
               </div>
               <div class="col-span-1 text-right">
-                <button @click="deleteDeviation(rec.id)" class="text-xs text-red-400 hover:text-red-300">Löschen</button>
+                <button @click="deleteDeviation(rec.id)" class="text-xs text-red-400 hover:text-red-300">Delete</button>
               </div>
             </div>
           </template>
           <div x-show="deviations.length === 0" class="p-12 text-center text-slate-400 text-sm">
-            Keine Preisabweichungen erfasst
+            No price deviations recorded
           </div>
         </div>
       </div>
@@ -375,21 +377,21 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
           <div class="card p-4 text-center">
             <p class="text-2xl font-bold text-slate-700" x-text="overduePOs.length"></p>
-            <p class="text-xs text-slate-400 mt-1">Überfällige Bestellungen</p>
+            <p class="text-xs text-slate-400 mt-1">Overdue Orders</p>
           </div>
           <div class="card p-4 text-center">
             <p class="text-2xl font-bold text-yellow-400" x-text="chaseEmails.filter(e=>!e.approved).length"></p>
-            <p class="text-xs text-slate-400 mt-1">Ausstehende Genehmigungen</p>
+            <p class="text-xs text-slate-400 mt-1">Pending Approvals</p>
           </div>
           <div class="card p-4 text-center">
             <p class="text-2xl font-bold text-emerald-600" x-text="chaseEmails.filter(e=>e.approved).length"></p>
-            <p class="text-xs text-slate-400 mt-1">Genehmigte E-Mails</p>
+            <p class="text-xs text-slate-400 mt-1">Approved Emails</p>
           </div>
         </div>
 
         <!-- Overdue POs needing chase -->
         <div x-show="overduePOs.length > 0">
-          <h3 class="font-semibold text-slate-700 mb-3">Überfällige Bestellungen</h3>
+          <h3 class="font-bold text-slate-700 mb-3">Overdue Orders</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
             <template x-for="po in overduePOs" :key="po.id">
               <div class="card p-4 border-l-4" style="border-left-color:#ef4444">
@@ -397,22 +399,22 @@
                   <div>
                     <p class="font-semibold text-slate-800" x-text="po.po_number"></p>
                     <p class="text-xs text-slate-500" x-text="po.supplier_name"></p>
-                    <p class="text-xs text-red-500 mt-1 font-medium" x-text="po.days_overdue + ' Tage überfällig'"></p>
+                    <p class="text-xs text-red-500 mt-1 font-medium" x-text="po.days_overdue + ' days overdue'"></p>
                   </div>
                   <div class="text-right">
                     <p class="text-sm font-bold text-emerald-600" x-text="formatCurrency(po.total_value)"></p>
-                    <p class="text-xs text-slate-500 mt-1" x-text="'Bis: ' + formatDate(po.expected_delivery)"></p>
+                    <p class="text-xs text-slate-500 mt-1" x-text="'Due: ' + formatDate(po.expected_delivery)"></p>
                   </div>
                 </div>
                 <div class="flex gap-2 mt-3">
                   <button @click="generateChase(po.id, 1)" class="btn-ghost text-xs px-3 py-1.5 rounded-lg flex-1">
-                    Stufe 1 – Erinnerung
+                    Level 1 – Reminder
                   </button>
                   <button @click="generateChase(po.id, 2)" class="text-xs px-3 py-1.5 rounded-lg flex-1 border" style="border-color:rgba(234,179,8,.4);color:#eab308">
-                    Stufe 2 – Dringend
+                    Level 2 – Urgent
                   </button>
                   <button @click="generateChase(po.id, 3)" class="text-xs px-3 py-1.5 rounded-lg flex-1 border" style="border-color:rgba(239,68,68,.4);color:#ef4444">
-                    Stufe 3 – Eskalation
+                    Level 3 – Escalation
                   </button>
                 </div>
               </div>
@@ -421,7 +423,7 @@
         </div>
 
         <!-- Generated emails -->
-        <h3 class="font-semibold text-slate-700 mb-3">Generierte E-Mails</h3>
+        <h3 class="font-bold text-slate-700 mb-3">Generated Emails</h3>
         <div class="space-y-3">
           <template x-for="email in chaseEmails" :key="email.id">
             <div class="card p-4">
@@ -430,19 +432,19 @@
                   <div class="flex items-center gap-2 mb-1">
                     <span class="text-xs font-bold px-2 py-0.5 rounded"
                           :class="{'level-1 badge-gray': email.level===1, 'level-2 badge-yellow': email.level===2, 'level-3 badge-red': email.level===3}"
-                          x-text="'Stufe ' + email.level"></span>
+                          x-text="'Level ' + email.level"></span>
                     <span class="text-xs text-slate-500" x-text="email.po_number + ' · ' + email.supplier_name"></span>
-                    <span x-show="email.approved" class="badge-green text-xs px-2 py-0.5 rounded">Genehmigt</span>
+                    <span x-show="email.approved" class="badge-green text-xs px-2 py-0.5 rounded">Approved</span>
                   </div>
                   <p class="text-sm font-semibold text-slate-800" x-text="email.subject"></p>
-                  <p class="text-xs text-slate-500 mt-0.5" x-text="'An: ' + (email.supplier_email || 'E-Mail nicht hinterlegt')"></p>
+                  <p class="text-xs text-slate-500 mt-0.5" x-text="'To: ' + (email.supplier_email || 'No email on file')"></p>
                 </div>
                 <div class="flex items-center gap-2 ml-4">
                   <button @click="previewChaseEmail(email)" class="btn-ghost text-xs px-3 py-1.5 rounded-lg">
-                    Vorschau
+                    Preview
                   </button>
                   <button x-show="!email.approved" @click="approveChase(email.id)" class="btn-primary text-xs px-3 py-1.5 rounded-lg">
-                    Genehmigen
+                    Approve
                   </button>
                   <button @click="deleteChase(email.id)" class="text-xs text-red-400 hover:text-red-300 px-2">
                     ✕
@@ -452,7 +454,7 @@
             </div>
           </template>
           <div x-show="chaseEmails.length === 0" class="card p-12 text-center text-slate-400 text-sm">
-            Keine Chase-E-Mails generiert. Wählen Sie oben eine überfällige Bestellung aus.
+            No chase emails generated. Select an overdue order above.
           </div>
         </div>
       </div>
@@ -461,27 +463,27 @@
       <div x-show="currentView === 'spend'" class="space-y-6">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div class="card p-5">
-            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Gesamtausgaben</p>
-            <p class="text-2xl font-bold text-emerald-600" x-text="formatCurrency(summary.total_spend||0)"></p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Total Spend</p>
+            <p class="text-2xl font-extrabold text-emerald-600" x-text="formatCurrency(summary.total_spend||0)"></p>
           </div>
           <div class="card p-5">
-            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Bezahlt</p>
-            <p class="text-2xl font-bold text-slate-800" x-text="formatCurrency(summary.paid_spend||0)"></p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Paid</p>
+            <p class="text-2xl font-extrabold text-slate-800" x-text="formatCurrency(summary.paid_spend||0)"></p>
           </div>
           <div class="card p-5">
-            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Lieferanten</p>
-            <p class="text-2xl font-bold text-slate-800" x-text="summary.supplier_count||0"></p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Suppliers</p>
+            <p class="text-2xl font-extrabold text-slate-800" x-text="summary.supplier_count||0"></p>
           </div>
           <div class="card p-5">
-            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Bestellungen</p>
-            <p class="text-2xl font-bold text-slate-800" x-text="summary.total_pos||0"></p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Orders</p>
+            <p class="text-2xl font-extrabold text-slate-800" x-text="summary.total_pos||0"></p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <!-- Bar: spend by supplier -->
           <div class="card p-5 lg:col-span-2">
-            <h3 class="font-semibold text-slate-700 mb-4">Ausgaben nach Lieferant</h3>
+            <h3 class="font-bold text-slate-700 mb-4">Spend by Supplier</h3>
             <div style="height:280px; position:relative">
               <canvas id="chartSupplier"></canvas>
             </div>
@@ -489,7 +491,7 @@
 
           <!-- Pie: spend by category -->
           <div class="card p-5">
-            <h3 class="font-semibold text-slate-700 mb-4">Ausgaben nach Kategorie</h3>
+            <h3 class="font-bold text-slate-700 mb-4">Spend by Category</h3>
             <div style="height:280px; position:relative">
               <canvas id="chartCategory"></canvas>
             </div>
@@ -498,7 +500,7 @@
 
         <!-- Line: trend -->
         <div class="card p-5">
-          <h3 class="font-semibold text-slate-700 mb-4">Ausgaben-Trend (monatlich)</h3>
+          <h3 class="font-bold text-slate-700 mb-4">Spend Trend (Monthly)</h3>
           <div style="height:240px; position:relative">
             <canvas id="chartTrend"></canvas>
           </div>
@@ -506,14 +508,14 @@
 
         <!-- Anomalies -->
         <div class="card p-5">
-          <h3 class="font-semibold text-slate-700 mb-4">Top Preisanomalien</h3>
+          <h3 class="font-bold text-slate-700 mb-4">Top Price Anomalies</h3>
           <div class="space-y-2">
             <template x-for="a in anomalies" :key="a.id">
               <div class="flex items-center justify-between py-2 border-b border-slate-100 text-sm">
                 <div class="flex items-center gap-3">
                   <span class="text-xs px-2 py-0.5 rounded font-bold"
                         :class="{'badge-yellow': a.status==='yellow','badge-red': a.status==='red'}"
-                        x-text="a.status==='red' ? 'KRITISCH' : 'WARNUNG'"></span>
+                        x-text="a.status==='red' ? 'CRITICAL' : 'WARNING'"></span>
                   <span class="text-slate-700" x-text="a.item_description"></span>
                   <span class="text-slate-500 text-xs" x-text="a.supplier_name + ' · ' + (a.po_number||'')"></span>
                 </div>
@@ -522,7 +524,7 @@
               </div>
             </template>
             <div x-show="anomalies.length === 0" class="text-center py-6 text-slate-400 text-sm">
-              Keine Anomalien – alle Preise im Rahmen
+              No anomalies – all prices within range
             </div>
           </div>
         </div>
@@ -555,21 +557,21 @@
                   x-text="statusLabel(selectedPO.status, selectedPO.is_overdue)"></span>
           </div>
           <div>
-            <p class="text-slate-500 text-xs">Kategorie</p>
+            <p class="text-slate-500 text-xs">Category</p>
             <p class="text-slate-800" x-text="selectedPO.category || '—'"></p>
           </div>
           <div>
-            <p class="text-slate-500 text-xs">Erw. Lieferung</p>
+            <p class="text-slate-500 text-xs">Exp. Delivery</p>
             <p class="text-slate-800" x-text="formatDate(selectedPO.expected_delivery)"></p>
           </div>
           <div>
-            <p class="text-slate-500 text-xs">Gesamtwert</p>
+            <p class="text-slate-500 text-xs">Total Value</p>
             <p class="font-bold text-emerald-600" x-text="formatCurrency(selectedPO.total_value)"></p>
           </div>
         </div>
 
         <div x-show="selectedPO.items?.length">
-          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Artikel</p>
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Items</p>
           <div class="space-y-1">
             <template x-for="item in selectedPO.items" :key="item.id">
               <div class="flex justify-between text-sm py-1.5 border-b border-slate-100">
@@ -581,7 +583,7 @@
         </div>
 
         <div x-show="selectedPO.notes">
-          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Notizen</p>
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Notes</p>
           <p class="text-sm text-slate-600" x-text="selectedPO.notes"></p>
         </div>
 
@@ -592,7 +594,7 @@
                     x-text="'→ ' + st.label"></button>
           </template>
           <button @click="deletePO(selectedPO); modal.poDetail=false" class="ml-auto text-xs text-red-400 hover:text-red-300">
-            Löschen
+            Delete
           </button>
         </div>
       </div>
@@ -604,54 +606,54 @@
 <div x-show="modal.addPO" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" @click.self="modal.addPO=false">
   <div class="modal-box shadow-xl w-full max-w-xl mx-4 p-6">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="text-xl font-bold text-slate-800">Neue Bestellung</h2>
+      <h2 class="text-xl font-extrabold text-slate-800">New Order</h2>
       <button @click="modal.addPO=false" class="text-slate-400 hover:text-slate-700 text-xl">✕</button>
     </div>
     <div class="space-y-4">
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="text-xs text-slate-500 block mb-1">Bestellnummer *</label>
+          <label class="text-xs text-slate-500 block mb-1">Order Number *</label>
           <input type="text" x-model="newPO.po_number" class="input" placeholder="PO-2026-XXX" />
         </div>
         <div>
-          <label class="text-xs text-slate-500 block mb-1">Lieferant *</label>
+          <label class="text-xs text-slate-500 block mb-1">Supplier *</label>
           <select x-model="newPO.supplier_id" class="input">
-            <option value="">Bitte wählen…</option>
+            <option value="">Please select…</option>
             <template x-for="s in suppliers" :key="s.id">
               <option :value="s.id" x-text="s.name"></option>
             </template>
           </select>
         </div>
         <div>
-          <label class="text-xs text-slate-500 block mb-1">Erw. Lieferdatum</label>
+          <label class="text-xs text-slate-500 block mb-1">Exp. Delivery Date</label>
           <input type="date" x-model="newPO.expected_delivery" class="input" />
         </div>
         <div>
-          <label class="text-xs text-slate-500 block mb-1">Kategorie</label>
-          <input type="text" x-model="newPO.category" class="input" placeholder="z.B. Elektronik" />
+          <label class="text-xs text-slate-500 block mb-1">Category</label>
+          <input type="text" x-model="newPO.category" class="input" placeholder="e.g. Electronics" />
         </div>
       </div>
       <div>
-        <label class="text-xs text-slate-500 block mb-1">Notizen</label>
-        <textarea x-model="newPO.notes" class="input h-16 resize-none" placeholder="Optionale Notizen…"></textarea>
+        <label class="text-xs text-slate-500 block mb-1">Notes</label>
+        <textarea x-model="newPO.notes" class="input h-16 resize-none" placeholder="Optional notes…"></textarea>
       </div>
       <div>
         <div class="flex items-center justify-between mb-2">
-          <label class="text-xs text-slate-400">Artikel</label>
-          <button @click="newPO.items.push({description:'',quantity:1,unit_price:0})" class="text-xs text-sky-600 hover:underline">+ Artikel</button>
+          <label class="text-xs text-slate-400">Items</label>
+          <button @click="newPO.items.push({description:'',quantity:1,unit_price:0})" class="text-xs text-sky-600 hover:underline">+ Item</button>
         </div>
         <template x-for="(item, idx) in newPO.items" :key="idx">
           <div class="flex gap-2 mb-2 items-center">
-            <input type="text" x-model="item.description" class="input flex-1 text-sm" placeholder="Beschreibung" />
-            <input type="number" x-model="item.quantity" class="input w-20 text-sm" placeholder="Menge" min="1" />
-            <input type="number" x-model="item.unit_price" class="input w-28 text-sm" placeholder="Stückpreis" step="0.01" />
+            <input type="text" x-model="item.description" class="input flex-1 text-sm" placeholder="Description" />
+            <input type="number" x-model="item.quantity" class="input w-20 text-sm" placeholder="Qty" min="1" />
+            <input type="number" x-model="item.unit_price" class="input w-28 text-sm" placeholder="Unit price" step="0.01" />
             <button @click="newPO.items.splice(idx,1)" class="text-red-400 text-sm">✕</button>
           </div>
         </template>
       </div>
       <div class="flex gap-3 pt-2">
-        <button @click="submitAddPO()" class="btn-primary flex-1 py-2.5 rounded-lg">Bestellung speichern</button>
-        <button @click="modal.addPO=false" class="btn-ghost flex-1 py-2.5 rounded-lg">Abbrechen</button>
+        <button @click="submitAddPO()" class="btn-primary flex-1 py-2.5 rounded-lg">Save Order</button>
+        <button @click="modal.addPO=false" class="btn-ghost flex-1 py-2.5 rounded-lg">Cancel</button>
       </div>
     </div>
   </div>
@@ -661,43 +663,43 @@
 <div x-show="modal.addSupplier" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" @click.self="modal.addSupplier=false">
   <div class="modal-box shadow-xl w-full max-w-lg mx-4 p-6">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="text-xl font-bold text-slate-800">Neuer Lieferant</h2>
+      <h2 class="text-xl font-extrabold text-slate-800">New Supplier</h2>
       <button @click="modal.addSupplier=false" class="text-slate-400 hover:text-slate-700 text-xl">✕</button>
     </div>
     <div class="space-y-3">
       <div>
-        <label class="text-xs text-slate-500 block mb-1">Firmenname *</label>
-        <input type="text" x-model="newSupplier.name" class="input" placeholder="Mustermann GmbH" />
+        <label class="text-xs text-slate-500 block mb-1">Company Name *</label>
+        <input type="text" x-model="newSupplier.name" class="input" placeholder="Acme Corp" />
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="text-xs text-slate-500 block mb-1">Ansprechpartner</label>
+          <label class="text-xs text-slate-500 block mb-1">Contact Name</label>
           <input type="text" x-model="newSupplier.contact_name" class="input" />
         </div>
         <div>
-          <label class="text-xs text-slate-500 block mb-1">E-Mail</label>
+          <label class="text-xs text-slate-500 block mb-1">Email</label>
           <input type="email" x-model="newSupplier.email" class="input" />
         </div>
         <div>
-          <label class="text-xs text-slate-500 block mb-1">Telefon</label>
+          <label class="text-xs text-slate-500 block mb-1">Phone</label>
           <input type="text" x-model="newSupplier.phone" class="input" />
         </div>
         <div>
-          <label class="text-xs text-slate-500 block mb-1">Zahlungsbedingungen</label>
-          <input type="text" x-model="newSupplier.payment_terms" class="input" placeholder="30 Tage netto" />
+          <label class="text-xs text-slate-500 block mb-1">Payment Terms</label>
+          <input type="text" x-model="newSupplier.payment_terms" class="input" placeholder="Net 30" />
         </div>
       </div>
       <div>
-        <label class="text-xs text-slate-500 block mb-1">Kategorie</label>
-        <input type="text" x-model="newSupplier.category" class="input" placeholder="z.B. Elektronik & Komponenten" />
+        <label class="text-xs text-slate-500 block mb-1">Category</label>
+        <input type="text" x-model="newSupplier.category" class="input" placeholder="e.g. Electronics & Components" />
       </div>
       <div>
-        <label class="text-xs text-slate-500 block mb-1">Adresse</label>
+        <label class="text-xs text-slate-500 block mb-1">Address</label>
         <input type="text" x-model="newSupplier.address" class="input" />
       </div>
       <div class="flex gap-3 pt-2">
-        <button @click="submitAddSupplier()" class="btn-primary flex-1 py-2.5 rounded-lg">Lieferant speichern</button>
-        <button @click="modal.addSupplier=false" class="btn-ghost flex-1 py-2.5 rounded-lg">Abbrechen</button>
+        <button @click="submitAddSupplier()" class="btn-primary flex-1 py-2.5 rounded-lg">Save Supplier</button>
+        <button @click="modal.addSupplier=false" class="btn-ghost flex-1 py-2.5 rounded-lg">Cancel</button>
       </div>
     </div>
   </div>
@@ -718,62 +720,62 @@
         <!-- Contact info -->
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <p class="text-xs text-slate-400">Ansprechpartner</p>
+            <p class="text-xs text-slate-400">Contact</p>
             <p class="text-slate-800" x-text="selectedSupplier.contact_name || '—'"></p>
           </div>
           <div>
-            <p class="text-xs text-slate-400">E-Mail</p>
+            <p class="text-xs text-slate-400">Email</p>
             <p class="text-sky-600" x-text="selectedSupplier.email || '—'"></p>
           </div>
           <div>
-            <p class="text-xs text-slate-400">Telefon</p>
+            <p class="text-xs text-slate-400">Phone</p>
             <p class="text-slate-800" x-text="selectedSupplier.phone || '—'"></p>
           </div>
           <div>
-            <p class="text-xs text-slate-400">Zahlungsbedingungen</p>
+            <p class="text-xs text-slate-400">Payment Terms</p>
             <p class="text-slate-800" x-text="selectedSupplier.payment_terms || '—'"></p>
           </div>
         </div>
 
         <!-- Scorecard -->
         <div x-show="selectedSupplier.scorecard">
-          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Performance Scorecard</p>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Performance Scorecard</p>
           <div class="grid grid-cols-3 gap-3">
             <div class="card p-3 text-center">
               <p class="text-2xl font-bold" :class="selectedSupplier.scorecard?.on_time_pct>=90?'text-green-400':selectedSupplier.scorecard?.on_time_pct>=70?'text-yellow-400':'text-red-400'"
                  x-text="(selectedSupplier.scorecard?.on_time_pct||0) + '%'"></p>
-              <p class="text-xs text-slate-400 mt-1">Pünktlichkeit</p>
+              <p class="text-xs text-slate-400 mt-1">On-Time Rate</p>
             </div>
             <div class="card p-3 text-center">
               <p class="text-2xl font-bold" :class="selectedSupplier.scorecard?.price_adherence_pct>=95?'text-green-400':selectedSupplier.scorecard?.price_adherence_pct>=80?'text-yellow-400':'text-red-400'"
                  x-text="(selectedSupplier.scorecard?.price_adherence_pct||0) + '%'"></p>
-              <p class="text-xs text-slate-400 mt-1">Preiskonformität</p>
+              <p class="text-xs text-slate-400 mt-1">Price Compliance</p>
             </div>
             <div class="card p-3 text-center">
               <p class="text-2xl font-bold text-emerald-600"
                  x-text="(selectedSupplier.scorecard?.score||0).toFixed(0)"></p>
-              <p class="text-xs text-slate-400 mt-1">Gesamtscore</p>
+              <p class="text-xs text-slate-400 mt-1">Overall Score</p>
             </div>
           </div>
           <div class="mt-3 grid grid-cols-3 gap-3 text-center text-sm">
             <div>
               <p class="text-xl font-bold text-slate-800" x-text="selectedSupplier.scorecard?.total_orders||0"></p>
-              <p class="text-xs text-slate-500">Bestellungen</p>
+              <p class="text-xs text-slate-500">Orders</p>
             </div>
             <div>
               <p class="text-xl font-bold text-emerald-600" x-text="formatCurrency(selectedSupplier.scorecard?.total_spend||0)"></p>
-              <p class="text-xs text-slate-500">Gesamt</p>
+              <p class="text-xs text-slate-500">Total</p>
             </div>
             <div>
               <p class="text-xl font-bold text-slate-800" x-text="selectedSupplier.scorecard?.completed||0"></p>
-              <p class="text-xs text-slate-500">Abgeschlossen</p>
+              <p class="text-xs text-slate-500">Completed</p>
             </div>
           </div>
         </div>
 
         <!-- Recent orders -->
         <div x-show="selectedSupplier.orders?.length > 0">
-          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Letzte Bestellungen</p>
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Recent Orders</p>
           <div class="space-y-1.5 max-h-48 overflow-y-auto scrollbar-thin">
             <template x-for="po in (selectedSupplier.orders||[]).slice(0,8)" :key="po.id">
               <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-100">
@@ -798,11 +800,11 @@
         <div class="flex items-center gap-2 mb-1">
           <span class="text-xs font-bold px-2 py-0.5 rounded"
                 :class="{'badge-gray level-1':selectedEmail?.level===1,'badge-yellow level-2':selectedEmail?.level===2,'badge-red level-3':selectedEmail?.level===3}"
-                x-text="'Eskalationsstufe ' + selectedEmail?.level"></span>
-          <span x-show="selectedEmail?.approved" class="badge-green text-xs px-2 py-0.5 rounded">Genehmigt</span>
+                x-text="'Escalation Level ' + selectedEmail?.level"></span>
+          <span x-show="selectedEmail?.approved" class="badge-green text-xs px-2 py-0.5 rounded">Approved</span>
         </div>
         <h2 class="text-lg font-bold text-slate-800" x-text="selectedEmail?.subject"></h2>
-        <p class="text-sm text-slate-500 mt-0.5" x-text="'An: ' + (selectedEmail?.supplier_email || 'E-Mail nicht hinterlegt')"></p>
+        <p class="text-sm text-slate-500 mt-0.5" x-text="'To: ' + (selectedEmail?.supplier_email || 'No email on file')"></p>
       </div>
       <button @click="modal.chasePreview=false" class="text-slate-400 hover:text-slate-700 text-xl ml-4">✕</button>
     </div>
@@ -810,13 +812,13 @@
     <div class="flex gap-3 mt-4">
       <button x-show="!selectedEmail?.approved" @click="approveChase(selectedEmail?.id); modal.chasePreview=false"
               class="btn-primary flex-1 py-2.5 rounded-lg">
-        Genehmigen &amp; exportieren
+        Approve &amp; Export
       </button>
       <button @click="copyEmailBody()" class="btn-ghost flex-1 py-2.5 rounded-lg">
-        Text kopieren
+        Copy Text
       </button>
       <button @click="modal.chasePreview=false" class="btn-ghost py-2.5 px-6 rounded-lg">
-        Schließen
+        Close
       </button>
     </div>
   </div>
@@ -826,50 +828,50 @@
 <div x-show="modal.addDeviation" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" @click.self="modal.addDeviation=false">
   <div class="modal-box shadow-xl w-full max-w-md mx-4 p-6">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="text-xl font-bold text-slate-800">Preischeck hinzufügen</h2>
+      <h2 class="text-xl font-extrabold text-slate-800">Add Price Check</h2>
       <button @click="modal.addDeviation=false" class="text-slate-400 hover:text-slate-700 text-xl">✕</button>
     </div>
     <div class="space-y-4">
       <div>
-        <label class="text-xs text-slate-500 block mb-1">Lieferant *</label>
+        <label class="text-xs text-slate-500 block mb-1">Supplier *</label>
         <select x-model="newDeviation.supplier_id" class="input">
-          <option value="">Bitte wählen…</option>
+          <option value="">Please select…</option>
           <template x-for="s in suppliers" :key="s.id">
             <option :value="s.id" x-text="s.name"></option>
           </template>
         </select>
       </div>
       <div>
-        <label class="text-xs text-slate-500 block mb-1">Bestellung (optional)</label>
+        <label class="text-xs text-slate-500 block mb-1">Order (optional)</label>
         <select x-model="newDeviation.po_id" class="input">
-          <option value="">Keine Verknüpfung</option>
+          <option value="">No link</option>
           <template x-for="po in allPOs" :key="po.id">
             <option :value="po.id" x-text="po.po_number + ' – ' + po.supplier_name"></option>
           </template>
         </select>
       </div>
       <div>
-        <label class="text-xs text-slate-500 block mb-1">Artikel / Beschreibung *</label>
-        <input type="text" x-model="newDeviation.item_description" class="input" placeholder="z.B. Stahlplatten 10mm" />
+        <label class="text-xs text-slate-500 block mb-1">Item / Description *</label>
+        <input type="text" x-model="newDeviation.item_description" class="input" placeholder="e.g. Steel plates 10mm" />
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="text-xs text-slate-500 block mb-1">Genehmigter Preis (€)</label>
+          <label class="text-xs text-slate-500 block mb-1">Approved Price (€)</label>
           <input type="number" x-model="newDeviation.approved_price" class="input" step="0.01" />
         </div>
         <div>
-          <label class="text-xs text-slate-500 block mb-1">Rechnungspreis (€)</label>
+          <label class="text-xs text-slate-500 block mb-1">Invoice Price (€)</label>
           <input type="number" x-model="newDeviation.invoice_price" class="input" step="0.01" />
         </div>
       </div>
       <div x-show="newDeviation.approved_price && newDeviation.invoice_price" class="text-sm text-center py-2 rounded-lg"
            :class="Math.abs((newDeviation.invoice_price-newDeviation.approved_price)/newDeviation.approved_price*100)<5?'badge-green':Math.abs((newDeviation.invoice_price-newDeviation.approved_price)/newDeviation.approved_price*100)<10?'badge-yellow':'badge-red'">
-        Abweichung: <span class="font-bold"
+        Deviation: <span class="font-bold"
           x-text="newDeviation.approved_price>0 ? ((newDeviation.invoice_price-newDeviation.approved_price)/newDeviation.approved_price*100).toFixed(1)+'%' : '—'"></span>
       </div>
       <div class="flex gap-3 pt-2">
-        <button @click="submitAddDeviation()" class="btn-primary flex-1 py-2.5 rounded-lg">Preischeck speichern</button>
-        <button @click="modal.addDeviation=false" class="btn-ghost flex-1 py-2.5 rounded-lg">Abbrechen</button>
+        <button @click="submitAddDeviation()" class="btn-primary flex-1 py-2.5 rounded-lg">Save Price Check</button>
+        <button @click="modal.addDeviation=false" class="btn-ghost flex-1 py-2.5 rounded-lg">Cancel</button>
       </div>
     </div>
   </div>
@@ -894,15 +896,15 @@ function app() {
     navItems: [
       { id: 'dashboard', label: 'Dashboard', badge: 0,
         icon: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>' },
-      { id: 'kanban', label: 'PO-Tracker', badge: 0,
+      { id: 'kanban', label: 'PO Tracker', badge: 0,
         icon: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 10h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 16h4v4H4zm6 0h4v4h-4z"/></svg>' },
-      { id: 'suppliers', label: 'Lieferanten', badge: 0,
+      { id: 'suppliers', label: 'Suppliers', badge: 0,
         icon: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>' },
-      { id: 'price', label: 'Preismonitor', badge: 0,
+      { id: 'price', label: 'Price Monitor', badge: 0,
         icon: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>' },
-      { id: 'chase', label: 'Mahnungen', badge: 0,
+      { id: 'chase', label: 'Chase Emails', badge: 0,
         icon: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>' },
-      { id: 'spend', label: 'Ausgaben-Report', badge: 0,
+      { id: 'spend', label: 'Spend Report', badge: 0,
         icon: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>' },
     ],
 
@@ -921,11 +923,11 @@ function app() {
     supplierSearch: '',
 
     kanbanColumns: [
-      { status: 'ordered',  label: 'Bestellt',   color: '#94a3b8' },
-      { status: 'shipped',  label: 'Versendet',  color: '#00B3FF' },
-      { status: 'received', label: 'Erhalten',   color: '#00FFC5' },
-      { status: 'invoiced', label: 'Rechnung',   color: '#eab308' },
-      { status: 'paid',     label: 'Bezahlt',    color: '#22c55e' },
+      { status: 'ordered',  label: 'Ordered',    color: '#94a3b8' },
+      { status: 'shipped',  label: 'Shipped',    color: '#00B3FF' },
+      { status: 'received', label: 'Received',   color: '#00FFC5' },
+      { status: 'invoiced', label: 'Invoiced',   color: '#eab308' },
+      { status: 'paid',     label: 'Paid',       color: '#22c55e' },
     ],
 
     modal: {
@@ -938,7 +940,7 @@ function app() {
     selectedEmail: null,
 
     newPO: { po_number:'', supplier_id:'', expected_delivery:'', category:'', notes:'', items:[{description:'',quantity:1,unit_price:0}] },
-    newSupplier: { name:'', contact_name:'', email:'', phone:'', payment_terms:'30 Tage netto', address:'', category:'' },
+    newSupplier: { name:'', contact_name:'', email:'', phone:'', payment_terms:'Net 30', address:'', category:'' },
     newDeviation: { supplier_id:'', po_id:'', item_description:'', approved_price:'', invoice_price:'' },
 
     deviationCounts: { green:0, yellow:0, red:0 },
@@ -967,7 +969,7 @@ function app() {
         this.loginPassword = '';
         await this.loadAll();
       } else {
-        this.loginError = 'Falsches Passwort';
+        this.loginError = 'Incorrect password';
       }
     },
 
@@ -1056,20 +1058,20 @@ function app() {
 
     get currentViewLabel() {
       const map = {
-        dashboard: 'Dashboard', kanban: 'PO-Tracker', suppliers: 'Lieferantenverzeichnis',
-        price: 'Preismonitor', chase: 'Mahnungs-Engine', spend: 'Ausgaben-Report',
+        dashboard: 'Dashboard', kanban: 'PO Tracker', suppliers: 'Supplier Directory',
+        price: 'Price Monitor', chase: 'Chase Engine', spend: 'Spend Report',
       };
       return map[this.currentView] || '';
     },
 
     get currentViewSub() {
       const map = {
-        dashboard: 'Übersicht aller Beschaffungsaktivitäten',
-        kanban: 'Bestellungen nach Status verwalten',
-        suppliers: 'Lieferanten, Konditionen &amp; Scorecards',
-        price: 'Preisabweichungen erkennen &amp; eskalieren',
-        chase: 'Überfällige Lieferungen automatisch mahnen',
-        spend: 'Ausgabenanalyse &amp; Trends',
+        dashboard: 'Overview of all procurement activities',
+        kanban: 'Manage orders by status',
+        suppliers: 'Suppliers, terms &amp; scorecards',
+        price: 'Detect &amp; escalate price deviations',
+        chase: 'Automatically chase overdue deliveries',
+        spend: 'Spend analysis &amp; trends',
       };
       return map[this.currentView] || '';
     },
@@ -1116,7 +1118,7 @@ function app() {
       await this.loadSummary();
       this.buildStatusSummary();
       this.updateBadges();
-      this.showToast('Status aktualisiert', 'success');
+      this.showToast('Status updated', 'success');
     },
 
     openPODetail(po) { this.selectedPO = po; this.modal.poDetail = true; },
@@ -1127,7 +1129,7 @@ function app() {
 
     async submitAddPO() {
       if (!this.newPO.po_number || !this.newPO.supplier_id) {
-        this.showToast('Bestellnummer und Lieferant erforderlich', 'error'); return;
+        this.showToast('Order number and supplier required', 'error'); return;
       }
       const res = await fetch('/api/pos', {
         method: 'POST',
@@ -1138,28 +1140,28 @@ function app() {
         this.modal.addPO = false;
         await this.loadPOs();
         await this.loadSummary();
-        this.showToast('Bestellung gespeichert', 'success');
+        this.showToast('Order saved', 'success');
       } else {
         const e = await res.json();
-        this.showToast(e.detail || 'Fehler beim Speichern', 'error');
+        this.showToast(e.detail || 'Error saving', 'error');
       }
     },
 
     async deletePO(po) {
-      if (!confirm(`Bestellung ${po.po_number} wirklich löschen?`)) return;
+      if (!confirm(`Really delete order ${po.po_number}?`)) return;
       await fetch(`/api/pos/${po.id}`, { method: 'DELETE' });
       await this.loadPOs();
       await this.loadSummary();
-      this.showToast('Bestellung gelöscht', 'success');
+      this.showToast('Order deleted', 'success');
     },
 
     openAddSupplier() {
-      this.newSupplier = { name:'', contact_name:'', email:'', phone:'', payment_terms:'30 Tage netto', address:'', category:'' };
+      this.newSupplier = { name:'', contact_name:'', email:'', phone:'', payment_terms:'Net 30', address:'', category:'' };
       this.modal.addSupplier = true;
     },
 
     async submitAddSupplier() {
-      if (!this.newSupplier.name) { this.showToast('Name erforderlich', 'error'); return; }
+      if (!this.newSupplier.name) { this.showToast('Name required', 'error'); return; }
       const res = await fetch('/api/suppliers', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
@@ -1168,7 +1170,7 @@ function app() {
       if (res.ok) {
         this.modal.addSupplier = false;
         await this.loadSuppliers();
-        this.showToast('Lieferant gespeichert', 'success');
+        this.showToast('Supplier saved', 'success');
       }
     },
 
@@ -1185,7 +1187,7 @@ function app() {
 
     async submitAddDeviation() {
       if (!this.newDeviation.supplier_id || !this.newDeviation.item_description || !this.newDeviation.approved_price || !this.newDeviation.invoice_price) {
-        this.showToast('Bitte alle Pflichtfelder ausfüllen', 'error'); return;
+        this.showToast('Please fill in all required fields', 'error'); return;
       }
       const res = await fetch('/api/price-deviations', {
         method: 'POST',
@@ -1196,7 +1198,7 @@ function app() {
         this.modal.addDeviation = false;
         await this.loadDeviations();
         this.updateBadges();
-        this.showToast('Preischeck gespeichert', 'success');
+        this.showToast('Price check saved', 'success');
       }
     },
 
@@ -1204,7 +1206,7 @@ function app() {
       await fetch(`/api/price-deviations/${id}`, { method: 'DELETE' });
       await this.loadDeviations();
       this.updateBadges();
-      this.showToast('Eintrag gelöscht', 'success');
+      this.showToast('Entry deleted', 'success');
     },
 
     async generateChase(poId, level) {
@@ -1219,7 +1221,7 @@ function app() {
         this.updateBadges();
         this.selectedEmail = email;
         this.modal.chasePreview = true;
-        this.showToast('E-Mail generiert', 'success');
+        this.showToast('Email generated', 'success');
       }
     },
 
@@ -1229,20 +1231,20 @@ function app() {
       await fetch(`/api/chase-emails/${id}/approve`, { method: 'POST' });
       await this.loadChaseEmails();
       this.updateBadges();
-      this.showToast('E-Mail genehmigt', 'success');
+      this.showToast('Email approved', 'success');
     },
 
     async deleteChase(id) {
       await fetch(`/api/chase-emails/${id}`, { method: 'DELETE' });
       await this.loadChaseEmails();
       this.updateBadges();
-      this.showToast('E-Mail gelöscht', 'success');
+      this.showToast('Email deleted', 'success');
     },
 
     async copyEmailBody() {
       if (this.selectedEmail?.body) {
         await navigator.clipboard.writeText(this.selectedEmail.body);
-        this.showToast('Text kopiert', 'success');
+        this.showToast('Text copied', 'success');
       }
     },
 
@@ -1257,16 +1259,16 @@ function app() {
         await this.loadPOs();
         await this.loadSuppliers();
         await this.loadSummary();
-        this.showToast(`${d.created} Bestellungen importiert${d.errors.length?' ('+d.errors.length+' Fehler)':''}`, d.errors.length ? 'error' : 'success');
+        this.showToast(`${d.created} orders imported${d.errors.length?' ('+d.errors.length+' errors)':''}`, d.errors.length ? 'error' : 'success');
       }
       event.target.value = '';
     },
 
     downloadCSVTemplate() {
-      const csv = 'po_number,supplier_name,item_description,quantity,unit_price,expected_delivery,category\nPO-2026-100,Beispiel GmbH,Artikel A,10,25.00,2026-05-01,Elektronik\n';
+      const csv = 'po_number,supplier_name,item_description,quantity,unit_price,expected_delivery,category\nPO-2026-100,Example Corp,Item A,10,25.00,2026-05-01,Electronics\n';
       const a = document.createElement('a');
       a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-      a.download = 'bestellungen_vorlage.csv';
+      a.download = 'orders_template.csv';
       a.click();
     },
 
@@ -1275,7 +1277,7 @@ function app() {
       const d = await res.json();
       if (d.loaded) {
         await this.loadAll();
-        this.showToast('Demo-Daten geladen! 5 Lieferanten, 25 Bestellungen', 'success');
+        this.showToast('Demo data loaded! 5 suppliers, 25 orders', 'success');
       } else {
         this.showToast(d.message, 'info');
       }
@@ -1295,7 +1297,7 @@ function app() {
 
       const commonOptions = {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Inter' } } } },
+        plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Outfit' } } } },
       };
 
       const colors = ['#00B3FF','#00FFC5','#eab308','#a78bfa','#f472b6','#34d399','#fb923c','#60a5fa'];
@@ -1309,7 +1311,7 @@ function app() {
           data: {
             labels: bySupplier.map(d => d.supplier_name),
             datasets: [{
-              label: 'Ausgaben (€)',
+              label: 'Spend (€)',
               data: bySupplier.map(d => d.total_spend),
               backgroundColor: colors,
               borderRadius: 6,
@@ -1319,8 +1321,8 @@ function app() {
           options: {
             ...commonOptions,
             scales: {
-              x: { ticks: { color: tickColor, font:{family:'Inter',size:11} }, grid: { color: gridColor } },
-              y: { ticks: { color: tickColor, callback: v => this.formatCurrencyShort(v), font:{family:'Inter',size:11} }, grid: { color: gridColor } }
+              x: { ticks: { color: tickColor, font:{family:'Outfit',size:11} }, grid: { color: gridColor } },
+              y: { ticks: { color: tickColor, callback: v => this.formatCurrencyShort(v), font:{family:'Outfit',size:11} }, grid: { color: gridColor } }
             },
             plugins: { ...commonOptions.plugins, tooltip: {
               callbacks: { label: ctx => ' ' + this.formatCurrency(ctx.parsed.y) }
@@ -1364,7 +1366,7 @@ function app() {
           data: {
             labels: trend.map(d => d.month),
             datasets: [{
-              label: 'Monatliche Ausgaben (€)',
+              label: 'Monthly Spend (€)',
               data: trend.map(d => d.total_spend),
               borderColor: highlight,
               backgroundColor: 'rgba(0,255,197,0.08)',
@@ -1379,8 +1381,8 @@ function app() {
           options: {
             ...commonOptions,
             scales: {
-              x: { ticks: { color: tickColor, font:{family:'Inter',size:11} }, grid: { color: gridColor } },
-              y: { ticks: { color: tickColor, callback: v => this.formatCurrencyShort(v), font:{family:'Inter',size:11} }, grid: { color: gridColor } }
+              x: { ticks: { color: tickColor, font:{family:'Outfit',size:11} }, grid: { color: gridColor } },
+              y: { ticks: { color: tickColor, callback: v => this.formatCurrencyShort(v), font:{family:'Outfit',size:11} }, grid: { color: gridColor } }
             },
             plugins: { ...commonOptions.plugins, tooltip: {
               callbacks: { label: ctx => ' ' + this.formatCurrency(ctx.parsed.y) }
@@ -1393,7 +1395,7 @@ function app() {
     // ---- Utilities ----
     formatCurrency(val) {
       if (val === null || val === undefined) return '—';
-      return new Intl.NumberFormat('de-DE', { style:'currency', currency:'EUR', minimumFractionDigits:0, maximumFractionDigits:0 }).format(val);
+      return new Intl.NumberFormat('en-US', { style:'currency', currency:'EUR', minimumFractionDigits:0, maximumFractionDigits:0 }).format(val);
     },
     formatCurrencyShort(val) {
       if (val >= 1000) return (val/1000).toFixed(0) + 'k €';
@@ -1401,13 +1403,13 @@ function app() {
     },
     formatDate(d) {
       if (!d) return '—';
-      try { return new Date(d + 'T00:00:00').toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',year:'numeric'}); }
+      try { return new Date(d + 'T00:00:00').toLocaleDateString('en-US', {day:'2-digit',month:'2-digit',year:'numeric'}); }
       catch { return d; }
     },
 
     statusLabel(status, isOverdue) {
-      if (isOverdue) return 'Überfällig';
-      const m = { ordered:'Bestellt', shipped:'Versendet', received:'Erhalten', invoiced:'Rechnung', paid:'Bezahlt' };
+      if (isOverdue) return 'Overdue';
+      const m = { ordered:'Ordered', shipped:'Shipped', received:'Received', invoiced:'Invoiced', paid:'Paid' };
       return m[status] || status;
     },
     statusBadge(status, isOverdue) {

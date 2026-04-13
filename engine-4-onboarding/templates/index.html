@@ -137,6 +137,23 @@
         </svg>
         New Onboarding
       </button>
+      <button
+        @click="showSlack = true; slackChannel = 'onboarding'"
+        class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-slate-900"
+      >
+        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+          <rect x="2.5" y="9" width="5" height="3" rx="1.5" fill="#36C5F0"/>
+          <rect x="2.5" y="12" width="3" height="5" rx="1.5" fill="#36C5F0"/>
+          <rect x="9.5" y="2.5" width="3" height="5" rx="1.5" fill="#2EB67D"/>
+          <rect x="9.5" y="9" width="5" height="5" rx="1" fill="#ECB22E"/>
+          <rect x="9.5" y="16" width="3" height="5" rx="1.5" fill="#ECB22E"/>
+          <rect x="16.5" y="9" width="5" height="3" rx="1.5" fill="#E01E5A"/>
+          <rect x="14.5" y="12" width="3" height="5" rx="1.5" fill="#E01E5A"/>
+          <rect x="16.5" y="2.5" width="3" height="5" rx="1.5" fill="#2EB67D"/>
+        </svg>
+        <span class="flex-1 text-left">Slack — OpenClaw</span>
+        <span class="bg-red-500 text-white text-xs rounded-full px-1.5 leading-4 font-bold">4</span>
+      </button>
     </nav>
 
     <!-- Employee List -->
@@ -651,6 +668,220 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
+     FAKE SLACK ENVIRONMENT
+════════════════════════════════════════════════════════════════ -->
+<div
+  x-show="showSlack"
+  x-transition:enter="transition ease-out duration-200"
+  x-transition:enter-start="opacity-0"
+  x-transition:enter-end="opacity-100"
+  class="fixed inset-0 z-[60] flex"
+  style="font-family: 'Outfit', sans-serif;"
+>
+  <!-- Slack Left Sidebar -->
+  <div class="flex flex-col flex-shrink-0 overflow-hidden" style="width: 258px; background: #3F0F3F;">
+
+    <!-- Workspace header -->
+    <div class="flex items-center px-4 py-3 cursor-pointer flex-shrink-0" style="background: #350D36;">
+      <div class="flex-1 min-w-0">
+        <div class="text-white font-bold text-sm">Acme Corp</div>
+        <div class="flex items-center gap-1.5 mt-0.5">
+          <span class="w-2 h-2 rounded-full bg-green-400 flex-shrink-0 inline-block"></span>
+          <span class="text-xs" style="color: #D0A3D0;">You're active</span>
+        </div>
+      </div>
+      <svg class="w-4 h-4 ml-2 flex-shrink-0" style="color: #D0A3D0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </div>
+
+    <!-- Sidebar items -->
+    <div class="flex-1 overflow-y-auto py-2" style="scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent;">
+
+      <!-- Quick nav -->
+      <button class="flex items-center gap-2.5 w-full text-sm rounded-md py-1.5 px-3 hover:bg-white/10 transition-colors" style="color: #D0A3D0;">
+        <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+        </svg>
+        Home
+      </button>
+      <button class="flex items-center gap-2.5 w-full text-sm rounded-md py-1.5 px-3 hover:bg-white/10 transition-colors" style="color: #D0A3D0;">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+        </svg>
+        Threads
+      </button>
+
+      <!-- Channels -->
+      <div class="px-3 pt-4 pb-1 uppercase tracking-wider font-semibold" style="color: rgba(255,255,255,0.45); font-size: 11px;">Channels</div>
+
+      <template x-for="ch in slackChannels" :key="ch.id">
+        <button
+          @click="slackChannel = ch.id"
+          class="flex items-center gap-2 w-full text-sm rounded-md py-1 px-3 transition-colors"
+          :style="slackChannel === ch.id ? 'background: rgba(255,255,255,0.15); color: white;' : 'color: #D0A3D0;'"
+        >
+          <span class="text-base font-light opacity-60">#</span>
+          <span class="flex-1 text-left truncate" x-text="ch.label"></span>
+          <span x-show="ch.unread > 0"
+                class="text-xs font-bold rounded-full px-1.5 leading-4 flex-shrink-0"
+                style="background: white; color: #3F0F3F;"
+                x-text="ch.unread"></span>
+        </button>
+      </template>
+
+      <!-- Direct Messages -->
+      <div class="px-3 pt-4 pb-1 uppercase tracking-wider font-semibold" style="color: rgba(255,255,255,0.45); font-size: 11px;">Direct Messages</div>
+
+      <button
+        @click="slackChannel = 'dm-openclaw'"
+        class="flex items-center gap-2.5 w-full text-sm rounded-md py-1.5 px-3 transition-colors"
+        :style="slackChannel === 'dm-openclaw' ? 'background: rgba(255,255,255,0.15); color: white;' : 'color: #D0A3D0;'"
+      >
+        <div class="w-5 h-5 rounded flex items-center justify-center text-xs leading-none flex-shrink-0" style="background: #F5A623;">🦞</div>
+        <span class="flex-1 text-left">OpenClaw</span>
+        <span class="w-2 h-2 rounded-full bg-green-400 flex-shrink-0"></span>
+      </button>
+
+      <button
+        @click="slackChannel = 'dm-hr'"
+        class="flex items-center gap-2.5 w-full text-sm rounded-md py-1.5 px-3 transition-colors"
+        :style="slackChannel === 'dm-hr' ? 'background: rgba(255,255,255,0.15); color: white;' : 'color: #D0A3D0;'"
+      >
+        <div class="w-5 h-5 rounded flex items-center justify-center text-xs font-bold flex-shrink-0" style="background: #4F46E5; color: white;">H</div>
+        <span class="flex-1 text-left">HR Team</span>
+        <span class="w-2 h-2 rounded-full bg-green-400 flex-shrink-0"></span>
+      </button>
+
+      <button
+        @click="slackChannel = 'dm-you'"
+        class="flex items-center gap-2.5 w-full text-sm rounded-md py-1.5 px-3 transition-colors"
+        :style="slackChannel === 'dm-you' ? 'background: rgba(255,255,255,0.15); color: white;' : 'color: #D0A3D0;'"
+      >
+        <div class="w-5 h-5 rounded flex items-center justify-center text-xs font-bold flex-shrink-0" style="background: #6366F1; color: white;">Y</div>
+        <span class="flex-1 text-left">You <span style="opacity:0.6; font-size:11px;">(yourself)</span></span>
+      </button>
+    </div>
+
+    <!-- Back button -->
+    <div class="p-3 flex-shrink-0" style="border-top: 1px solid rgba(255,255,255,0.1);">
+      <button
+        @click="showSlack = false"
+        class="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 transition-colors"
+        style="color: #D0A3D0;"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+        </svg>
+        Back to Dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col min-w-0 bg-white">
+
+    <!-- Channel header -->
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 flex-shrink-0 bg-white shadow-sm">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="text-gray-500 font-bold text-lg leading-none" x-show="!slackChannel.startsWith('dm-')">#</span>
+        <div x-show="slackChannel === 'dm-openclaw'" class="w-6 h-6 rounded flex items-center justify-center text-sm leading-none flex-shrink-0" style="background: #F5A623;">🦞</div>
+        <div x-show="slackChannel === 'dm-hr'" class="w-6 h-6 rounded flex items-center justify-center text-xs font-bold flex-shrink-0" style="background: #4F46E5; color: white;">H</div>
+        <div x-show="slackChannel === 'dm-you'" class="w-6 h-6 rounded flex items-center justify-center text-xs font-bold flex-shrink-0" style="background: #6366F1; color: white;">Y</div>
+        <h2 class="font-bold text-gray-900 text-sm" x-text="slackChannelLabel"></h2>
+        <span class="text-gray-400 text-xs ml-1 truncate hidden md:block" x-text="slackChannelDesc"></span>
+      </div>
+      <div class="flex items-center gap-1 flex-shrink-0">
+        <button class="text-gray-400 hover:text-gray-700 p-1.5 rounded hover:bg-gray-100 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </button>
+        <button @click="showSlack = false" class="text-gray-400 hover:text-gray-700 p-1.5 rounded hover:bg-gray-100 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
+      <template x-for="msg in slackMessages" :key="msg.id">
+        <div class="flex gap-3 px-3 py-1.5 rounded-lg hover:bg-gray-50 group transition-colors">
+          <!-- Avatar -->
+          <div class="w-9 h-9 rounded-lg flex-shrink-0 flex items-center justify-center text-sm font-bold leading-none mt-0.5"
+               :style="`background: ${msg.avatarBg}; color: ${msg.avatarColor}`"
+               x-text="msg.avatar"></div>
+          <!-- Body -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-baseline gap-2 flex-wrap">
+              <span class="font-bold text-gray-900 text-sm leading-snug" x-text="msg.name"></span>
+              <span x-show="msg.bot" class="rounded px-1 font-semibold" style="background: #E8E8E8; color: #555; font-size: 10px; line-height: 1.6;">APP</span>
+              <span class="text-gray-400" style="font-size: 11px;" x-text="msg.time"></span>
+            </div>
+            <div class="text-sm text-gray-700 mt-0.5 leading-relaxed" x-html="msg.text"></div>
+            <!-- Attachment block -->
+            <div x-show="msg.attachment"
+                 class="mt-2 pl-3 border-l-4 rounded-r-md py-2 pr-3 text-xs"
+                 :style="msg.attachment ? `border-color: ${msg.attachment.color}; background: ${msg.attachment.bg}` : ''"
+                 x-html="msg.attachment ? msg.attachment.content : ''"></div>
+            <!-- Reactions -->
+            <div x-show="(msg.reactions || []).length > 0" class="flex gap-1 mt-1.5 flex-wrap">
+              <template x-for="r in (msg.reactions || [])" :key="r.emoji">
+                <span class="inline-flex items-center gap-1 text-xs bg-blue-50 hover:bg-blue-100 rounded-full px-2 py-0.5 cursor-pointer border border-blue-200 transition-colors">
+                  <span x-text="r.emoji"></span>
+                  <span class="text-blue-700 font-semibold" x-text="r.count"></span>
+                </span>
+              </template>
+            </div>
+          </div>
+        </div>
+      </template>
+      <div x-show="slackMessages.length === 0" class="text-gray-400 text-sm text-center py-16">No messages yet.</div>
+    </div>
+
+    <!-- Message input -->
+    <div class="px-4 pb-4 flex-shrink-0">
+      <div class="border border-gray-300 rounded-xl shadow-sm overflow-hidden">
+        <!-- Mini formatting toolbar -->
+        <div class="flex items-center gap-0.5 px-3 pt-2 pb-1 border-b border-gray-100">
+          <button class="text-gray-400 hover:text-gray-700 px-1.5 py-0.5 rounded hover:bg-gray-100 text-xs font-bold transition-colors">B</button>
+          <button class="text-gray-400 hover:text-gray-700 px-1.5 py-0.5 rounded hover:bg-gray-100 text-xs italic transition-colors">I</button>
+          <button class="text-gray-400 hover:text-gray-700 px-1.5 py-0.5 rounded hover:bg-gray-100 text-xs transition-colors line-through">S</button>
+          <div class="w-px h-4 bg-gray-200 mx-1"></div>
+          <button class="text-gray-400 hover:text-gray-700 p-1 rounded hover:bg-gray-100 transition-colors text-sm">😊</button>
+          <button class="text-gray-400 hover:text-gray-700 p-1 rounded hover:bg-gray-100 transition-colors">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+            </svg>
+          </button>
+        </div>
+        <!-- Text input row -->
+        <div class="flex items-center gap-2 px-3 py-2">
+          <input
+            x-model="slackInput"
+            @keydown.enter="sendSlackMessage()"
+            type="text"
+            class="flex-1 text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent"
+            :placeholder="`Message ${slackChannel.startsWith('dm-') ? '' : '#'}${slackChannelLabel}`"
+          />
+          <button
+            @click="sendSlackMessage()"
+            class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
+            :class="slackInput.trim() ? 'bg-green-700 text-white hover:bg-green-800' : 'bg-gray-200 text-gray-400 cursor-not-allowed'"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
      TASK EDIT MODAL
 ════════════════════════════════════════════════════════════════ -->
 <div
@@ -815,6 +1046,19 @@ function app() {
     dragOverColumn: null,
     demoLoading: false,
     toast: null,
+
+    // Slack
+    showSlack: false,
+    slackChannel: 'onboarding',
+    slackInput: '',
+    slackChannels: [
+      { id: 'general',         label: 'general',         unread: 0 },
+      { id: 'onboarding',      label: 'onboarding',      unread: 3 },
+      { id: 'new-hire-alerts', label: 'new-hire-alerts', unread: 1 },
+      { id: 'it-setup',        label: 'it-setup',        unread: 0 },
+      { id: 'hr-team',         label: 'hr-team',         unread: 0 },
+    ],
+    slackUserMessages: [],
 
     // ── Computed ──
     get unreadCount() {
@@ -1123,6 +1367,285 @@ function app() {
     showToast(message, type = 'success') {
       this.toast = { message, type };
       setTimeout(() => { this.toast = null; }, 3500);
+    },
+
+    // ── Slack helpers ──
+    get slackChannelLabel() {
+      if (this.slackChannel === 'dm-openclaw') return 'OpenClaw';
+      if (this.slackChannel === 'dm-hr') return 'HR Team';
+      if (this.slackChannel === 'dm-you') return 'You (yourself)';
+      return this.slackChannel;
+    },
+    get slackChannelDesc() {
+      const map = {
+        'onboarding':      '· Automated onboarding & offboarding updates via OpenClaw',
+        'general':         '· Company-wide announcements',
+        'it-setup':        '· IT provisioning, access & equipment',
+        'hr-team':         '· Internal HR coordination',
+        'new-hire-alerts': '· New hire arrival and departure alerts',
+        'dm-openclaw':     '· Your personal AI onboarding assistant',
+        'dm-hr':           '· Direct message with the HR team',
+        'dm-you':          '· Your personal notepad',
+      };
+      return map[this.slackChannel] || '';
+    },
+    get slackMessages() {
+      const now = new Date();
+      const fmt = (h, m) => {
+        const d = new Date(now);
+        d.setHours(h, m, 0, 0);
+        if (d > now) d.setDate(d.getDate() - 1);
+        return 'Today at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      };
+
+      const claw = (id, time, text, reactions, attachment) => ({
+        id, name: 'OpenClaw', avatar: '🦞', avatarBg: '#F5A623', avatarColor: '#7c3aed',
+        time, text, bot: true, reactions: reactions || [], attachment: attachment || null
+      });
+      const hr = (id, time, text, reactions) => ({
+        id, name: 'HR Team', avatar: 'HR', avatarBg: '#4F46E5', avatarColor: '#fff',
+        time, text, bot: false, reactions: reactions || [], attachment: null
+      });
+      const it = (id, time, text, reactions) => ({
+        id, name: 'IT Support', avatar: 'IT', avatarBg: '#0EA5E9', avatarColor: '#fff',
+        time, text, bot: false, reactions: reactions || [], attachment: null
+      });
+      const person = (id, name, initials, bg, color, time, text, reactions) => ({
+        id, name, avatar: initials, avatarBg: bg, avatarColor: color,
+        time, text, bot: false, reactions: reactions || [], attachment: null
+      });
+
+      const emps = this.employees;
+      const onbs = emps.filter(e => e.type === 'onboarding');
+      const offs = emps.filter(e => e.type === 'offboarding');
+      const overdueTotal = emps.reduce((a, e) => a + (e.overdue_count || 0), 0);
+      const totalTasks = emps.reduce((a, e) => a + (e.total_tasks || 0), 0);
+      const doneTasks  = emps.reduce((a, e) => a + (e.done_tasks  || 0), 0);
+
+      // ── #onboarding ──
+      if (this.slackChannel === 'onboarding') {
+        const msgs = [
+          hr(1, fmt(8,30), '👋 Morning team — please keep the task board up to date so OpenClaw can report accurately.', [{emoji:'☀️', count:4}]),
+          claw(2, fmt(8,32), `Here's today's onboarding snapshot 📋`, [{emoji:'👀', count:2}]),
+        ];
+        if (emps.length === 0) {
+          msgs.push(claw(3, fmt(8,33), 'No active processes yet. Once you add employees from the dashboard, I\'ll post status updates here automatically.', [], null));
+        } else {
+          emps.forEach((emp, i) => {
+            const icon = emp.overdue_count > 0 ? '⚠️' : emp.progress >= 80 ? '🎉' : '🔄';
+            const bar  = '█'.repeat(Math.round(emp.progress / 10)) + '░'.repeat(10 - Math.round(emp.progress / 10));
+            msgs.push(claw(10 + i, fmt(8, 34 + i * 2),
+              `${icon} <strong>${emp.name}</strong> — ${emp.role} <span style="color:#888;">(${emp.type})</span>`,
+              [],
+              {
+                color: emp.overdue_count > 0 ? '#e11d48' : emp.progress >= 80 ? '#10b981' : '#0ea5e9',
+                bg:    emp.overdue_count > 0 ? '#fff1f2' : emp.progress >= 80 ? '#f0fdf4' : '#f0f9ff',
+                content: `<strong>${emp.done_tasks}/${emp.total_tasks} tasks</strong> · ${emp.progress}% complete`
+                        + (emp.overdue_count > 0 ? ` · <span style="color:#e11d48;font-weight:600;">⚠️ ${emp.overdue_count} overdue</span>` : '')
+                        + `<br/><span style="font-family:monospace;letter-spacing:-2px;color:#555;">${bar}</span>`
+              }
+            ));
+          });
+          if (overdueTotal > 0) {
+            msgs.push(claw(30, fmt(9,15),
+              `⚠️ Action needed: <strong>${overdueTotal} overdue task${overdueTotal !== 1 ? 's' : ''}</strong> across active processes. Please review and reassign where needed.`,
+              [{emoji:'🚨', count: overdueTotal}]
+            ));
+            msgs.push(hr(31, fmt(9,17), 'On it — I\'ll follow up with the team leads now.', [{emoji:'👍', count:2}]));
+          } else {
+            msgs.push(claw(30, fmt(9,15), '✅ All tasks on track — no overdue items today. Great work everyone!', [{emoji:'🎉', count:3},{emoji:'💪', count:2}]));
+          }
+        }
+        const firstName = onbs[0]?.name || 'the new hire';
+        msgs.push(person(50, 'Sarah K.', 'SK', '#8B5CF6', '#fff', fmt(10,5),
+          `Thanks @OpenClaw! Can you assign the laptop setup task for <strong>${firstName}</strong> to IT?`, [{emoji:'👍', count:1}]));
+        msgs.push(claw(51, fmt(10,6), `Done! ✅ Equipment setup has been reassigned to @IT Support. They'll get a notification.`, [{emoji:'✅', count:2}]));
+        msgs.push(it(52, fmt(10,22), `Got it — adding <strong>${firstName}</strong>'s laptop to our prep queue now. Should be ready Day 1. 💻`, [{emoji:'💻', count:3}]));
+        msgs.push(...this.slackUserMessages.filter(m => m.channel === 'onboarding'));
+        return msgs.sort((a, b) => a.id - b.id);
+      }
+
+      // ── #general ──
+      if (this.slackChannel === 'general') {
+        const msgs = [
+          hr(1, fmt(8,0), '📢 Welcome to the Acme Corp Slack workspace! This is your hub for company communication.', [{emoji:'🎉', count:12}]),
+          person(2, 'Marcus L.', 'ML', '#059669', '#fff', fmt(9,10), 'Good morning everyone! 👋', [{emoji:'👋', count:8}]),
+          person(3, 'Anna K.', 'AK', '#DB2777', '#fff', fmt(9,12), 'Morning! All-hands at 2pm today — don\'t forget.', [{emoji:'📅', count:5}]),
+          claw(4, fmt(9,30),
+            `👋 Heads up from #onboarding: we have <strong>${emps.length} active process${emps.length !== 1 ? 'es' : ''}</strong> running this week. Check <strong>#onboarding</strong> for details!`,
+            [{emoji:'🤝', count:4}]
+          ),
+          person(5, 'Tobias M.', 'TM', '#7C3AED', '#fff', fmt(10,45), 'Thanks @OpenClaw — always good to know who\'s joining the team 🙌', [{emoji:'👍', count:3}]),
+          person(6, 'Sarah K.', 'SK', '#8B5CF6', '#fff', fmt(11,15), 'Reminder: lunch is at 12:30 in the main kitchen 🍕', [{emoji:'🍕', count:7},{emoji:'😋', count:4}]),
+          ...this.slackUserMessages.filter(m => m.channel === 'general'),
+        ];
+        return msgs;
+      }
+
+      // ── #it-setup ──
+      if (this.slackChannel === 'it-setup') {
+        const itTasks = this.currentTasks.filter(t => t.assignee === 'it' || t.category === 'setup');
+        const msgs = [
+          it(1, fmt(8,15), '🖥️ IT Setup channel — hardware requests, access provisioning, and software installs.', [{emoji:'💻', count:3}]),
+          claw(2, fmt(8,20), `Good morning IT team! Here are the pending IT tasks${itTasks.length > 0 ? ` for <strong>${this.selectedEmployee?.name || 'the current employee'}</strong>` : ''}:`, [{emoji:'👀', count:2}]),
+        ];
+        if (itTasks.length > 0) {
+          itTasks.slice(0, 5).forEach((task, i) => {
+            const icon = task.status === 'done' ? '✅' : task.status === 'overdue' ? '⚠️' : task.status === 'in_progress' ? '🔄' : '📋';
+            msgs.push(claw(10 + i, fmt(8, 22 + i),
+              `${icon} <strong>${task.title}</strong>`,
+              [],
+              {
+                color: task.status === 'done' ? '#10b981' : task.status === 'overdue' ? '#e11d48' : '#0ea5e9',
+                bg:    task.status === 'done' ? '#f0fdf4' : task.status === 'overdue' ? '#fff1f2' : '#f0f9ff',
+                content: `<strong>Assignee:</strong> ${this.formatAssignee(task.assignee)} · <strong>Due:</strong> ${this.formatDate(task.due_date)} · <strong>Status:</strong> ${task.status.replace('_',' ')}`
+              }
+            ));
+          });
+        } else {
+          msgs.push(claw(3, fmt(8,22), 'No IT tasks loaded yet. Select an employee from the dashboard to load their IT checklist here.', [], null));
+        }
+        msgs.push(it(50, fmt(9,30), 'Got the list! Starting with access provisioning first — that takes the longest lead time.', [{emoji:'👍', count:2}]));
+        msgs.push(person(51, 'Sarah K.', 'SK', '#8B5CF6', '#fff', fmt(10,0), 'Can someone also make sure VPN credentials are configured before Day 1?', [{emoji:'🔐', count:2}]));
+        msgs.push(claw(52, fmt(10,1), '✅ Added "Configure VPN access" to the IT checklist and assigned it to @IT Support.', [{emoji:'✅', count:3}]));
+        msgs.push(...this.slackUserMessages.filter(m => m.channel === 'it-setup'));
+        return msgs.sort((a, b) => a.id - b.id);
+      }
+
+      // ── #hr-team ──
+      if (this.slackChannel === 'hr-team') {
+        const avgProg = emps.length > 0 ? Math.round(emps.reduce((a, e) => a + (e.progress || 0), 0) / emps.length) : 0;
+        return [
+          hr(1, fmt(8,0), '🏢 Internal HR channel — keep all onboarding coordination here.', [{emoji:'📋', count:2}]),
+          hr(2, fmt(8,30), `Current: <strong>${onbs.length} onboarding${onbs.length !== 1 ? 's' : ''}</strong>, <strong>${offs.length} offboarding${offs.length !== 1 ? 's' : ''}</strong> in progress.`, [{emoji:'📊', count:3}]),
+          claw(3, fmt(8,32),
+            `Daily HR summary:<br/>• Active employees: <strong>${emps.length}</strong><br/>• Total tasks: <strong>${totalTasks}</strong><br/>• Completed: <strong>${doneTasks}</strong><br/>• Overdue: <strong style="color:${overdueTotal > 0 ? '#e11d48' : 'inherit'}">${overdueTotal}</strong><br/>• Avg completion: <strong>${avgProg}%</strong>`,
+            [{emoji:'📈', count:4}]
+          ),
+          person(4, 'Anna K.', 'AK', '#DB2777', '#fff', fmt(9,0),
+            overdueTotal > 0
+              ? `@OpenClaw can you send reminder nudges to the ${overdueTotal} overdue task assignees?`
+              : 'Everything looks on track! Thanks @OpenClaw for keeping us in the loop. 🙌',
+            [{emoji: overdueTotal > 0 ? '🙏' : '🎉', count: 2}]
+          ),
+          claw(5, fmt(9,1),
+            overdueTotal > 0
+              ? `Done! Automated reminders sent to all assignees with overdue tasks. They'll receive a notification. 📧`
+              : 'Happy to help! I\'ll flag anything that slips immediately. 🤖',
+            [{emoji:'✅', count:3}]
+          ),
+          ...this.slackUserMessages.filter(m => m.channel === 'hr-team'),
+        ];
+      }
+
+      // ── #new-hire-alerts ──
+      if (this.slackChannel === 'new-hire-alerts') {
+        const msgs = [
+          claw(1, fmt(7,55), '🔔 New Hire Alerts — I\'ll post here whenever an onboarding or offboarding is started from the task board.', [], null),
+        ];
+        if (emps.length === 0) {
+          msgs.push(claw(2, fmt(8,0), 'No new hires or departures yet. Check back after adding employees to the dashboard.', [], null));
+        }
+        onbs.forEach((emp, i) => {
+          msgs.push(claw(10 + i, fmt(8, i * 5),
+            `🎉 <strong>New onboarding started!</strong> Say hello to <strong>${emp.name}</strong>!`,
+            [{emoji:'🎉', count:5+i},{emoji:'👋', count:3}],
+            {
+              color: '#0ea5e9', bg: '#f0f9ff',
+              content: `<strong>Role:</strong> ${emp.role} · <strong>Dept:</strong> ${emp.department || 'N/A'}<br/><strong>Start Date:</strong> ${this.formatDate(emp.start_date)}<br/><strong>Tasks Generated:</strong> ${emp.total_tasks} tasks across HR, IT &amp; Manager`
+            }
+          ));
+        });
+        offs.forEach((emp, i) => {
+          msgs.push(claw(30 + i, fmt(8, 30 + i * 5),
+            `📤 <strong>Offboarding initiated</strong> for <strong>${emp.name}</strong>`,
+            [],
+            {
+              color: '#f59e0b', bg: '#fffbeb',
+              content: `<strong>Last day:</strong> ${this.formatDate(emp.start_date)}<br/>${emp.total_tasks} offboarding tasks created · Access revocation scheduled`
+            }
+          ));
+        });
+        msgs.push(...this.slackUserMessages.filter(m => m.channel === 'new-hire-alerts'));
+        return msgs.sort((a, b) => a.id - b.id);
+      }
+
+      // ── DM: OpenClaw ──
+      if (this.slackChannel === 'dm-openclaw') {
+        const avgProg = emps.length > 0 ? Math.round(emps.reduce((a, e) => a + (e.progress || 0), 0) / emps.length) : 0;
+        return [
+          claw(1, fmt(8,0),
+            '👋 Hey! I\'m <strong>OpenClaw</strong> — your AI onboarding assistant. I automate task tracking, send reminders, and keep HR, IT, and managers aligned throughout onboarding and offboarding.',
+            [{emoji:'🦞', count:1}]
+          ),
+          claw(2, fmt(8,1),
+            `Here's your live snapshot:<br/>📋 <strong>${emps.length} active process${emps.length !== 1 ? 'es' : ''}</strong><br/>✅ <strong>${doneTasks} tasks completed</strong><br/>⚠️ <strong>${overdueTotal} overdue</strong><br/>📊 <strong>${avgProg}% avg completion</strong>`,
+            []
+          ),
+          person(3, 'You', 'Y', '#6366F1', '#fff', fmt(8,30), 'How can you help with our onboarding process?', []),
+          claw(4, fmt(8,31),
+            'Great question! Here\'s what I do:<br/><br/>🤖 <strong>Automatic checklists</strong> — custom task lists for each new hire or departure<br/>📢 <strong>Slack updates</strong> — task assignments, completions &amp; overdue alerts right here<br/>📧 <strong>Reminder nudges</strong> — automatic follow-ups to assignees who are behind<br/>📊 <strong>Progress tracking</strong> — flag risks before they become problems<br/>🔗 <strong>Integrations</strong> — HRIS, IT ticketing, calendar, and more',
+            [{emoji:'🤩', count:2}]
+          ),
+          claw(5, fmt(9,0), 'You can ask me to:<br/>• Show task status for any employee<br/>• Reassign overdue tasks<br/>• Send reminder notifications<br/>• Generate a progress summary', []),
+          ...this.slackUserMessages.filter(m => m.channel === 'dm-openclaw'),
+        ];
+      }
+
+      // ── DM: HR Team ──
+      if (this.slackChannel === 'dm-hr') {
+        return [
+          hr(1, fmt(9,0), 'Hi! This is the HR team DM. Ask us anything about onboarding or offboarding.', []),
+          person(2, 'You', 'Y', '#6366F1', '#fff', fmt(9,15), 'Who\'s the contact for IT equipment requests?', []),
+          hr(3, fmt(9,17), 'That\'s @IT Support. Or just ask @OpenClaw — it will auto-assign the task and notify IT directly!', [{emoji:'👍', count:1}]),
+          person(4, 'You', 'Y', '#6366F1', '#fff', fmt(9,45), 'Great, thanks! Can you also check if the welcome package for the new starters is ready?', []),
+          hr(5, fmt(9,50), 'On it — I\'ll confirm with the office manager and post here once it\'s confirmed. Should be good by tomorrow. 📦', [{emoji:'📦', count:2}]),
+          ...this.slackUserMessages.filter(m => m.channel === 'dm-hr'),
+        ];
+      }
+
+      return [...this.slackUserMessages.filter(m => m.channel === this.slackChannel)];
+    },
+
+    sendSlackMessage() {
+      const text = this.slackInput.trim();
+      if (!text) return;
+      const timeStr = 'Today at ' + new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      this.slackUserMessages.push({
+        id: Date.now(),
+        name: 'You',
+        avatar: 'Y',
+        avatarBg: '#6366F1',
+        avatarColor: '#fff',
+        time: timeStr,
+        text: text.replace(/</g, '&lt;').replace(/>/g, '&gt;'),
+        bot: false,
+        reactions: [],
+        attachment: null,
+        channel: this.slackChannel,
+      });
+      // Reset unread badge for current channel
+      const ch = this.slackChannels.find(c => c.id === this.slackChannel);
+      if (ch) ch.unread = 0;
+      this.slackInput = '';
+      // Auto-reply in OpenClaw DM
+      if (this.slackChannel === 'dm-openclaw') {
+        setTimeout(() => {
+          this.slackUserMessages.push({
+            id: Date.now() + 1,
+            name: 'OpenClaw',
+            avatar: '🦞',
+            avatarBg: '#F5A623',
+            avatarColor: '#7c3aed',
+            time: 'Today at ' + new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+            text: 'Got it! I\'ve logged your message. Check the task board for real-time updates, or ask me anything else. 🤖',
+            bot: true,
+            reactions: [{emoji:'✅', count:1}],
+            attachment: null,
+            channel: 'dm-openclaw',
+          });
+        }, 1100);
+      }
     },
 
     // ── Init ──

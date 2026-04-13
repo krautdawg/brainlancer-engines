@@ -11,31 +11,31 @@ MOCK_LEADS = [
         "company_name": "Digitale Zukunft GmbH",
         "website": "https://digitale-zukunft-berlin.de",
         "contact_name": "Thomas Becker",
-        "role": "Geschäftsführer",
+        "role": "Managing Director",
         "email": "t.becker@digitale-zukunft-berlin.de",
         "phone": "+49 30 2345 6789",
-        "notes": "Berliner IT-Dienstleister mit 45 Mitarbeitern – aktiv auf Wachstumskurs. Manuelle Reporting-Prozesse kosten wöchentlich mehrere Stunden. Perfekter Kandidat für KI-Automatisierung.",
-        "source": "Demo-Daten",
+        "notes": "Berlin-based IT services company with 45 employees and clear growth momentum. Manual reporting still consumes several hours each week. Strong fit for AI automation.",
+        "source": "Demo Data",
     },
     {
         "company_name": "Brandenburg Consulting AG",
         "website": "https://bb-consulting.de",
         "contact_name": "Dr. Sabine Hoffmann",
-        "role": "Vorstandsvorsitzende",
+        "role": "Chief Executive Officer",
         "email": "s.hoffmann@bb-consulting.de",
         "phone": "+49 331 8765 4321",
-        "notes": "Führende Unternehmensberatung in Potsdam mit Schwerpunkt Mittelstand. Bietet klassische Beratung an, jedoch noch ohne KI-gestützte Analysetools. Große Chance für Effizienzsteigerung.",
-        "source": "Demo-Daten",
+        "notes": "Established consulting firm in Potsdam focused on mid-market clients. Still delivers mostly traditional consulting services without AI-driven analytics. Clear upside in efficiency and differentiation.",
+        "source": "Demo Data",
     },
     {
         "company_name": "Havelland Industrie Service GmbH",
         "website": "https://havelland-industrie.de",
         "contact_name": "Klaus-Dieter Schulz",
-        "role": "Inhaber & Geschäftsführer",
+        "role": "Owner & Managing Director",
         "email": "info@havelland-industrie.de",
         "phone": "+49 3386 701 234",
-        "notes": "Mittelständischer Industriedienstleister in Rathenow mit 80 Mitarbeitern. Vertriebsteam arbeitet noch mit Excel – enormes Potenzial für CRM-Automatisierung und KI-Leadgenerierung.",
-        "source": "Demo-Daten",
+        "notes": "Mid-sized industrial services provider in Rathenow with 80 employees. The sales team still relies heavily on Excel, creating strong potential for CRM automation and AI-supported lead generation.",
+        "source": "Demo Data",
     },
     {
         "company_name": "Spree Valley IT Solutions",
@@ -44,18 +44,18 @@ MOCK_LEADS = [
         "role": "CEO & Co-Founder",
         "email": "m.zimmermann@spreevalley-it.de",
         "phone": "+49 3375 2198 44",
-        "notes": "Wachstumsstarkes IT-Unternehmen aus Königs Wusterhausen. Entwickelt Software für Logistik-Kunden, kämpft aber mit manuellem Vertrieb. Explizit auf der Suche nach Automatisierungslösungen.",
-        "source": "Demo-Daten",
+        "notes": "Fast-growing IT company from Koenigs Wusterhausen building software for logistics clients. Sales is still largely manual, and the company is actively looking for automation opportunities.",
+        "source": "Demo Data",
     },
     {
         "company_name": "Berliner Handwerk Digital GmbH",
         "website": "https://berliner-handwerk-digital.de",
         "contact_name": "Andreas Krause",
-        "role": "Geschäftsführer",
+        "role": "Managing Director",
         "email": "a.krause@berliner-handwerk-digital.de",
         "phone": "+49 30 9876 5432",
-        "notes": "Plattform für die Digitalisierung von Handwerksbetrieben in Berlin. 120+ Kunden, aber Kundenakquise noch vollständig manuell. Sehr offen für KI-Lösungen laut LinkedIn-Aktivität.",
-        "source": "Demo-Daten",
+        "notes": "Platform helping trade businesses digitize operations across Berlin. It serves more than 120 customers, but customer acquisition is still fully manual. Public activity suggests high openness to AI solutions.",
+        "source": "Demo Data",
     },
     {
         "company_name": "Smart Factory Solutions GmbH",
@@ -64,8 +64,8 @@ MOCK_LEADS = [
         "role": "Head of Digital Transformation",
         "email": "p.neumann@smart-factory-solutions.de",
         "phone": "+49 3301 5678 90",
-        "notes": "Industrie-4.0-Spezialist aus Oranienburg mit 60 Mitarbeitern. Bekannter Schmerzpunkt: Datenerfassung in der Produktion noch nicht automatisiert. Aktiver Content zu KI auf ihrem Blog.",
-        "source": "Demo-Daten",
+        "notes": "Industry 4.0 specialist in Oranienburg with 60 employees. A known pain point is that shop-floor data capture is still not automated. Their blog shows active interest in AI topics.",
+        "source": "Demo Data",
     },
     {
         "company_name": "Nordost Digital Ventures",
@@ -74,38 +74,38 @@ MOCK_LEADS = [
         "role": "Managing Director",
         "email": "s.lange@nordost-digital.de",
         "phone": "+49 335 2234 567",
-        "notes": "Digitalberatung aus Frankfurt (Oder) mit Fokus auf KMU der Region. Arbeitet mit 30+ Mittelstandskunden zusammen, nutzt aber noch klassische Tools für Projektmanagement.",
-        "source": "Demo-Daten",
+        "notes": "Digital advisory firm in Frankfurt (Oder) focused on regional SMEs. It already works with more than 30 mid-market clients but still depends on conventional project management tooling.",
+        "source": "Demo Data",
     },
     {
         "company_name": "ProzessketteTech AG",
         "website": "https://prozesskette-tech.de",
         "contact_name": "Julia Wagner",
-        "role": "Vorstand Operations",
+        "role": "Chief Operating Officer",
         "email": "j.wagner@prozesskette-tech.de",
         "phone": "+49 331 4455 6677",
-        "notes": "Spezialist für Prozessoptimierung in Potsdam, bedient vor allem Logistik- und Fertigungsunternehmen. Kürzlich auf LinkedIn gepostet: 'KI ist die Zukunft der Prozessoptimierung'.",
-        "source": "Demo-Daten",
+        "notes": "Process optimization specialist in Potsdam serving logistics and manufacturing clients. The team recently posted publicly that AI is the future of process optimization, which signals strong strategic fit.",
+        "source": "Demo Data",
     },
     {
         "company_name": "BerlinBrand Agency GmbH",
         "website": "https://berlinbrand-agency.de",
         "contact_name": "Robert Fischer",
-        "role": "Gründer & CEO",
+        "role": "Founder & CEO",
         "email": "r.fischer@berlinbrand-agency.de",
         "phone": "+49 30 1234 8765",
-        "notes": "Performance-Marketing-Agentur in Berlin-Mitte mit 25 Mitarbeitern. Kunden fragen nach KI-gestützten Kampagnen-Analysen – Agentur hat noch keine entsprechende Lösung integriert.",
-        "source": "Demo-Daten",
+        "notes": "Performance marketing agency in central Berlin with 25 employees. Clients are already asking for AI-assisted campaign analytics, but the agency has not yet integrated a suitable solution.",
+        "source": "Demo Data",
     },
     {
         "company_name": "Mittelstand Digital Hub GmbH",
         "website": "https://mittelstand-digital-hub.de",
         "contact_name": "Claudia Richter",
-        "role": "Geschäftsführerin",
+        "role": "Managing Director",
         "email": "c.richter@mittelstand-digital-hub.de",
         "phone": "+49 355 7788 9900",
-        "notes": "Netzwerk und Accelerator für mittelständische Unternehmen in Cottbus. Begleitet Digitalisierungsprojekte, aber kein eigenes KI-Toolset. Sehr hohe Kaufbereitschaft für bewährte Lösungen.",
-        "source": "Demo-Daten",
+        "notes": "Network and accelerator for mid-sized companies in Cottbus. It supports digitization projects but does not yet offer its own AI toolkit. Purchase intent for proven solutions is likely high.",
+        "source": "Demo Data",
     },
 ]
 
@@ -171,32 +171,32 @@ async def gemini_find_leads(icp_data: dict) -> list:
     genai.configure(api_key=GOOGLE_API_KEY)
     model = genai.GenerativeModel("gemini-2.0-flash")
 
-    prompt = f"""Finde 10 reale deutsche B2B-Unternehmen, die zu diesem Ideal Customer Profile passen.
+    prompt = f"""Find 10 real German B2B companies that match this Ideal Customer Profile.
 
 ICP:
-- Branche: {icp_data.get("industry")}
-- Ziel-Jobtitel: {", ".join(icp_data.get("titles", []))}
-- Region: {icp_data.get("location", "DACH-Region")}
-- Unternehmensgröße: {icp_data.get("company_size_min", 10)}–{icp_data.get("company_size_max", 200)} Mitarbeiter
-- Schmerzpunkte: {", ".join(icp_data.get("pain_signals", []))}
-- Kundenbeschreibung: {icp_data.get("description", "")}
+- Industry: {icp_data.get("industry")}
+- Target job titles: {", ".join(icp_data.get("titles", []))}
+- Region: {icp_data.get("location", "DACH region")}
+- Company size: {icp_data.get("company_size_min", 10)}-{icp_data.get("company_size_max", 200)} employees
+- Pain signals: {", ".join(icp_data.get("pain_signals", []))}
+- Customer description: {icp_data.get("description", "")}
 
-Antworte NUR mit einem JSON-Array mit 10 Unternehmen:
+Respond ONLY with a JSON array containing 10 companies:
 [
   {{
-    "company_name": "Echter Unternehmensname GmbH",
+    "company_name": "Real company name GmbH",
     "website": "https://example.de",
-    "contact_name": "Name oder 'Geschäftsführung'",
-    "role": "Geschäftsführer",
+    "contact_name": "Name or 'Management'",
+    "role": "Managing Director",
     "email": "N/A",
     "phone": "N/A",
-    "notes": "Warum dieses Unternehmen ein perfekter Fit ist – konkrete Begründung",
+    "notes": "Why this company is a strong fit - concrete justification",
     "source": "Gemini Research"
   }}
 ]
 
-Nur reale, verifizierbare deutsche Unternehmen. Fokus auf DACH-Region.
-Keine B2C-Unternehmen. Keine Konzerne. Mittelstand bevorzugt."""
+Only include real, verifiable German companies. Focus on the DACH region.
+No B2C companies. No large enterprises. Prefer mid-market businesses."""
 
     response = model.generate_content(
         prompt,
@@ -228,7 +228,7 @@ async def find_leads(icp_data: dict) -> list:
                 if impressum["phone"] and (not lead.get("phone") or lead["phone"] == "N/A"):
                     lead["phone"] = impressum["phone"]
                 if impressum["contact_name"] and (
-                    not lead.get("contact_name") or lead["contact_name"] == "Geschäftsführung"
+                    not lead.get("contact_name") or lead["contact_name"] == "Management"
                 ):
                     lead["contact_name"] = impressum["contact_name"]
 

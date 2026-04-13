@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" x-data="app()" x-init="init()">
+<html lang="en" x-data="app()" x-init="init()">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -182,10 +182,10 @@
         </span>
       </div>
       <!-- Demo badge -->
-      <div x-show="isDemo" class="chip chip-mint text-xs">Demo-Modus</div>
+      <div x-show="isDemo" class="chip chip-mint text-xs">Demo Mode</div>
       <!-- Logout -->
       <form action="/logout" method="POST">
-        <button type="submit" class="btn-ghost text-xs px-3 py-1.5 rounded-lg">Abmelden</button>
+        <button type="submit" class="btn-ghost text-xs px-3 py-1.5 rounded-lg">Sign Out</button>
       </form>
     </div>
   </nav>
@@ -205,7 +205,7 @@
           </svg>
           <span x-show="currentStep <= 1">1</span>
         </div>
-        <span class="text-xs font-medium whitespace-nowrap" :class="currentStep >= 1 ? 'text-slate-700' : 'text-slate-400'">Website analysieren</span>
+        <span class="text-xs font-medium whitespace-nowrap" :class="currentStep >= 1 ? 'text-slate-700' : 'text-slate-400'">Analyze Website</span>
       </div>
       <div class="step-line mb-5" :class="currentStep > 1 ? 'done' : 'idle'"></div>
       <!-- Step 2 -->
@@ -216,7 +216,7 @@
           </svg>
           <span x-show="currentStep <= 2">2</span>
         </div>
-        <span class="text-xs font-medium whitespace-nowrap" :class="currentStep >= 2 ? 'text-slate-700' : 'text-slate-400'">ICP prüfen</span>
+        <span class="text-xs font-medium whitespace-nowrap" :class="currentStep >= 2 ? 'text-slate-700' : 'text-slate-400'">Review ICP</span>
       </div>
       <div class="step-line mb-5" :class="currentStep > 2 ? 'done' : 'idle'"></div>
       <!-- Step 3 -->
@@ -227,7 +227,7 @@
           </svg>
           <span x-show="currentStep <= 3">3</span>
         </div>
-        <span class="text-xs font-medium whitespace-nowrap" :class="currentStep >= 3 ? 'text-slate-700' : 'text-slate-400'">Leads finden</span>
+        <span class="text-xs font-medium whitespace-nowrap" :class="currentStep >= 3 ? 'text-slate-700' : 'text-slate-400'">Find Leads</span>
       </div>
     </div>
 
@@ -237,22 +237,22 @@
     <div x-show="view === 'input'" x-transition:enter="fade-up" class="max-w-2xl mx-auto">
       <div class="text-center mb-10">
         <h1 class="font-lexend text-4xl text-slate-800 mb-3 leading-tight">
-          Ihre idealen Kunden –
-          <span style="background:linear-gradient(135deg,#0ea5e9,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent">automatisch gefunden</span>
+          Your ideal customers -
+          <span style="background:linear-gradient(135deg,#0ea5e9,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent">found automatically</span>
         </h1>
         <p class="text-base text-slate-500">
-          Geben Sie Ihre Website-URL ein. Die KI analysiert Ihr Angebot und erstellt ein Ideal Customer Profile.
+          Enter your website URL. The AI analyzes your offer and builds an Ideal Customer Profile.
         </p>
       </div>
 
       <div class="section-card p-8">
-        <label class="field-label">IHRE WEBSITE-URL</label>
+        <label class="field-label">YOUR WEBSITE URL</label>
         <div class="flex gap-3">
           <input
             type="text"
             x-model="url"
             @keydown.enter="startAnalysis"
-            placeholder="https://ihr-unternehmen.de"
+            placeholder="https://your-company.com"
             class="field flex-1 px-4 py-3.5 text-sm"
           />
           <button
@@ -260,13 +260,13 @@
             :disabled="!url.trim() || loading"
             class="btn-primary px-6 py-3.5 rounded-xl text-sm whitespace-nowrap"
           >
-            Analysieren
+            Analyze
           </button>
         </div>
 
         <!-- Example URLs -->
         <div class="mt-5 flex flex-wrap gap-2">
-          <span class="text-xs text-slate-400">Beispiele:</span>
+          <span class="text-xs text-slate-400">Examples:</span>
           <button @click="url = 'https://www.haufe.de'" class="chip chip-gray text-xs cursor-pointer hover:opacity-80">haufe.de</button>
           <button @click="url = 'https://www.datev.de'" class="chip chip-gray text-xs cursor-pointer hover:opacity-80">datev.de</button>
           <button @click="url = 'https://www.wlw.de'" class="chip chip-gray text-xs cursor-pointer hover:opacity-80">wlw.de</button>
@@ -279,9 +279,9 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             <div>
-              <p class="text-xs font-semibold text-sky-700">Wie es funktioniert</p>
+              <p class="text-xs font-semibold text-sky-700">How it works</p>
               <p class="text-xs mt-1 text-slate-500">
-                Die KI liest Ihre Website, versteht Ihr Angebot und erstellt automatisch ein ICP mit passenden Zielkunden, Jobtiteln und Schmerzpunkten. Anschließend werden passende Leads in der DACH-Region gefunden.
+                The AI reads your website, understands your offer, and automatically builds an ICP with matching target customers, job titles, and pain signals. It then finds matching leads across the DACH region.
               </p>
             </div>
           </div>
@@ -307,7 +307,7 @@
               d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
         </div>
-        <h2 class="font-lexend text-xl text-slate-800 mb-1">Website wird analysiert</h2>
+        <h2 class="font-lexend text-xl text-slate-800 mb-1">Analyzing website</h2>
         <p class="text-sm text-slate-500 mb-8" x-text="loadingUrl"></p>
 
         <!-- Progress bar -->
@@ -327,7 +327,7 @@
               </svg>
               <div x-show="analyzeStep < 1" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="analyzeStep >= 1 ? 'text-slate-700' : 'text-slate-400'">Website-Inhalt lesen</span>
+            <span class="text-sm" :class="analyzeStep >= 1 ? 'text-slate-700' : 'text-slate-400'">Reading website content</span>
           </div>
           <div class="load-step" :class="analyzeStep >= 2 ? (analyzeStep > 2 ? 'done' : 'running') : 'waiting'">
             <div class="load-step-icon">
@@ -339,7 +339,7 @@
               </svg>
               <div x-show="analyzeStep < 2" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="analyzeStep >= 2 ? 'text-slate-700' : 'text-slate-400'">KI analysiert Angebot &amp; Zielgruppe</span>
+            <span class="text-sm" :class="analyzeStep >= 2 ? 'text-slate-700' : 'text-slate-400'">AI analyzes offer and target audience</span>
           </div>
           <div class="load-step" :class="analyzeStep >= 3 ? 'done' : 'waiting'">
             <div class="load-step-icon">
@@ -348,7 +348,7 @@
               </svg>
               <div x-show="analyzeStep < 3" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="analyzeStep >= 3 ? 'text-slate-700' : 'text-slate-400'">ICP erstellt</span>
+            <span class="text-sm" :class="analyzeStep >= 3 ? 'text-slate-700' : 'text-slate-400'">ICP created</span>
           </div>
         </div>
       </div>
@@ -363,17 +363,17 @@
         <div>
           <div class="flex items-center gap-3 mb-1">
             <h2 class="font-lexend text-2xl text-slate-800">Ideal Customer Profile</h2>
-            <div x-show="icp && icp.is_demo" class="chip chip-mint text-xs">Demo-Daten</div>
+            <div x-show="icp && icp.is_demo" class="chip chip-mint text-xs">Demo Data</div>
           </div>
           <p class="text-sm text-slate-500">
-            Prüfen und bearbeiten Sie das KI-generierte Profil, bevor die Leads gesucht werden.
+            Review and edit the AI-generated profile before searching for leads.
           </p>
         </div>
-        <button @click="view = 'input'; icp = null; error = null" class="btn-ghost text-xs px-3 py-2 rounded-lg flex items-center gap-2">
+        <button @click="view = 'input'; resetIcp(); error = null" class="btn-ghost text-xs px-3 py-2 rounded-lg flex items-center gap-2">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
           </svg>
-          Neue URL
+          New URL
         </button>
       </div>
 
@@ -384,22 +384,22 @@
             <!-- Company + Industry row -->
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="field-label">UNTERNEHMEN</label>
+                <label class="field-label">COMPANY</label>
                 <input x-model="icp.company_name" class="field w-full px-4 py-3 text-sm" type="text" />
               </div>
               <div>
-                <label class="field-label">BRANCHE</label>
+                <label class="field-label">INDUSTRY</label>
                 <input x-model="icp.industry" class="field w-full px-4 py-3 text-sm" type="text" />
               </div>
             </div>
             <!-- Location + Size row -->
             <div class="grid grid-cols-3 gap-4">
               <div class="col-span-2">
-                <label class="field-label">REGION / MARKT</label>
+                <label class="field-label">REGION / MARKET</label>
                 <input x-model="icp.location" class="field w-full px-4 py-3 text-sm" type="text" />
               </div>
               <div>
-                <label class="field-label">MITARBEITER</label>
+                <label class="field-label">EMPLOYEES</label>
                 <div class="flex gap-2 items-center">
                   <input x-model.number="icp.company_size_min" class="field w-full px-3 py-3 text-sm text-center" type="number" min="1" />
                   <span class="text-xs text-slate-400">–</span>
@@ -409,14 +409,14 @@
             </div>
             <!-- Description -->
             <div>
-              <label class="field-label">BESCHREIBUNG DER ZIELGRUPPE</label>
+                <label class="field-label">TARGET AUDIENCE DESCRIPTION</label>
               <textarea x-model="icp.description" rows="3" class="field w-full px-4 py-3 text-sm resize-none"></textarea>
             </div>
           </div>
 
           <!-- Titles -->
           <div class="section-card p-6">
-            <label class="field-label">ZIEL-JOBTITEL</label>
+            <label class="field-label">TARGET JOB TITLES</label>
             <div class="tag-input-wrapper">
               <template x-for="(title, index) in icp.titles" :key="index">
                 <span class="chip chip-sky text-xs">
@@ -430,17 +430,17 @@
               </template>
               <input
                 type="text"
-                placeholder="Jobtitel hinzufügen..."
+                placeholder="Add job title..."
                 @keydown.enter.prevent="addTitle($event)"
                 @keydown.tab.prevent="addTitle($event)"
               />
             </div>
-            <p class="text-xs mt-2 text-slate-400">Enter drücken zum Hinzufügen</p>
+            <p class="text-xs mt-2 text-slate-400">Press Enter to add</p>
           </div>
 
           <!-- Pain signals -->
           <div class="section-card p-6">
-            <label class="field-label">SCHMERZPUNKTE DER ZIELKUNDEN</label>
+            <label class="field-label">TARGET CUSTOMER PAIN SIGNALS</label>
             <div class="space-y-2 mb-3">
               <template x-for="(pain, index) in icp.pain_signals" :key="index">
                 <div class="flex gap-2 items-center group">
@@ -449,7 +449,7 @@
                     x-model="icp.pain_signals[index]"
                     class="field flex-1 px-3 py-2.5 text-sm"
                     type="text"
-                    placeholder="Schmerzpunkt..."
+                    placeholder="Pain signal..."
                   />
                   <button @click="icp.pain_signals.splice(index, 1)"
                     class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-red-50">
@@ -465,7 +465,7 @@
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
               </svg>
-              Schmerzpunkt hinzufügen
+              Add pain signal
             </button>
           </div>
         </div>
@@ -480,28 +480,28 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
                 </svg>
               </div>
-              <span class="font-semibold text-sm text-slate-700">ICP Zusammenfassung</span>
+              <span class="font-semibold text-sm text-slate-700">ICP Summary</span>
             </div>
             <div class="space-y-3 text-xs">
               <div>
-                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Unternehmen</span>
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Company</span>
                 <p class="text-slate-800 mt-0.5 font-medium" x-text="icp?.company_name || '—'"></p>
               </div>
               <div class="glow-line"></div>
               <div>
-                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Branche</span>
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Industry</span>
                 <p class="mt-0.5 text-slate-700" x-text="icp?.industry || '—'"></p>
               </div>
               <div class="glow-line"></div>
               <div>
-                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Größe</span>
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Size</span>
                 <p class="mt-0.5 text-slate-700">
                   <span x-text="icp?.company_size_min"></span>–<span x-text="icp?.company_size_max"></span> MA
                 </p>
               </div>
               <div class="glow-line"></div>
               <div>
-                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Jobtitel</span>
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Job Titles</span>
                 <div class="mt-1.5 flex flex-wrap gap-1.5">
                   <template x-for="t in (icp?.titles || []).slice(0, 4)" :key="t">
                     <span class="chip chip-sky py-0.5 text-xs" x-text="t"></span>
@@ -520,10 +520,10 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
-            10 Leads finden
+            Find 10 Leads
           </button>
           <p class="text-xs text-center mt-2 text-slate-400">
-            Sucht passende Unternehmen in der DACH-Region
+            Searches for matching companies in the DACH region
           </p>
         </div>
       </div>
@@ -540,9 +540,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
         </div>
-        <h2 class="font-lexend text-xl text-slate-800 mb-1">Leads werden gesucht</h2>
+        <h2 class="font-lexend text-xl text-slate-800 mb-1">Finding leads</h2>
         <p class="text-sm text-slate-500 mb-8">
-          KI durchsucht DACH-Unternehmensverzeichnisse...
+          AI is searching DACH business directories...
         </p>
 
         <div class="w-full rounded-full h-1.5 mb-6 bg-slate-100">
@@ -560,7 +560,7 @@
               </svg>
               <div x-show="leadStep < 1" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="leadStep >= 1 ? 'text-slate-700' : 'text-slate-400'">ICP an KI übergeben</span>
+            <span class="text-sm" :class="leadStep >= 1 ? 'text-slate-700' : 'text-slate-400'">Sending ICP to AI</span>
           </div>
           <div class="load-step" :class="leadStep >= 2 ? (leadStep > 2 ? 'done' : 'running') : 'waiting'">
             <div class="load-step-icon">
@@ -572,7 +572,7 @@
               </svg>
               <div x-show="leadStep < 2" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="leadStep >= 2 ? 'text-slate-700' : 'text-slate-400'">Unternehmensverzeichnisse durchsuchen</span>
+            <span class="text-sm" :class="leadStep >= 2 ? 'text-slate-700' : 'text-slate-400'">Searching business directories</span>
           </div>
           <div class="load-step" :class="leadStep >= 3 ? (leadStep > 3 ? 'done' : 'running') : 'waiting'">
             <div class="load-step-icon">
@@ -584,7 +584,7 @@
               </svg>
               <div x-show="leadStep < 3" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="leadStep >= 3 ? 'text-slate-700' : 'text-slate-400'">Kontaktdaten anreichern</span>
+            <span class="text-sm" :class="leadStep >= 3 ? 'text-slate-700' : 'text-slate-400'">Enriching contact data</span>
           </div>
           <div class="load-step" :class="leadStep >= 4 ? 'done' : 'waiting'">
             <div class="load-step-icon">
@@ -593,7 +593,7 @@
               </svg>
               <div x-show="leadStep < 4" class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
             </div>
-            <span class="text-sm" :class="leadStep >= 4 ? 'text-slate-700' : 'text-slate-400'">Lead-Liste fertig</span>
+            <span class="text-sm" :class="leadStep >= 4 ? 'text-slate-700' : 'text-slate-400'">Lead list ready</span>
           </div>
         </div>
       </div>
@@ -607,12 +607,12 @@
       <div class="flex items-center justify-between mb-6">
         <div>
           <div class="flex items-center gap-3 mb-1">
-            <h2 class="font-lexend text-2xl text-slate-800">Lead-Liste</h2>
-            <span class="chip chip-mint text-xs" x-text="leads.length + ' Leads gefunden'"></span>
-            <div x-show="isDemo" class="chip chip-gray text-xs">Demo-Daten</div>
+            <h2 class="font-lexend text-2xl text-slate-800">Lead List</h2>
+            <span class="chip chip-mint text-xs" x-text="leads.length + ' leads found'"></span>
+            <div x-show="isDemo" class="chip chip-gray text-xs">Demo Data</div>
           </div>
           <p class="text-sm text-slate-500">
-            Passende Unternehmen für <span class="text-slate-800 font-medium" x-text="icp?.company_name || 'Ihr Unternehmen'"></span>
+            Matching companies for <span class="text-slate-800 font-medium" x-text="icp?.company_name || 'your company'"></span>
           </p>
         </div>
         <div class="flex items-center gap-3">
@@ -624,7 +624,7 @@
             <input
               type="text"
               x-model="search"
-              placeholder="Filtern..."
+              placeholder="Filter..."
               class="field pl-9 pr-4 py-2.5 text-sm w-48"
             />
           </div>
@@ -641,7 +641,7 @@
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
             </svg>
-            Neue Suche
+            New Search
           </button>
         </div>
       </div>
@@ -649,7 +649,7 @@
       <!-- ICP Quick Summary -->
       <div class="section-card p-5 mb-6 flex flex-wrap gap-6">
         <div>
-          <span class="field-label">BRANCHE</span>
+          <span class="field-label">INDUSTRY</span>
           <span class="text-sm text-slate-800 font-medium" x-text="icp?.industry"></span>
         </div>
         <div>
@@ -657,11 +657,11 @@
           <span class="text-sm text-slate-800 font-medium" x-text="icp?.location"></span>
         </div>
         <div>
-          <span class="field-label">UNTERNEHMENSGRÖSSE</span>
-          <span class="text-sm text-slate-800 font-medium"><span x-text="icp?.company_size_min"></span>–<span x-text="icp?.company_size_max"></span> MA</span>
+          <span class="field-label">COMPANY SIZE</span>
+          <span class="text-sm text-slate-800 font-medium"><span x-text="icp?.company_size_min"></span>-<span x-text="icp?.company_size_max"></span> employees</span>
         </div>
         <div>
-          <span class="field-label">ZIEL-JOBTITEL</span>
+          <span class="field-label">TARGET JOB TITLES</span>
           <div class="flex flex-wrap gap-1.5 mt-0.5">
             <template x-for="t in (icp?.titles || []).slice(0, 3)" :key="t">
               <span class="chip chip-sky py-0.5 text-xs" x-text="t"></span>
@@ -677,11 +677,11 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Unternehmen</th>
-                <th>Ansprechpartner</th>
-                <th>E-Mail</th>
-                <th>Telefon</th>
-                <th>Quelle</th>
+                <th>Company</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Source</th>
                 <th></th>
               </tr>
             </thead>
@@ -733,7 +733,7 @@
               <!-- Empty state -->
               <tr x-show="filteredLeads.length === 0">
                 <td colspan="7" class="text-center py-10 text-sm text-slate-400">
-                  Keine Leads gefunden – bitte Filter anpassen.
+                  No leads found. Adjust the filter and try again.
                 </td>
               </tr>
             </tbody>
@@ -772,40 +772,40 @@
       <!-- Modal body -->
       <div class="px-6 py-5 space-y-1">
         <div class="detail-row">
-          <span class="detail-label">Kontakt</span>
+          <span class="detail-label">Contact</span>
           <span class="detail-value font-medium text-slate-800" x-text="selectedLead?.contact_name || '—'"></span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Rolle</span>
+          <span class="detail-label">Role</span>
           <span class="detail-value" x-text="selectedLead?.role || '—'"></span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">E-Mail</span>
+          <span class="detail-label">Email</span>
           <a x-show="selectedLead?.email && selectedLead?.email !== 'N/A'"
              :href="'mailto:' + selectedLead?.email"
              class="detail-value font-mono text-sm hover:underline text-emerald-600"
              x-text="selectedLead?.email"></a>
           <span x-show="!selectedLead?.email || selectedLead?.email === 'N/A'"
-                class="detail-value text-slate-300">Nicht verfügbar</span>
+                class="detail-value text-slate-300">Not available</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Telefon</span>
+          <span class="detail-label">Phone</span>
           <a x-show="selectedLead?.phone && selectedLead?.phone !== 'N/A'"
              :href="'tel:' + selectedLead?.phone"
              class="detail-value font-mono text-sm hover:underline text-slate-700"
              x-text="selectedLead?.phone"></a>
           <span x-show="!selectedLead?.phone || selectedLead?.phone === 'N/A'"
-                class="detail-value text-slate-300">Nicht verfügbar</span>
+                class="detail-value text-slate-300">Not available</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Quelle</span>
+          <span class="detail-label">Source</span>
           <span class="detail-value" x-text="selectedLead?.source || '—'"></span>
         </div>
       </div>
 
       <!-- Notes section -->
       <div x-show="selectedLead?.notes" class="mx-6 mb-5 p-4 rounded-xl" style="background:#f0f9ff; border:1px solid #bae6fd">
-        <p class="text-xs font-semibold uppercase tracking-wider mb-2 text-sky-700">KI-Analyse: Warum dieser Lead?</p>
+        <p class="text-xs font-semibold uppercase tracking-wider mb-2 text-sky-700">AI Analysis: Why this lead?</p>
         <p class="text-sm leading-relaxed text-slate-600" x-text="selectedLead?.notes"></p>
       </div>
 
@@ -819,7 +819,7 @@
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
           </svg>
-          Website besuchen
+          Visit Website
         </a>
         <button
           x-show="selectedLead?.email && selectedLead?.email !== 'N/A'"
@@ -829,7 +829,7 @@
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
           </svg>
-          <span x-text="copied ? 'Kopiert!' : 'E-Mail kopieren'"></span>
+          <span x-text="copied ? 'Copied!' : 'Copy Email'"></span>
         </button>
       </div>
     </div>
@@ -842,7 +842,17 @@
         view: 'input',       // input | analyzing | icp | finding | results
         currentStep: 1,
         url: '',
-        icp: null,
+        icp: {
+          company_name: '',
+          industry: '',
+          location: '',
+          company_size_min: '',
+          company_size_max: '',
+          description: '',
+          titles: [],
+          pain_signals: [],
+          is_demo: false,
+        },
         leads: [],
         credits: {{ credits }},
         loading: false,
@@ -856,7 +866,21 @@
         loadingUrl: '',
 
         init() {
-          // nothing to init
+          this.resetIcp();
+        },
+
+        resetIcp() {
+          this.icp = {
+            company_name: '',
+            industry: '',
+            location: '',
+            company_size_min: '',
+            company_size_max: '',
+            description: '',
+            titles: [],
+            pain_signals: [],
+            is_demo: false,
+          };
         },
 
         stepClass(n) {
@@ -903,11 +927,11 @@
               return;
             }
             if (res.status === 429) {
-              throw new Error('Keine Credits mehr. Bitte erneut einloggen.');
+              throw new Error('No credits remaining. Please sign in again.');
             }
             if (!res.ok) {
               const d = await res.json().catch(() => ({}));
-              throw new Error(d.detail || 'Analyse fehlgeschlagen');
+              throw new Error(d.detail || 'Analysis failed');
             }
 
             const data = await res.json();
@@ -967,7 +991,7 @@
             }
             if (!res.ok) {
               const d = await res.json().catch(() => ({}));
-              throw new Error(d.detail || 'Lead-Suche fehlgeschlagen');
+              throw new Error(d.detail || 'Lead search failed');
             }
 
 
@@ -1004,7 +1028,7 @@
         startOver() {
           this.view = 'input';
           this.currentStep = 1;
-          this.icp = null;
+          this.resetIcp();
           this.leads = [];
           this.error = null;
           this.search = '';

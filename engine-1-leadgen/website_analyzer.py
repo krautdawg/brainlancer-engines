@@ -7,22 +7,22 @@ import re
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 MOCK_ICP = {
-    "company_name": "KI Katapult Demo GmbH",
-    "industry": "KI-gestützte Unternehmensberatung",
-    "titles": ["Geschäftsführer", "Head of Digital", "IT-Leiter"],
-    "location": "Berlin & Brandenburg, DACH-Region",
+    "company_name": "KI Katapult Demo Ltd.",
+    "industry": "AI-powered business consulting",
+    "titles": ["Managing Director", "Head of Digital", "IT Director"],
+    "location": "Berlin & Brandenburg, DACH region",
     "company_size_min": 10,
     "company_size_max": 250,
     "pain_signals": [
-        "Manuelle Prozesse bremsen das Wachstum",
-        "Fehlende KI-Strategie im Unternehmen",
-        "Vertrieb und Marketing nicht automatisiert",
-        "Hohe Kosten durch ineffiziente Abläufe",
+        "Manual processes are slowing growth",
+        "No clear AI strategy across the business",
+        "Sales and marketing workflows are not automated",
+        "High operating costs caused by inefficient processes",
     ],
     "description": (
-        "Mittelständische Unternehmen in der DACH-Region, die ihre Geschäftsprozesse mit KI "
-        "automatisieren und skalieren wollen. Typischerweise 10–250 Mitarbeiter, wachstumsorientiert "
-        "und offen für digitale Transformation."
+        "Mid-market companies in the DACH region that want to automate and scale their business "
+        "processes with AI. Typically 10-250 employees, growth-oriented, and open to digital "
+        "transformation."
     ),
     "website_url": "",
     "is_demo": True,
@@ -66,7 +66,7 @@ async def scrape_website_content(url: str) -> str:
         return content[:3500]
 
     except Exception as e:
-        return f"Website konnte nicht geladen werden: {str(e)}"
+        return f"Could not load website: {str(e)}"
 
 
 async def analyze_website(url: str) -> dict:
@@ -86,31 +86,31 @@ async def analyze_website(url: str) -> dict:
         genai.configure(api_key=GOOGLE_API_KEY)
         model = genai.GenerativeModel("gemini-2.0-flash")
 
-        prompt = f"""Analysiere diesen Website-Inhalt und erstelle ein Ideal Customer Profile (ICP) für die B2B-Leadgenerierung.
+        prompt = f"""Analyze this website content and create an Ideal Customer Profile (ICP) for B2B lead generation.
 
 Website URL: {url}
-Website-Inhalt:
+Website content:
 {content}
 
-Antworte NUR mit einem JSON-Objekt mit diesen exakten Feldern:
+Respond ONLY with a JSON object using these exact fields:
 {{
-  "company_name": "Name des Unternehmens von der Website",
-  "industry": "Branche / Nische des Unternehmens",
-  "titles": ["Ziel-Jobtitel 1", "Ziel-Jobtitel 2", "Ziel-Jobtitel 3"],
-  "location": "Hauptmarkt / Region (z.B. Berlin, DACH-Region)",
+  "company_name": "Company name from the website",
+  "industry": "Industry / niche of the company",
+  "titles": ["Target job title 1", "Target job title 2", "Target job title 3"],
+  "location": "Primary market / region (e.g. Berlin, DACH region)",
   "company_size_min": 10,
   "company_size_max": 200,
   "pain_signals": [
-    "Schmerzpunkt 1 der Zielkunden",
-    "Schmerzpunkt 2 der Zielkunden",
-    "Schmerzpunkt 3 der Zielkunden",
-    "Schmerzpunkt 4 der Zielkunden"
+    "Pain point 1 of the target customers",
+    "Pain point 2 of the target customers",
+    "Pain point 3 of the target customers",
+    "Pain point 4 of the target customers"
   ],
-  "description": "2-3 Sätze: Wer ist die ideale Zielgruppe dieses Unternehmens und warum?",
+  "description": "2-3 sentences: Who is this company's ideal target audience and why?",
   "website_url": "{url}"
 }}
 
-Fokus: DACH-Region (Deutschland, Österreich, Schweiz). Jobtitel und Schmerzpunkte auf Deutsch."""
+Focus on the DACH region (Germany, Austria, Switzerland). Return job titles and pain points in English."""
 
         response = model.generate_content(
             prompt,

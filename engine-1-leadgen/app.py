@@ -65,7 +65,7 @@ async def login_submit(request: Request):
         request.session["credits"] = CREDITS_PER_SESSION
         ensure_session_id(request)
         return RedirectResponse("/", status_code=303)
-    return templates.TemplateResponse(name="login.html", context={"request": request, "error": "Falsches Passwort"}, request=request)
+    return templates.TemplateResponse(name="login.html", context={"request": request, "error": "Incorrect password"}, request=request)
 
 
 @app.post("/logout")
@@ -90,12 +90,12 @@ async def api_analyze(request: Request):
 
     credits = request.session.get("credits", 0)
     if credits <= 0:
-        raise HTTPException(status_code=429, detail="Keine Credits mehr. Bitte erneut einloggen.")
+        raise HTTPException(status_code=429, detail="No credits remaining. Please sign in again.")
 
     body = await request.json()
     url = body.get("url", "").strip()
     if not url:
-        raise HTTPException(status_code=400, detail="URL ist erforderlich")
+        raise HTTPException(status_code=400, detail="URL is required")
 
     icp = await analyze_website(url)
 
@@ -115,7 +115,7 @@ async def api_leads(request: Request):
     body = await request.json()
     icp_data = body.get("icp")
     if not icp_data:
-        raise HTTPException(status_code=400, detail="ICP-Daten fehlen")
+        raise HTTPException(status_code=400, detail="ICP data is missing")
 
     leads = await find_leads(icp_data)
 
@@ -135,11 +135,11 @@ async def export_leads(request: Request):
 
     session_id = request.session.get("session_id")
     if not session_id:
-        raise HTTPException(status_code=404, detail="Keine Leads gefunden")
+        raise HTTPException(status_code=404, detail="No leads found")
 
     leads = get_session_leads(session_id)
     if not leads:
-        raise HTTPException(status_code=404, detail="Keine Leads zum Exportieren")
+        raise HTTPException(status_code=404, detail="No leads available for export")
 
     output = io.StringIO()
     fieldnames = ["company_name", "website", "contact_name", "role", "email", "phone", "notes", "source"]
