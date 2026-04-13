@@ -155,12 +155,19 @@
         <span class="bg-red-500 text-white text-xs rounded-full px-1.5 leading-4 font-bold">4</span>
       </button>
       <button
-        @click="alert('Syncing onboarding checklists to Notion database...')"
+        @click="showNotion = true"
         class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-slate-900"
       >
         <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
           <path d="M4.459 4.208c.739.043 1.207.245 1.765.348 1.458.261 2.916.522 4.374.783.504.088.941.16 1.344.209.682.083 1.25.12 1.93.12 1.159 0 2.317-.05 3.476-.1 1.054-.045 1.549-.241 1.938-.72.333-.414.47-.962.47-1.549 0-.256-.011-.512-.032-.767-.042-.501-.132-.821-.47-1.159-.319-.319-.711-.47-1.159-.47-.192 0-.384.032-.576.096-.192.064-.384.192-.512.384-.128.192-.192.384-.192.576 0 .192.064.384.192.512.128.128.32.192.512.192.192 0 .384-.064.512-.192.128-.128.192-.32.192-.512 0-.192-.064-.384-.192-.512-.128-.128-.32-.192-.512-.192-.192 0-.384.064-.512.192s-.192.32-.192.512c0 .192.064.384.192.512.128.128.32.192.512.192 1.124 0 2.112-.641 2.56-1.6.448-.959.448-2.08 0-3.039-.448-.959-1.436-1.6-2.56-1.6-1.124 0-2.112.641-2.56 1.6-.448.959-.448 2.08 0 3.039.448.959 1.436 1.6 2.56 1.6 1.124 0 2.112-.641 2.56-1.6.448-.959.448-2.08 0-3.039z"/><path d="M4.459 4.208V20.84c0 .546.223 1.052.593 1.419.37.367.886.581 1.442.581h13.298c1.124 0 2.035-.911 2.035-2.035V4.208c0-1.124-.911-2.035-2.035-2.035H6.494c-1.124 0-2.035.911-2.035 2.035zm2.864 1.938h10.354v14.694H7.323V6.146zm2.302 2.302v10.09h1.938V8.448H9.625zm4.481 0v10.09h1.938V8.448h-1.938z"/></svg>
-        Notion Workspaces
+        Notion Workspace
+      </button>
+      <button
+        @click="showWorkflows = true"
+        class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-slate-900"
+      >
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Logic Workflows
       </button>
       <button
         @click="alert('Syncing employee records with SAP SuccessFactors...')"
@@ -1074,6 +1081,8 @@ function app() {
       { id: 'hr-team',         label: 'hr-team',         unread: 0 },
     ],
     slackUserMessages: [],
+    showNotion: false,
+    showWorkflows: false,
 
     // ── Computed ──
     get unreadCount() {
@@ -1677,6 +1686,152 @@ function app() {
   };
 }
 </script>
+
+  <!-- ═══════════════════════════════════
+       WORKFLOWS INTEGRATION VIEW
+  ═══════════════════════════════════ -->
+  <div x-show="showWorkflows" x-cloak class="fixed inset-0 z-[100] bg-[#f8fafc] flex flex-col font-sans text-slate-700 overflow-hidden" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+    <header class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <h2 class="font-extrabold text-slate-800 tracking-tight">Onboarding Operationalizer — Visual Logic</h2>
+      </div>
+      <button @click="showWorkflows = false" class="bg-slate-900 text-white px-5 py-2 rounded-xl text-xs font-bold transition hover:bg-slate-800 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        EXIT WORKFLOW VIEW
+      </button>
+    </header>
+
+    <div class="flex-1 overflow-auto bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] bg-[length:24px_24px] p-12">
+      <div class="max-w-6xl mx-auto flex items-center gap-12 py-20 min-w-max relative">
+        <!-- Node 1 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-blue-500 bg-blue-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-white mb-2 text-sm">👤</div>
+            <div class="text-xs font-bold text-blue-700">New Hire Event</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">HR Form or SAP Import</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 2 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-amber-500 bg-amber-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white mb-2 text-sm">📋</div>
+            <div class="text-xs font-bold text-amber-700">Template Sync</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Dev/Designer Selector</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 3 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white mb-2 text-sm">🧩</div>
+            <div class="text-xs font-bold text-emerald-700">Task Generator</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">YAML → Active Board</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 4 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-amber-500 bg-amber-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white mb-2 text-sm">📣</div>
+            <div class="text-xs font-bold text-amber-700">Notify Router</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Team Assignments</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 5 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-amber-500 bg-amber-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white mb-2 text-sm">📉</div>
+            <div class="text-xs font-bold text-amber-700">Status Tracker</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Escalation Logic</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 6 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-red-500 bg-red-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center text-white mb-2 text-sm">🦞</div>
+            <div class="text-xs font-bold text-red-700">Ecosystem Sync</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Slack, Notion, SAP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div x-show="showNotion" x-cloak class="fixed inset-0 z-[100] bg-white flex font-sans text-[#37352f] overflow-hidden" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+    <!-- Notion Sidebar -->
+    <aside class="w-60 bg-[#fbfbfa] border-r border-[#efefee] flex flex-col shrink-0">
+      <div class="p-4 flex items-center gap-2 hover:bg-[#efefee] cursor-pointer transition">
+        <div class="w-5 h-5 bg-white border border-[#efefee] rounded shadow-sm flex items-center justify-center font-bold text-xs">A</div>
+        <span class="text-sm font-semibold truncate">Acme Corp Notion</span>
+      </div>
+      <nav class="flex-1 px-2 py-4 space-y-0.5">
+        <div class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#efefee] rounded text-sm text-[#37352f] opacity-60">
+          <span>🏠</span> Home
+        </div>
+        <div class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#efefee] rounded text-sm text-[#37352f] font-bold bg-[#efefee]">
+          <span>📋</span> HR: Onboarding
+        </div>
+        <div class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#efefee] rounded text-sm text-[#37352f] opacity-60">
+          <span>👥</span> Team Directory
+        </div>
+      </nav>
+      <div class="p-4">
+        <button @click="showNotion = false" class="w-full py-2 bg-black text-white rounded text-xs font-bold transition hover:bg-zinc-800">
+          BACK TO DASHBOARD
+        </button>
+      </div>
+    </aside>
+
+    <!-- Notion Content -->
+    <main class="flex-1 overflow-y-auto flex flex-col bg-white">
+      <div class="h-12 border-b border-[#efefee] flex items-center px-6 gap-2 shrink-0">
+        <span class="text-xs text-[#37352f] opacity-40">HR Workspace / Onboarding /</span>
+        <span class="text-xs text-[#37352f] font-medium" x-text="selectedEmployee?.name || 'Employee'"></span>
+      </div>
+      <div class="max-w-3xl mx-auto w-full px-12 py-20">
+        <div class="text-6xl mb-6">👤</div>
+        <h1 class="text-4xl font-extrabold mb-4" x-text="selectedEmployee?.name"></h1>
+        <div class="flex items-center gap-4 text-sm mb-12">
+          <span class="px-2 py-0.5 bg-[#efefee] rounded">Property: <b>Onboarding</b></span>
+          <span class="px-2 py-0.5 bg-[#efefee] rounded" x-text="'Role: ' + (selectedEmployee?.role || 'New Hire')"></span>
+        </div>
+
+        <div class="space-y-8">
+          <div>
+            <h2 class="text-lg font-bold border-b-2 border-black pb-1 mb-4 flex items-center gap-2">
+              <span>📝</span> Automated Checklist (from KI Katapult)
+            </h2>
+            <div class="space-y-2">
+              <template x-for="task in (currentTasks || [])" :key="task.id">
+                <div class="flex items-center gap-3 py-1 group">
+                  <div class="w-4 h-4 border border-slate-300 rounded flex items-center justify-center text-[10px]" :class="task.status === 'done' ? 'bg-blue-500 border-blue-500 text-white' : ''">
+                    <span x-show="task.status === 'done'">✓</span>
+                  </div>
+                  <span class="text-sm font-medium" :class="task.status === 'done' ? 'line-through opacity-40' : ''" x-text="task.title"></span>
+                  <span class="ml-auto text-[10px] uppercase font-bold px-1.5 py-0.5 bg-slate-100 rounded opacity-0 group-hover:opacity-100 transition" x-text="task.assignee"></span>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <div class="bg-blue-50/50 border border-blue-100 p-6 rounded-xl">
+            <h3 class="text-sm font-bold text-blue-800 mb-2">Internal Sync Note</h3>
+            <p class="text-xs leading-relaxed text-blue-700/80 italic">This page is automatically maintained by the KI Katapult Onboarding Engine. Do not edit tasks manually as they sync bidirectionally with the HR Dashboard.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
 
 </body>
 </html>

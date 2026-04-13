@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KI Katapult — Automation Workflows</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    body { 
+      font-family: 'Outfit', sans-serif; 
+      background-color: #f8fafc;
+      background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .node-canvas {
+      position: relative;
+      min-height: 400px;
+      overflow-x: auto;
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+    .node {
+      position: relative;
+      width: 180px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      background: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    .node-trigger { border-color: #3b82f6; background: #eff6ff; }
+    .node-ai { border-color: #10b981; background: #f0fdf4; }
+    .node-logic { border-color: #f59e0b; background: #fffbeb; }
+    .node-output { border-color: #ef4444; background: #fef2f2; }
+    
+    .node-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+    .icon-blue { background: #3b82f6; color: white; }
+    .icon-green { background: #10b981; color: white; }
+    .icon-amber { background: #f59e0b; color: white; }
+    .icon-red { background: #ef4444; color: white; }
+
+    .connector {
+      position: absolute;
+      top: 50%;
+      right: -40px;
+      width: 40px;
+      height: 2px;
+      background: #cbd5e1;
+      z-index: 5;
+    }
+    .connector::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: -4px;
+      width: 0; height: 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 8px solid #cbd5e1;
+    }
+
+    [x-cloak] { display: none !important; }
+  </style>
+</head>
+<body class="p-8">
+
+  <div class="max-w-7xl mx-auto">
+    <header class="mb-12 flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Backend Workflows</h1>
+        <p class="text-slate-500 font-medium mt-1 uppercase text-xs tracking-widest">Visual Logic Mapping — n8n Protocol</p>
+      </div>
+      <a href="/" class="text-sm font-bold text-sky-600 hover:text-sky-700 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        Back to Engines
+      </a>
+    </header>
+
+    <div class="space-y-24 pb-24">
+
+      <!-- ENGINE 1 -->
+      <section>
+        <div class="flex items-center gap-3 mb-6">
+          <div class="px-3 py-1 bg-sky-500 text-white text-xs font-bold rounded-full">ENGINE 1</div>
+          <h2 class="text-xl font-bold text-slate-800 uppercase tracking-tight">Lead Generation Pipeline</h2>
+        </div>
+        <div class="node-canvas bg-white/50 border border-slate-200 rounded-3xl overflow-x-auto">
+          <!-- Trigger -->
+          <div class="node node-trigger">
+            <div class="node-icon icon-blue">⚡</div>
+            <div class="text-xs font-bold text-blue-700">Trigger</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Manual URL or Search</div>
+            <div class="connector"></div>
+          </div>
+          <!-- Scraper -->
+          <div class="node node-ai">
+            <div class="node-icon icon-green">🔍</div>
+            <div class="text-xs font-bold text-emerald-700">Web Scraper</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">BeautifulSoup Parser</div>
+            <div class="connector"></div>
+          </div>
+          <!-- AI Analyzer -->
+          <div class="node node-ai">
+            <div class="node-icon icon-green">🤖</div>
+            <div class="text-xs font-bold text-emerald-700">AI ICP Analyzer</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Gemini Pro Reasoning</div>
+            <div class="connector"></div>
+          </div>
+          <!-- Search -->
+          <div class="node node-ai">
+            <div class="node-icon icon-green">🏢</div>
+            <div class="text-xs font-bold text-emerald-700">Lead Sourcing</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Public Directory Search</div>
+            <div class="connector"></div>
+          </div>
+          <!-- Scoring -->
+          <div class="node node-logic">
+            <div class="node-icon icon-amber">⚖️</div>
+            <div class="text-xs font-bold text-amber-700">Lead Scoring</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">ICP Fit Rank (1-10)</div>
+            <div class="connector"></div>
+          </div>
+          <!-- Filter -->
+          <div class="node node-logic">
+            <div class="node-icon icon-amber">✅</div>
+            <div class="text-xs font-bold text-amber-700">Quality Filter</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Score > 7?</div>
+            <div class="connector"></div>
+          </div>
+          <!-- Output -->
+          <div class="node node-output">
+            <div class="node-icon icon-red">📤</div>
+            <div class="text-xs font-bold text-red-700">Multi-Sync</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">HubSpot / Salesforce</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ENGINE 2 -->
+      <section>
+        <div class="flex items-center gap-3 mb-6">
+          <div class="px-3 py-1 bg-purple-500 text-white text-xs font-bold rounded-full">ENGINE 2</div>
+          <h2 class="text-xl font-bold text-slate-800 uppercase tracking-tight">Outbound Sequence Orchestrator</h2>
+        </div>
+        <div class="node-canvas bg-white/50 border border-slate-200 rounded-3xl overflow-x-auto">
+          <div class="node node-trigger">
+            <div class="node-icon icon-blue">📥</div>
+            <div class="text-xs font-bold text-blue-700">Lead Ingest</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Engine 1 or CRM</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-ai">
+            <div class="node-icon icon-green">📝</div>
+            <div class="text-xs font-bold text-emerald-700">Lead Parser</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Contextual Normalization</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-logic">
+            <div class="node-icon icon-amber">⚙️</div>
+            <div class="text-xs font-bold text-amber-700">Campaign Config</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Tone & Touchpoints</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-ai">
+            <div class="node-icon icon-green">✨</div>
+            <div class="text-xs font-bold text-emerald-700">AI Sequence Gen</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Gemini Personalized Copy</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-logic">
+            <div class="node-icon icon-amber">👁️</div>
+            <div class="text-xs font-bold text-amber-700">Human Review</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Approval Interface</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-output">
+            <div class="node-icon icon-red">📬</div>
+            <div class="text-xs font-bold text-red-700">Sync & Send</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Gmail / CRM Tasks</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ENGINE 3 -->
+      <section>
+        <div class="flex items-center gap-3 mb-6">
+          <div class="px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full">ENGINE 3</div>
+          <h2 class="text-xl font-bold text-slate-800 uppercase tracking-tight">VAT Compliance Flow</h2>
+        </div>
+        <div class="node-canvas bg-white/50 border border-slate-200 rounded-3xl overflow-x-auto">
+          <div class="node node-trigger">
+            <div class="node-icon icon-blue">📧</div>
+            <div class="text-xs font-bold text-blue-700">Fetch Invoices</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">IMAP or PDF Upload</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-ai">
+            <div class="node-icon icon-green">📄</div>
+            <div class="text-xs font-bold text-emerald-700">PDF Extractor</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">pdfplumber Text OCR</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-logic">
+            <div class="node-icon icon-amber">📑</div>
+            <div class="text-xs font-bold text-amber-700">Rule Triage</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">German Tax Categories</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-ai">
+            <div class="node-icon icon-green">⚖️</div>
+            <div class="text-xs font-bold text-emerald-700">AI Reviewer</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Confidence Verification</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-logic">
+            <div class="node-icon icon-amber">🛑</div>
+            <div class="text-xs font-bold text-amber-700">Manual Queue</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">If Confidence < 80%</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-ai">
+            <div class="node-icon icon-green">📊</div>
+            <div class="text-xs font-bold text-emerald-700">ELSTER Calc</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Quarterly Kennzahlen</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-output">
+            <div class="node-icon icon-red">🏛️</div>
+            <div class="text-xs font-bold text-red-700">SAP / ELSTER</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">ERP Post & XML Gen</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ENGINE 4 -->
+      <section>
+        <div class="flex items-center gap-3 mb-6">
+          <div class="px-3 py-1 bg-orange-500 text-white text-xs font-bold rounded-full">ENGINE 4</div>
+          <h2 class="text-xl font-bold text-slate-800 uppercase tracking-tight">Onboarding Operationalizer</h2>
+        </div>
+        <div class="node-canvas bg-white/50 border border-slate-200 rounded-3xl overflow-x-auto">
+          <div class="node node-trigger">
+            <div class="node-icon icon-blue">👤</div>
+            <div class="text-xs font-bold text-blue-700">New Hire Event</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">HR Form or SAP Import</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-logic">
+            <div class="node-icon icon-amber">📋</div>
+            <div class="text-xs font-bold text-amber-700">Template Sync</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Dev/Designer Selector</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-ai">
+            <div class="node-icon icon-green">🧩</div>
+            <div class="text-xs font-bold text-emerald-700">Task Generator</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">YAML → Active Board</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-logic">
+            <div class="node-icon icon-amber">📣</div>
+            <div class="text-xs font-bold text-amber-700">Notify Router</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Team Assignments</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-logic">
+            <div class="node-icon icon-amber">📉</div>
+            <div class="text-xs font-bold text-amber-700">Status Tracker</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Escalation Logic</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-output">
+            <div class="node-icon icon-red">🦞</div>
+            <div class="text-xs font-bold text-red-700">Ecosystem Sync</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Slack, Notion, SAP</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ENGINE 5 -->
+      <section>
+        <div class="flex items-center gap-3 mb-6">
+          <div class="px-3 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">ENGINE 5</div>
+          <h2 class="text-xl font-bold text-slate-800 uppercase tracking-tight">Supplier Exception Monitor</h2>
+        </div>
+        <div class="node-canvas bg-white/50 border border-slate-200 rounded-3xl overflow-x-auto">
+          <div class="node node-trigger">
+            <div class="node-icon icon-blue">📦</div>
+            <div class="text-xs font-bold text-blue-700">PO Ingest</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">SAP MM or CSV</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-ai">
+            <div class="node-icon icon-green">📊</div>
+            <div class="text-xs font-bold text-emerald-700">PO Tracker</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Status Lifecycle Sync</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-logic">
+            <div class="node-icon icon-amber">💲</div>
+            <div class="text-xs font-bold text-amber-700">Price Check</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Historical Variance</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-ai">
+            <div class="node-icon icon-green">🚩</div>
+            <div class="text-xs font-bold text-emerald-700">Risk Classifier</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">AI Performance Score</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-logic">
+            <div class="node-icon icon-amber">📧</div>
+            <div class="text-xs font-bold text-amber-700">Chase Engine</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Auto-Escalation Link</div>
+            <div class="connector"></div>
+          </div>
+          <div class="node node-output">
+            <div class="node-icon icon-red">🔔</div>
+            <div class="text-xs font-bold text-red-700">Ops Alerts</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Slack & SAP Update</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+</body>
+</html>

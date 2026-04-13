@@ -184,8 +184,13 @@
           <svg class="w-3.5 h-3.5 text-black" viewBox="0 0 24 24" fill="currentColor"><path d="M4.459 4.208c.739.043 1.207.245 1.765.348 1.458.261 2.916.522 4.374.783.504.088.941.16 1.344.209.682.083 1.25.12 1.93.12 1.159 0 2.317-.05 3.476-.1 1.054-.045 1.549-.241 1.938-.72.333-.414.47-.962.47-1.549 0-.256-.011-.512-.032-.767-.042-.501-.132-.821-.47-1.159-.319-.319-.711-.47-1.159-.47-.192 0-.384.032-.576.096-.192.064-.384.192-.512.384-.128.192-.192.384-.192.576 0 .192.064.384.192.512.128.128.32.192.512.192.192 0 .384-.064.512-.192.128-.128.192-.32.192-.512 0-.192-.064-.384-.192-.512-.128-.128-.32-.192-.512-.192-.192 0-.384.064-.512.192s-.192.32-.192.512c0 .192.064.384.192.512.128.128.32.192.512.192 1.124 0 2.112-.641 2.56-1.6.448-.959.448-2.08 0-3.039-.448-.959-1.436-1.6-2.56-1.6-1.124 0-2.112.641-2.56 1.6-.448.959-.448 2.08 0 3.039.448.959 1.436 1.6 2.56 1.6 1.124 0 2.112-.641 2.56-1.6.448-.959.448-2.08 0-3.039z"/><path d="M4.459 4.208V20.84c0 .546.223 1.052.593 1.419.37.367.886.581 1.442.581h13.298c1.124 0 2.035-.911 2.035-2.035V4.208c0-1.124-.911-2.035-2.035-2.035H6.494c-1.124 0-2.035.911-2.035 2.035zm2.864 1.938h10.354v14.694H7.323V6.146zm2.302 2.302v10.09h1.938V8.448H9.625zm4.481 0v10.09h1.938V8.448h-1.938z"/></svg>
         </div>
       </div>
+      <button @click="showWorkflows = true" class="btn-ghost flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 hover:bg-slate-50 transition-all">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Workflows
+      </button>
       <div class="h-4 w-px bg-slate-200"></div>
-      <button @click="pushToSlack()" class="btn-ghost flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 hover:bg-slate-50 transition-all">
+      <button @click="pushToSlack()"
+ class="btn-ghost flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 hover:bg-slate-50 transition-all">
         <svg class="w-3.5 h-3.5 text-[#4A154B]" viewBox="0 0 24 24" fill="currentColor">
           <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52h-2.521zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521a2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.958 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.52 2.521h-2.522v-2.521zM17.687 8.834a2.528 2.528 0 0 1-2.521 2.521a2.527 2.527 0 0 1-2.521-2.521V2.522A2.527 2.527 0 0 1 15.166 0a2.528 2.528 0 0 1 2.521 2.522v6.312zM15.166 18.958a2.528 2.528 0 0 1 2.521 2.522A2.528 2.528 0 0 1 15.166 24a2.527 2.527 0 0 1-2.521-2.522v-2.52h2.521zM15.166 17.687a2.527 2.527 0 0 1-2.521-2.521a2.527 2.527 0 0 1 2.521-2.521h6.312A2.528 2.528 0 0 1 24 15.166a2.528 2.528 0 0 1-2.522 2.521h-6.312z"/>
         </svg>
@@ -300,7 +305,7 @@
             <div>
               <p class="text-xs font-semibold text-sky-700">How it works</p>
               <p class="text-xs mt-1 text-slate-500">
-                The AI reads your website, understands your offer, and automatically builds an ICP with matching target customers, job titles, and pain signals. It then finds matching leads across the DACH region.
+                The AI reads your website, understands your offer, and automatically builds an ICP with matching target customers, job titles, and pain signals. It then finds matching leads for your business.
               </p>
             </div>
           </div>
@@ -542,8 +547,9 @@
             Find 10 Leads
           </button>
           <p class="text-xs text-center mt-2 text-slate-400">
-            Searches for matching companies in the DACH region
+            Searches for matching companies globally
           </p>
+
         </div>
       </div>
     </div>
@@ -926,7 +932,9 @@
         analyzeStep: 0,
         leadStep: 0,
         loadingUrl: '',
-        copied: false,
+        loadingUrl: '',
+        showSalesforce: false,
+        showWorkflows: false,
 
         syncToNotion(lead) {
           if (!lead) return;
@@ -944,11 +952,13 @@
           if (!lead) return;
           lead.salesforce_synced = true;
           this.credits -= 1;
+          setTimeout(() => { this.showSalesforce = true; }, 500);
         },
 
         pushToSlack() {
           alert('Notification pushed to Slack channel #sales-leads');
         },
+
 
         init() {
           this.resetIcp();
@@ -1126,6 +1136,190 @@
       };
     }
   </script>
+
+  <!-- ═══════════════════════════════════
+       WORKFLOWS INTEGRATION VIEW
+  ═══════════════════════════════════ -->
+  <div x-show="showWorkflows" x-cloak class="fixed inset-0 z-[100] bg-[#f8fafc] flex flex-col font-sans text-slate-700 overflow-hidden" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+    <header class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <h2 class="font-extrabold text-slate-800 tracking-tight">Lead Generation Pipeline — Visual Logic</h2>
+      </div>
+      <button @click="showWorkflows = false" class="bg-slate-900 text-white px-5 py-2 rounded-xl text-xs font-bold transition hover:bg-slate-800 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        EXIT WORKFLOW VIEW
+      </button>
+    </header>
+
+    <div class="flex-1 overflow-auto bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] bg-[length:24px_24px] p-12">
+      <div class="max-w-6xl mx-auto flex items-center gap-12 py-20 min-w-max relative">
+        <!-- Node 1 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-blue-500 bg-blue-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-white mb-2 text-sm">⚡</div>
+            <div class="text-xs font-bold text-blue-700">Trigger</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Manual URL or Search</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 2 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white mb-2 text-sm">🔍</div>
+            <div class="text-xs font-bold text-emerald-700">Web Scraper</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">BeautifulSoup Parser</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 3 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white mb-2 text-sm">🤖</div>
+            <div class="text-xs font-bold text-emerald-700">AI ICP Analyzer</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Gemini Pro Reasoning</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 4 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white mb-2 text-sm">🏢</div>
+            <div class="text-xs font-bold text-emerald-700">Lead Sourcing</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Public Directory Search</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 5 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-amber-500 bg-amber-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white mb-2 text-sm">⚖️</div>
+            <div class="text-xs font-bold text-amber-700">Lead Scoring</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">ICP Fit Rank (1-10)</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 6 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-red-500 bg-red-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center text-white mb-2 text-sm">📤</div>
+            <div class="text-xs font-bold text-red-700">Multi-Sync</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">HubSpot / Salesforce</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div x-show="showSalesforce" x-cloak class="fixed inset-0 z-[100] bg-[#f3f3f2] flex flex-col font-sans text-slate-700 overflow-hidden" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+    <!-- SF Top Nav -->
+    <header class="h-12 bg-[#1b96ff] flex items-center justify-between px-4 shrink-0">
+      <div class="flex items-center gap-4">
+        <div class="w-8 h-8 bg-white rounded flex items-center justify-center">
+          <svg class="w-6 h-6 text-[#00a1e0]" viewBox="0 0 24 24" fill="currentColor"><path d="M18.1 13.5c-.1 0-.1 0 0 0 .1-.4.2-.8.2-1.2 0-2.8-2.3-5-5-5-1.5 0-2.9.7-3.8 1.8C8.6 8.5 7.4 8 6 8c-2.2 0-4 1.8-4 4 0 .4.1.8.2 1.2C.9 13.8 0 15 0 16.5c0 1.9 1.6 3.5 3.5 3.5h14c1.9 0 3.5-1.6 3.5-3.5 0-1.6-1.1-2.9-2.9-3.5z"/></svg>
+        </div>
+        <div class="h-6 w-px bg-white/20"></div>
+        <nav class="flex items-center gap-4 text-white text-[13px] font-bold">
+          <span class="opacity-80">Home</span>
+          <span class="border-b-2 border-white pb-1">Leads</span>
+          <span class="opacity-80">Accounts</span>
+          <span class="opacity-80">Contacts</span>
+          <span class="opacity-80">Opportunities</span>
+        </nav>
+      </div>
+      <button @click="showSalesforce = false" class="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded text-xs font-bold transition flex items-center gap-2">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        BACK TO KI KATAPULT
+      </button>
+    </header>
+
+    <!-- SF Record Header -->
+    <div class="bg-white border-b border-slate-200 px-6 py-4 shrink-0">
+      <div class="flex items-center gap-4 mb-1">
+        <div class="w-10 h-10 bg-[#f88962] rounded flex items-center justify-center text-white">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+        <div>
+          <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Lead</p>
+          <h1 class="text-xl font-bold text-slate-900" x-text="selectedLead?.contact_name || 'New Lead'"></h1>
+        </div>
+        <div class="ml-auto flex gap-2">
+          <button class="px-4 py-1.5 border border-slate-300 rounded bg-white text-[13px] font-bold hover:bg-slate-50">Edit</button>
+          <button class="px-4 py-1.5 border border-slate-300 rounded bg-[#0176d3] text-white text-[13px] font-bold hover:bg-[#014486]">Convert</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SF Content -->
+    <div class="flex-1 overflow-y-auto p-6">
+      <div class="max-w-5xl mx-auto grid grid-cols-3 gap-6">
+        <!-- Main Info -->
+        <div class="col-span-2 space-y-6">
+          <div class="bg-white rounded border border-slate-200 overflow-hidden">
+            <div class="bg-[#f3f3f2] px-4 py-2 border-b border-slate-200 text-xs font-bold text-slate-600">LEAD INFORMATION</div>
+            <div class="p-4 grid grid-cols-2 gap-y-4 gap-x-8">
+              <div>
+                <p class="text-[11px] text-slate-500">Lead Status</p>
+                <p class="text-[13px] font-medium border-b border-dotted border-slate-300 pb-1">New</p>
+              </div>
+              <div>
+                <p class="text-[11px] text-slate-500">Phone</p>
+                <p class="text-[13px] font-medium border-b border-dotted border-slate-300 pb-1" x-text="selectedLead?.phone || '(555) 000-0000'"></p>
+              </div>
+              <div>
+                <p class="text-[11px] text-slate-500">Company</p>
+                <p class="text-[13px] font-medium border-b border-dotted border-slate-300 pb-1 text-[#0176d3]" x-text="selectedLead?.company_name"></p>
+              </div>
+              <div>
+                <p class="text-[11px] text-slate-500">Email</p>
+                <p class="text-[13px] font-medium border-b border-dotted border-slate-300 pb-1 text-[#0176d3]" x-text="selectedLead?.email"></p>
+              </div>
+              <div>
+                <p class="text-[11px] text-slate-500">Title</p>
+                <p class="text-[13px] font-medium border-b border-dotted border-slate-300 pb-1" x-text="selectedLead?.role || 'N/A'"></p>
+              </div>
+              <div>
+                <p class="text-[11px] text-slate-500">Rating</p>
+                <p class="text-[13px] font-medium border-b border-dotted border-slate-300 pb-1">Hot</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded border border-slate-200 overflow-hidden">
+            <div class="bg-[#f3f3f2] px-4 py-2 border-b border-slate-200 text-xs font-bold text-slate-600">AI RESEARCH NOTES (FROM KI KATAPULT)</div>
+            <div class="p-4">
+              <p class="text-[13px] leading-relaxed text-slate-700 italic" x-text="selectedLead?.notes"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <div class="bg-white rounded border border-slate-200 overflow-hidden">
+            <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-600">Activity</span>
+              <button class="text-xs text-[#0176d3] font-bold">View All</button>
+            </div>
+            <div class="p-4 space-y-4">
+              <div class="flex gap-3">
+                <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px]">✓</div>
+                <div>
+                  <p class="text-xs font-bold">Imported from KI Katapult</p>
+                  <p class="text-[10px] text-slate-400">Just now • Automated Task</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>

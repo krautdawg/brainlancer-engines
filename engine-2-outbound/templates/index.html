@@ -317,6 +317,22 @@
       </div>
 
       <button
+        @click="showHubSpot = true"
+        x-show="view === 'campaign-view'"
+        class="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-[#ff7a59] border border-[#ff7a59]/30 hover:bg-[#ff7a59]/5 transition"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.89 11.23a4.54 4.54 0 0 0-4.05-2.73 4.5 4.5 0 0 0-4.5 4.5c0 .32.04.62.11.92l-4.5 2.6a4.5 4.5 0 1 0 .91 1.58l4.47-2.58a4.51 4.51 0 1 0 6.64-3.72l2.3-1.33a2.02 2.02 0 1 0-1.38-.24zm-10.4 7.64a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm5.5-5.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0z"/></svg>
+        HubSpot Sync
+      </button>
+      <button
+        @click="showWorkflows = true"
+        x-show="view === 'campaign-view'"
+        class="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 border border-slate-200 hover:bg-slate-50 transition"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Workflows
+      </button>
+      <button
         @click="goTo('new-campaign')"
         x-show="view === 'dashboard'"
         class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-bold transition hover:bg-sky-600 bg-sky-500 shadow-sm shadow-sky-500/20"
@@ -1044,6 +1060,9 @@ function app() {
     globalLoading: true,
     loadingMsg: 'Loading...',
     nickelodeon: false,
+    showTelegram: false,
+    showHubSpot: false,
+    showWorkflows: false,
 
     // Auth
     loginPassword: '',
@@ -1626,5 +1645,242 @@ function app() {
   };
 }
 </script>
-</body>
-</html>
+  <!-- ═══════════════════════════════════
+       TELEGRAM INTEGRATION VIEW
+  ═══════════════════════════════════ -->
+  <div x-show="showTelegram" x-cloak class="fixed inset-0 z-[100] bg-[#000000bb] backdrop-blur-sm flex items-center justify-center p-4" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+    <!-- Phone Frame -->
+    <div class="relative w-[320px] h-[650px] bg-slate-900 rounded-[3rem] border-[8px] border-slate-800 shadow-2xl overflow-hidden flex flex-col">
+      <!-- Status Bar -->
+      <div class="h-6 bg-slate-900 w-full flex justify-between px-6 pt-2 items-center">
+        <span class="text-[10px] text-white font-bold">9:41</span>
+        <div class="flex gap-1">
+          <div class="w-3 h-2 bg-white/20 rounded-sm"></div>
+          <div class="w-3 h-2 bg-white rounded-sm"></div>
+        </div>
+      </div>
+
+      <!-- Telegram Header -->
+      <div class="h-14 bg-[#24a1de] flex items-center px-4 gap-3 shrink-0">
+        <button @click="showTelegram = false" class="text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold">K</div>
+        <div>
+          <p class="text-white font-bold text-sm leading-tight">KI Katapult Bot</p>
+          <p class="text-white/70 text-[10px]">bot</p>
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="flex-1 bg-[#8db1c5] p-4 flex flex-col gap-3 overflow-y-auto">
+        <div class="self-center bg-white/20 rounded-full px-3 py-1 text-[10px] text-white font-medium mb-2">Today</div>
+        
+        <!-- Bot Message -->
+        <div class="self-start max-w-[85%] bg-white rounded-2xl rounded-tl-none p-3 shadow-sm">
+          <p class="text-[13px] text-slate-800 font-bold mb-1">🚀 Campaign Update</p>
+          <p class="text-[12px] text-slate-600 leading-snug">New reply detected for <b>"Q2 Enterprise Outreach"</b>.</p>
+          <div class="mt-2 pt-2 border-t border-slate-100">
+            <p class="text-[11px] text-slate-400 uppercase font-bold">Prospect</p>
+            <p class="text-[13px] text-slate-800">Johnathan Miller</p>
+            <p class="text-[11px] text-emerald-600 font-bold mt-1">Sentiment: Positive (High Intent)</p>
+          </div>
+          <p class="text-[9px] text-slate-400 text-right mt-1">09:41 AM</p>
+        </div>
+
+        <!-- Bot Message 2 -->
+        <div class="self-start max-w-[85%] bg-white rounded-2xl rounded-tl-none p-3 shadow-sm">
+          <p class="text-[12px] text-slate-600 leading-snug">Sequence Stage 3 completed for 12 leads. 2 new meetings booked.</p>
+          <p class="text-[9px] text-slate-400 text-right mt-1">09:42 AM</p>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="h-14 bg-white px-4 flex items-center gap-3 shrink-0">
+        <div class="flex-1 bg-slate-100 rounded-full h-9 px-4 flex items-center text-slate-400 text-sm">Message</div>
+        <div class="w-9 h-9 rounded-full bg-[#24a1de] flex items-center justify-center text-white">
+          <svg class="w-5 h-5 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Back Button -->
+    <button @click="showTelegram = false" class="fixed top-8 right-8 bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-full font-bold transition flex items-center gap-3 backdrop-blur-md border border-white/20">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      EXIT PREVIEW
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       WORKFLOWS INTEGRATION VIEW
+  ═══════════════════════════════════ -->
+  <div x-show="showWorkflows" x-cloak class="fixed inset-0 z-[100] bg-[#f8fafc] flex flex-col font-sans text-slate-700 overflow-hidden" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+    <header class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <h2 class="font-extrabold text-slate-800 tracking-tight">Outbound Sequence Orchestrator — Visual Logic</h2>
+      </div>
+      <button @click="showWorkflows = false" class="bg-slate-900 text-white px-5 py-2 rounded-xl text-xs font-bold transition hover:bg-slate-800 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        EXIT WORKFLOW VIEW
+      </button>
+    </header>
+
+    <div class="flex-1 overflow-auto bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] bg-[length:24px_24px] p-12">
+      <div class="max-w-6xl mx-auto flex items-center gap-12 py-20 min-w-max relative">
+        <!-- Node 1 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-blue-500 bg-blue-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-white mb-2 text-sm">📥</div>
+            <div class="text-xs font-bold text-blue-700">Lead Ingest</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Engine 1 or CRM</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 2 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white mb-2 text-sm">📝</div>
+            <div class="text-xs font-bold text-emerald-700">Lead Parser</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Context Normalization</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 3 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-amber-500 bg-amber-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white mb-2 text-sm">⚙️</div>
+            <div class="text-xs font-bold text-amber-700">Campaign Config</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Tone & Touchpoints</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 4 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white mb-2 text-sm">✨</div>
+            <div class="text-xs font-bold text-emerald-700">AI Sequence Gen</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Gemini Personalization</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 5 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-amber-500 bg-amber-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white mb-2 text-sm">👁️</div>
+            <div class="text-xs font-bold text-amber-700">Human Review</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Approval Interface</div>
+          </div>
+          <div class="absolute top-1/2 -right-12 w-12 h-0.5 bg-slate-300 after:content-[''] after:absolute after:top-[-4px] after:right-0 after:border-y-[5px] after:border-y-transparent after:border-l-[8px] after:border-l-slate-300"></div>
+        </div>
+
+        <!-- Node 6 -->
+        <div class="relative group">
+          <div class="w-44 p-4 rounded-xl border-2 border-red-500 bg-red-50 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center text-white mb-2 text-sm">📬</div>
+            <div class="text-xs font-bold text-red-700">Sync & Send</div>
+            <div class="text-[10px] font-medium text-slate-500 mt-1">Gmail / CRM Sync</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div x-show="showHubSpot" x-cloak class="fixed inset-0 z-[100] bg-[#f5f8fa] flex flex-col font-sans text-[#33475b] overflow-hidden" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+    <!-- HubSpot Header -->
+    <header class="h-12 bg-[#2d3e50] flex items-center justify-between px-4 shrink-0">
+      <div class="flex items-center gap-6">
+        <svg class="w-6 h-6 text-[#ff7a59]" viewBox="0 0 24 24" fill="currentColor"><path d="M18.89 11.23a4.54 4.54 0 0 0-4.05-2.73 4.5 4.5 0 0 0-4.5 4.5c0 .32.04.62.11.92l-4.5 2.6a4.5 4.5 0 1 0 .91 1.58l4.47-2.58a4.51 4.51 0 1 0 6.64-3.72l2.3-1.33a2.02 2.02 0 1 0-1.38-.24zm-10.4 7.64a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm5.5-5.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0z"/></svg>
+        <nav class="flex items-center gap-5 text-white/90 text-sm font-medium">
+          <span class="hover:text-white cursor-pointer">Contacts</span>
+          <span class="hover:text-white cursor-pointer">Conversations</span>
+          <span class="text-white border-b-2 border-[#ff7a59] pb-3.5 pt-3">Marketing</span>
+          <span class="hover:text-white cursor-pointer">Sales</span>
+          <span class="hover:text-white cursor-pointer">Service</span>
+        </nav>
+      </div>
+      <button @click="showHubSpot = false" class="bg-[#ff7a59] hover:bg-[#ff8f73] text-white px-4 py-1.5 rounded text-xs font-bold transition flex items-center gap-2">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        BACK TO KI KATAPULT
+      </button>
+    </header>
+
+    <div class="flex-1 flex overflow-hidden">
+      <!-- HubSpot Sidebar -->
+      <aside class="w-80 bg-white border-r border-[#cbd6e2] p-6 shrink-0 overflow-y-auto">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-12 h-12 rounded-full bg-[#f5f8fa] border border-[#cbd6e2] flex items-center justify-center text-xl">👤</div>
+          <div>
+            <h2 class="font-bold text-lg leading-tight">Sequence Enrollment</h2>
+            <p class="text-xs text-[#516f7b]">Automated via OpenClaw</p>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="p-4 rounded-lg bg-[#f5f8fa] border border-[#cbd6e2]">
+            <p class="text-[10px] font-bold text-[#516f7b] uppercase mb-2">Active Sequence</p>
+            <p class="text-sm font-bold mb-1">Q2 Enterprise Outreach</p>
+            <div class="w-full bg-[#cbd6e2] h-1.5 rounded-full mt-3">
+              <div class="bg-[#00a4bd] h-1.5 rounded-full" style="width: 45%"></div>
+            </div>
+            <p class="text-[10px] text-[#516f7b] mt-2">Step 2 of 5 · Enrolled today</p>
+          </div>
+
+          <div class="space-y-1">
+            <p class="text-[10px] font-bold text-[#516f7b] uppercase mb-2 px-1">Lead Properties</p>
+            <div class="flex justify-between py-2 border-b border-[#eaf0f6] text-xs">
+              <span class="text-[#516f7b]">Lifecycle Stage</span>
+              <span class="font-bold">Marketing Qualified</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-[#eaf0f6] text-xs">
+              <span class="text-[#516f7b]">Lead Status</span>
+              <span class="font-bold text-[#00a4bd]">In Progress</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- HubSpot Main -->
+      <main class="flex-1 flex flex-col bg-white overflow-hidden">
+        <div class="px-8 py-6 border-b border-[#cbd6e2] flex items-center justify-between">
+          <h1 class="text-2xl font-bold">Sequence Activity: <span class="text-[#00a4bd]">OpenClaw Sync</span></h1>
+          <div class="flex gap-2">
+            <button class="px-4 py-2 text-sm font-bold border border-[#cbd6e2] rounded hover:bg-[#f5f8fa]">Pause</button>
+            <button class="px-4 py-2 text-sm font-bold bg-[#00a4bd] text-white rounded hover:bg-[#008ca3]">Settings</button>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-8 space-y-6">
+          <!-- Step 1 -->
+          <div class="border border-[#cbd6e2] rounded-lg overflow-hidden">
+            <div class="bg-[#f5f8fa] px-4 py-2 border-b border-[#cbd6e2] flex items-center justify-between">
+              <span class="text-xs font-bold">STEP 1: INITIAL OUTREACH (EMAIL)</span>
+              <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">DELIVERED</span>
+            </div>
+            <div class="p-4 space-y-3">
+              <p class="text-xs font-bold text-[#516f7b]">Subject: Transforming Acme Corp's Supply Chain</p>
+              <div class="p-3 bg-slate-50 rounded text-xs text-slate-600 italic">
+                "Hi Sarah, I noticed Acme Corp is expanding its logistics footprint in DACH..."
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="border border-[#cbd6e2] rounded-lg overflow-hidden shadow-sm ring-2 ring-[#00a4bd]/20">
+            <div class="bg-[#f5f8fa] px-4 py-2 border-b border-[#cbd6e2] flex items-center justify-between">
+              <span class="text-xs font-bold">STEP 2: FOLLOW-UP (LINKEDIN)</span>
+              <span class="text-[10px] font-bold text-[#00a4bd] animate-pulse">SCHEDULED FOR TOMORROW</span>
+            </div>
+            <div class="p-4">
+              <p class="text-xs text-slate-500 italic">Automated message sequence generated by KI Katapult AI.</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
