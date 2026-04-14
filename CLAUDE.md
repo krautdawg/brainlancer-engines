@@ -297,6 +297,500 @@ Currently no test framework configured. For validation:
 - Subtle shadows (`shadow-sm`) and rounded corners (`rounded-2xl`) for modern feel
 - Data-driven UI: components reflect live state from backend (no hardcoded demo content except static messages)
 
+## N8N-Style Workflow Diagrams
+
+Node color convention for video presentation:
+- 🔵 Input nodes (blue) — triggers and data sources
+- 🟢 Processing nodes (green) — transformation and enrichment
+- 🟡 Decision nodes (yellow diamond) — conditional branching
+- 🔴 Output nodes (red) — integrations and exports
+
+---
+
+### Engine 1: Lead Generation
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    LEAD GENERATION WORKFLOW                         │
+└─────────────────────────────────────────────────────────────────────┘
+
+  [Web Search Input]  [Manual URL Input]  [CSV Upload]
+            ↓               ↓                    ↓
+            └───────────────┬────────────────────┘
+                            ↓
+                  ┌─────────────────────┐
+                  │  Web Scraper Node   │
+                  │ (BeautifulSoup)     │
+                  └──────────┬──────────┘
+                             ↓
+                  ┌─────────────────────┐
+                  │  Parse & Clean      │
+                  │  Company Names      │
+                  │  Contact Info       │
+                  └──────────┬──────────┘
+                             ↓
+                  ┌─────────────────────┐
+                  │  Gemini AI Node     │
+                  │ Enrich with:        │
+                  │ • Industry          │
+                  │ • Firmographic Data │
+                  │ • Scoring           │
+                  └──────────┬──────────┘
+                             ↓
+                  ┌─────────────────────┐
+                  │ Deduplication Node  │
+                  │ Remove duplicates   │
+                  └──────────┬──────────┘
+                             ↓
+                  ┌─────────────────────┐
+                  │  Filter Node        │
+                  │ Quality Score > 7?  │
+                  └──────┬──────┬───────┘
+                    YES  │      │  NO
+                         ↓      ↓
+        ┌────────────┬────────────┐
+        │            │            │
+        ↓            ↓            ↓
+  [Salesforce] [HubSpot]  [Slack Alert]
+  Lead Creator Contact    "Low quality
+                Creator   lead filtered"
+        │            │
+        └────────────┴─────────────┐
+                                   ↓
+                         ┌─────────────────┐
+                         │  CSV Export     │
+                         │  Download ZIP   │
+                         └─────────────────┘
+```
+
+**Key Nodes:**
+- 🔍 **Web Scraper** — Crawl company websites
+- 🤖 **Gemini AI Enrichment** — Add industry, employee count, tech stack
+- 🗑️ **Deduplication** — Filter duplicates by domain
+- ✅ **Quality Filter** — Only pass high-confidence leads
+- 📤 **Multi-Output** — Salesforce, HubSpot, Slack, CSV export
+
+---
+
+### Engine 2: Outbound Sales
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│              OUTBOUND SALES SEQUENCE WORKFLOW                       │
+└─────────────────────────────────────────────────────────────────────┘
+
+  [Engine 1 Leads]  [Salesforce]  [HubSpot]  [CSV Import]
+            ↓           ↓            ↓             ↓
+            └───────────┬────────────┬─────────────┘
+                        ↓
+            ┌───────────────────────┐
+            │  Get Lead Details     │
+            │ (Name, Company, Role) │
+            └────────────┬──────────┘
+                         ↓
+            ┌───────────────────────┐
+            │  Campaign Config      │
+            │ Set:                  │
+            │ • Sender Name/Email   │
+            │ • Num Touches (3-5)   │
+            │ • Cadence (days)      │
+            │ • Tone (formal/casual)│
+            │ • Goal (call/demo)    │
+            └────────────┬──────────┘
+                         ↓
+            ┌───────────────────────┐
+            │  Gemini AI Node       │
+            │ Generate Sequence:    │
+            │ • Email 1 (Hook)      │
+            │ • Email 2 (Value)     │
+            │ • Email 3 (Urgency)   │
+            │ • Email 4 (Social P.) │
+            │ • Email 5 (Final CTA) │
+            └────────────┬──────────┘
+                         ↓
+            ┌───────────────────────┐
+            │  Template Renderer    │
+            │ • Personalize         │
+            │ • Insert links        │
+            │ • Style HTML          │
+            └────────────┬──────────┘
+                         ↓
+            ┌───────────────────────┐
+            │  Quality Check        │
+            │ • Length check        │
+            │ • Tone consistency    │
+            │ • Email validation    │
+            └────────────┬──────────┘
+                         ↓
+        ┌────────────┬──────────────────┬──────────────┐
+        │            │                  │              │
+        ↓            ↓                  ↓              ↓
+   [Salesforce] [HubSpot]         [Slack]      [CSV Export]
+   Create Task  Create Sequence   Notify      Download .eml
+   Link to Lead Auto-send emails  Sales Team  files ZIP
+        │            │                  │              │
+        └────────────┴──────────────────┴──────────────┘
+                        ↓
+            ┌───────────────────────┐
+            │  Kanban Board Update  │
+            │ Show sequences by:    │
+            │ • Draft               │
+            │ • Queued              │
+            │ • Sent                │
+            │ • Replied             │
+            └───────────────────────┘
+```
+
+**Key Nodes:**
+- 📋 **Campaign Config** — Set sequence parameters (touches, cadence, tone)
+- 🤖 **Gemini AI Sequence Generator** — Create personalized email sequence
+- 🎨 **Template Renderer** — Format emails with styling & personalization
+- ✅ **Quality Validator** — Check email tone consistency
+- 📤 **Multi-Output** — Salesforce Activities, HubSpot Sequences, Slack notifications
+
+---
+
+### Engine 3: VAT Intelligence
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                  VAT COMPLIANCE WORKFLOW                            │
+└─────────────────────────────────────────────────────────────────────┘
+
+  [IMAP Email]  [Manual PDF Upload]  [Dropbox Sync]
+       ↓               ↓                    ↓
+       └───────────────┬────────────────────┘
+                       ↓
+         ┌─────────────────────────┐
+         │  Email/PDF Fetch Node   │
+         │ • Extract attachments   │
+         │ • Parse file names      │
+         └────────────┬────────────┘
+                      ↓
+         ┌─────────────────────────┐
+         │  PDF Parser Node        │
+         │ (pdfplumber)            │
+         │ Extract:                │
+         │ • Vendor name           │
+         │ • Amount (€/$)          │
+         │ • Tax rate              │
+         │ • Invoice date          │
+         └────────────┬────────────┘
+                      ↓
+         ┌─────────────────────────┐
+         │  YAML Triage Rules      │
+         │ Apply business rules:   │
+         │ • Skip if <€50          │
+         │ • Intra-EU? (19% VAT)   │
+         │ • Reverse charge?       │
+         │ • Duplicate check       │
+         └────────────┬────────────┘
+                      ↓
+         ┌─────────────────────────┐
+         │  Gemini AI Review Node  │
+         │ Second opinion:         │
+         │ • Classification        │
+         │ • Tax treatment         │
+         │ • Risk flag             │
+         └────────────┬────────────┘
+                      ↓
+         ┌─────────────────────────┐
+         │  Manual Review?         │
+         │  Confidence < 80%?      │
+         └────────┬────────┬───────┘
+              HIGH │        │ LOW
+                   ↓        ↓
+            [Auto Classify] [Queue for
+                    │        Manual Review]
+                    │            │
+                    └────────┬───┘
+                             ↓
+         ┌─────────────────────────┐
+         │  ELSTER Calculator      │
+         │ Compute:                │
+         │ • Kz. 66 (In-Deliveries)│
+         │ • Kz. 67 (Outbound VAT) │
+         │ • Kz. 81 (Taxable Sales)│
+         │ • Kz. 89 (VAT payable)  │
+         └────────────┬────────────┘
+                      ↓
+      ┌───────────┬──────────┬──────────┬──────────┐
+      │           │          │          │          │
+      ↓           ↓          ↓          ↓          ↓
+   [SAP GL]  [Email]   [Telegram]  [Slack]   [Archive]
+   Post to   Reply to  Tax        Notify    Store PDF
+   GL Code   Vendor    Deadline   Finance   + Metadata
+   (100/110)           Alert      Team
+      │           │          │          │          │
+      └───────────┴──────────┴──────────┴──────────┘
+                        ↓
+         ┌─────────────────────────┐
+         │  USt-Voranmeldung       │
+         │  Generate quarterly     │
+         │  tax return XML         │
+         │  (ELSTER format)        │
+         └─────────────────────────┘
+```
+
+**Key Nodes:**
+- 📧 **Email/PDF Fetcher** — Pull invoices from IMAP or upload
+- 📄 **PDF Parser** — Extract structured data from invoices
+- 📋 **YAML Rules Engine** — Apply compliance rules (EU vs non-EU, thresholds)
+- 🤖 **Gemini AI Review** — Validate classification with AI
+- 🚨 **Manual Review Queue** — Route uncertain invoices to human
+- 📊 **ELSTER Calculator** — Compute VAT declaration fields
+- 📤 **Multi-Output** — SAP GL posting, Telegram alerts, Slack notifications
+
+---
+
+### Engine 4: Onboarding/Offboarding
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│          EMPLOYEE ONBOARDING/OFFBOARDING WORKFLOW                   │
+└─────────────────────────────────────────────────────────────────────┘
+
+  [HR Form]  [SAP Import]  [Manual Entry]  [Slack Command]
+     ↓           ↓              ↓               ↓
+     └───────────┬──────────────┬───────────────┘
+                 ↓
+   ┌─────────────────────────────┐
+   │  Get Employee Details       │
+   │ • Name, email, role         │
+   │ • Department, manager       │
+   │ • Start/end date            │
+   │ • Office location           │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Select Template            │
+   │ • Developer Onboarding      │
+   │ • Designer Onboarding       │
+   │ • Offboarding (25 tasks)    │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Generate Checklist         │
+   │ (YAML-driven)               │
+   │ • Pre-boarding (HR)         │
+   │ • Day 1 (IT + Manager)      │
+   │ • Week 1 (Training)         │
+   │ • Month 1 (Onboarding)      │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Assign Tasks to Teams      │
+   │ • HR tasks → HR team        │
+   │ • IT tasks → IT team        │
+   │ • Manager tasks → Manager   │
+   │ • New hire tasks → New hire │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Send Notifications         │
+   │ [Initial notifications      │
+   │  sent to all assignees]     │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Kanban Board               │
+   │ • To Do (30 tasks)          │
+   │ • In Progress               │
+   │ • Done                      │
+   │ • Overdue                   │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Task Update Loop           │
+   │ [Listening for updates]     │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Task Status Changed?       │
+   │  (Drag to new column)       │
+   └────────┬─────────────┬──────┘
+      YES   │             │  NO
+            ↓             ↓
+    [Create Activity]  [Update Progress %]
+            │             │
+            └──────┬───────┘
+                   ↓
+   ┌─────────────────────────────┐
+   │  Multi-Output Dispatcher    │
+   └────┬──────────┬──────┬──────┘
+        │          │      │      │
+        ↓          ↓      ↓      ↓
+    [Slack]   [Notion]  [SAP]  [Email]
+    OpenClaw  Employee  Update  Notify
+    Bot Posts DB Entry  Record  Assignees
+    to:       Checklist
+    • #onboarding
+    • #it-setup
+    • DMs
+    Includes:
+    • Task updates
+    • Progress bars
+    • Overdue flags
+```
+
+**Key Nodes:**
+- 👤 **Get Employee Details** — Capture onboarding data
+- 📋 **Template Selector** — Choose checklist template (Developer/Designer/Offboarding)
+- 🔄 **Generate Checklist** — Create tasks from YAML template
+- 👥 **Assign to Teams** — Route tasks to HR, IT, Manager, New Hire
+- 📊 **Kanban Board** — Visual task management (To Do → In Progress → Done → Overdue)
+- 🎯 **Task Listener** — Monitor checklist for updates
+- 📤 **Multi-Output Dispatcher** — Send to Slack (OpenClaw bot), Notion, SAP, Email
+- 🦞 **OpenClaw Bot** — Real Slack integration (not simulation)
+
+---
+
+### Engine 5: Supplier Management
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│            SUPPLIER ONBOARDING & PO MONITORING WORKFLOW             │
+└─────────────────────────────────────────────────────────────────────┘
+
+  [Procurement Form]  [SAP Import]  [Email]  [Manual Entry]
+          ↓               ↓            ↓           ↓
+          └───────────────┬────────────┬───────────┘
+                          ↓
+     ┌──────────────────────────────┐
+     │  New Supplier Input          │
+     │ • Company name               │
+     │ • Contact (name, email)      │
+     │ • Address, tax ID            │
+     │ • Payment terms              │
+     │ • Bank details               │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Generate Supplier Profile   │
+     │ • Unique Vendor ID           │
+     │ • Risk classification        │
+     │ • Document checklist         │
+     │ • Performance scorecard      │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Document Checklist          │
+     │ • Tax certificates           │
+     │ • Insurance docs             │
+     │ • Quality certifications     │
+     │ • Compliance docs            │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Send Onboarding Email       │
+     │ Request documents from       │
+     │ supplier (automated)         │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Track Document Receipt      │
+     │ • Received? Valid? Approved? │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  All Documents Approved?     │
+     └────────┬─────────────────┬───┘
+        YES   │                 │  NO
+              ↓                 ↓
+       [Activate Supplier]  [Send Reminder]
+              │                 │
+              └────────┬────────┘
+                       ↓
+     ┌──────────────────────────────┐
+     │  PO Tracking Loop            │
+     │  Kanban:                     │
+     │  Ordered → Shipped →         │
+     │  Received → Invoiced → Paid  │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Price Monitoring            │
+     │ Compare to approved rate     │
+     │ Flags: Green / Yellow / Red  │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Overdue Detection           │
+     │ → Escalation email L1/L2/L3  │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Invoice 3-Way Match         │
+     │ PO ↔ Invoice ↔ Receipt qty   │
+     │ Duplicate check              │
+     └────────────┬─────────────────┘
+                  ↓
+       ┌──────────┬──────────┬──────────┐
+       │          │          │          │
+       ↓          ↓          ↓          ↓
+    [SAP]     [Notion]   [Slack]    [Email]
+    Vendor    Supplier   #Procure-  Supplier/
+    Master    DB         ment       Internal
+    Record    Docs/POs   Updates    Team
+       │          │          │          │
+       └──────────┴──────────┴──────────┘
+                       ↓
+     ┌──────────────────────────────┐
+     │  Dashboard & Analytics       │
+     │ • Supplier scorecard         │
+     │ • On-time delivery %         │
+     │ • Price variance %           │
+     │ • Total spend by supplier    │
+     │ • Risk flags                 │
+     └──────────────────────────────┘
+```
+
+**Key Nodes:**
+- 📝 **New Supplier Input** — Capture vendor data
+- 📋 **Generate Checklist** — Create document requirements
+- 📧 **Send Onboarding Email** — Request documents from supplier
+- ✅ **Document Tracker** — Monitor receipt & approval
+- 🚀 **Activate Supplier** — Once all docs approved
+- 📊 **PO Kanban Board** — Track orders (Ordered → Shipped → Received → Invoiced → Paid)
+- 💰 **Price Monitor** — Flag deviations from approved rates
+- ⚠️ **Overdue Escalation** — 3-level email escalation for late deliveries
+- 🔍 **3-Way Match** — Verify PO ↔ Invoice ↔ Receipt
+- 📤 **Multi-Output** — SAP Vendor Master, Notion Supplier DB, Slack notifications
+- 📈 **Analytics Dashboard** — Supplier performance, spend tracking
+
+---
+
+### Cross-Engine Node Pattern Summary
+
+| Stage | Engine 1 | Engine 2 | Engine 3 | Engine 4 | Engine 5 |
+|-------|----------|----------|----------|----------|----------|
+| **Input** | Web scrape | Lead import | Email/PDF | HR form | Supplier form |
+| **Process 1** | Parse HTML | Campaign config | PDF parse | Template select | Generate checklist |
+| **Process 2** | Gemini enrich | Gemini sequence | YAML rules | Generate tasks | Doc request |
+| **Process 3** | Deduplicate | Template render | Gemini review | Assign teams | Track receipt |
+| **Filter** | Quality score | Quality check | Manual queue | Progress track | Activation check |
+| **Output** | Salesforce, HubSpot, Slack, CSV | Salesforce, HubSpot, Slack, .eml | SAP GL, Telegram, Slack | Slack, Notion, SAP, Email | SAP, Notion, Slack, Email |
+
+---
+
+## Recommended Integration Targets
+
+For video presentation, prioritize showing integrations where the data flow is most natural:
+
+| Engine | Primary | Secondary | Bonus |
+|--------|---------|-----------|-------|
+| **1: Lead Gen** | Salesforce (leads) | HubSpot (contacts) | Slack (new lead alerts) |
+| **2: Outbound** | Salesforce (activities) | HubSpot (sequences) | Slack (campaign status) |
+| **3: VAT** | SAP (GL posting) | Telegram (deadline alerts) | Slack (finance team) |
+| **4: Onboarding** | Slack via OpenClaw | Notion (employee DB) | SAP (employee record) |
+| **5: Supplier** | SAP (vendor master) | Notion (supplier directory) | Slack (#procurement) |
+
+**Video story arcs:**
+- **Sales motion** — Engines 1 + 2 → Salesforce (leads → sequences → CRM)
+- **Finance motion** — Engine 3 → SAP (invoices → classification → GL posting)
+- **HR motion** — Engine 4 → Slack + Notion (new hire → tasks → notifications)
+- **Procurement motion** — Engine 5 → SAP (supplier → vendor master → PO tracking)
+
 ## Reference Links
 
 - FastAPI docs: https://fastapi.tiangolo.com/
