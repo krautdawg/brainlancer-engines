@@ -1,5 +1,6 @@
 import os
 import secrets
+from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
@@ -9,6 +10,8 @@ SECRET_KEY = os.getenv("SECRET_KEY", secrets.token_hex(32))
 
 app = FastAPI(docs_url=None, redoc_url=None)
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY, session_cookie="bl_session")
+
+BASE_DIR = Path(__file__).resolve().parent
 
 LOGIN_HTML = """<!DOCTYPE html>
 <html lang="en">
@@ -62,5 +65,13 @@ async def login_submit(request: Request):
 async def index(request: Request):
     if not request.session.get("authenticated"):
         return RedirectResponse("/login", status_code=302)
-    html = open("index.html").read()
+    html = (BASE_DIR / "index.html").read_text(encoding="utf-8")
+    return HTMLResponse(html)
+
+
+@app.get("/workflows", response_class=HTMLResponse)
+async def workflows(request: Request):
+    if not request.session.get("authenticated"):
+        return RedirectResponse("/login", status_code=302)
+    html = (BASE_DIR / "workflows.html").read_text(encoding="utf-8")
     return HTMLResponse(html)

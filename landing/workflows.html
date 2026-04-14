@@ -3,341 +3,656 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KI Katapult — Automation Workflows</title>
+  <title>Brainlancer — Workflow Diagrams</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <style>
-    body { 
-      font-family: 'Outfit', sans-serif; 
-      background-color: #f8fafc;
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #f8fafc;
       background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
       background-size: 24px 24px;
+      color: #0f172a;
     }
-    .node-canvas {
-      position: relative;
-      min-height: 400px;
+    .diagram-panel {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 1rem;
+      box-shadow: 0 10px 20px -10px rgba(15, 23, 42, 0.15);
+    }
+    .diagram {
+      font-family: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+      font-size: 12px;
+      line-height: 1.24;
+      white-space: pre;
       overflow-x: auto;
-      padding: 40px;
-      display: flex;
+      padding: 1.25rem;
+      margin: 0.5rem -0.75rem -0.75rem;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 0 0 1rem 1rem;
+      border: 1px solid #1e293b;
+    }
+    .badge {
+      display: inline-flex;
       align-items: center;
-      gap: 40px;
+      gap: 0.45rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
-    .node {
-      position: relative;
-      width: 180px;
-      padding: 12px;
-      border-radius: 12px;
-      border: 2px solid transparent;
-      background: white;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      flex-shrink: 0;
-      z-index: 10;
+    .badge .dot {
+      width: 0.58rem;
+      height: 0.58rem;
+      border-radius: 999px;
+      display: inline-block;
     }
-    .node-trigger { border-color: #3b82f6; background: #eff6ff; }
-    .node-ai { border-color: #10b981; background: #f0fdf4; }
-    .node-logic { border-color: #f59e0b; background: #fffbeb; }
-    .node-output { border-color: #ef4444; background: #fef2f2; }
-    
-    .node-icon {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 8px;
-      font-size: 18px;
+    .badge input {
+      color: #334155;
     }
-    .icon-blue { background: #3b82f6; color: white; }
-    .icon-green { background: #10b981; color: white; }
-    .icon-amber { background: #f59e0b; color: white; }
-    .icon-red { background: #ef4444; color: white; }
-
-    .connector {
-      position: absolute;
-      top: 50%;
-      right: -40px;
-      width: 40px;
-      height: 2px;
-      background: #cbd5e1;
-      z-index: 5;
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
     }
-    .connector::after {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: -4px;
-      width: 0; height: 0;
-      border-top: 5px solid transparent;
-      border-bottom: 5px solid transparent;
-      border-left: 8px solid #cbd5e1;
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 0.6rem 0.7rem;
     }
-
-    [x-cloak] { display: none !important; }
+    th {
+      background: #f8fafc;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+    }
+    .ring {
+      outline: 1px solid #e2e8f0;
+      border-radius: 0.8rem;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
   </style>
 </head>
-<body class="p-8">
-
-  <div class="max-w-7xl mx-auto">
-    <header class="mb-12 flex items-center justify-between">
+<body class="p-5 md:p-8">
+  <div class="max-w-6xl mx-auto ring bg-white p-6 md:p-8 border bg-[#ffffff]">
+    <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div>
-        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Backend Workflows</h1>
-        <p class="text-slate-500 font-medium mt-1 uppercase text-xs tracking-widest">Visual Logic Mapping — n8n Protocol</p>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="badge" style="color:#1e3a8a;border-color:#93c5fd;background:#eff6ff"><span class="dot" style="background:#3b82f6"></span>Backend Workflow Maps</span>
+          <span class="badge" style="color:#9a3412;border-color:#fed7aa;background:#fff7ed"><span class="dot" style="background:#f97316"></span>n8n-style ASCII</span>
+          <span class="badge" style="color:#166534;border-color:#86efac;background:#ecfdf5"><span class="dot" style="background:#22c55e"></span>Updated</span>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">N8N Workflow Diagrams</h1>
+        <p class="text-slate-500 mt-2 uppercase text-xs tracking-wide">Brainlancer Engines 1–5</p>
       </div>
-      <a href="/" class="text-sm font-bold text-sky-600 hover:text-sky-700 flex items-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      <a href="/" class="self-start inline-flex items-center gap-2 text-sm font-bold text-sky-600 hover:text-sky-700">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         Back to Engines
       </a>
-    </header>
-
-    <div class="space-y-24 pb-24">
-
-      <!-- ENGINE 1 -->
-      <section>
-        <div class="flex items-center gap-3 mb-6">
-          <div class="px-3 py-1 bg-sky-500 text-white text-xs font-bold rounded-full">ENGINE 1</div>
-          <h2 class="text-xl font-bold text-slate-800 uppercase tracking-tight">Lead Generation Pipeline</h2>
-        </div>
-        <div class="node-canvas bg-white/50 border border-slate-200 rounded-3xl overflow-x-auto">
-          <!-- Trigger -->
-          <div class="node node-trigger">
-            <div class="node-icon icon-blue">⚡</div>
-            <div class="text-xs font-bold text-blue-700">Trigger</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Manual URL or Search</div>
-            <div class="connector"></div>
-          </div>
-          <!-- Scraper -->
-          <div class="node node-ai">
-            <div class="node-icon icon-green">🔍</div>
-            <div class="text-xs font-bold text-emerald-700">Web Scraper</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">BeautifulSoup Parser</div>
-            <div class="connector"></div>
-          </div>
-          <!-- AI Analyzer -->
-          <div class="node node-ai">
-            <div class="node-icon icon-green">🤖</div>
-            <div class="text-xs font-bold text-emerald-700">AI ICP Analyzer</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Gemini Pro Reasoning</div>
-            <div class="connector"></div>
-          </div>
-          <!-- Search -->
-          <div class="node node-ai">
-            <div class="node-icon icon-green">🏢</div>
-            <div class="text-xs font-bold text-emerald-700">Lead Sourcing</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Public Directory Search</div>
-            <div class="connector"></div>
-          </div>
-          <!-- Scoring -->
-          <div class="node node-logic">
-            <div class="node-icon icon-amber">⚖️</div>
-            <div class="text-xs font-bold text-amber-700">Lead Scoring</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">ICP Fit Rank (1-10)</div>
-            <div class="connector"></div>
-          </div>
-          <!-- Filter -->
-          <div class="node node-logic">
-            <div class="node-icon icon-amber">✅</div>
-            <div class="text-xs font-bold text-amber-700">Quality Filter</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Score > 7?</div>
-            <div class="connector"></div>
-          </div>
-          <!-- Output -->
-          <div class="node node-output">
-            <div class="node-icon icon-red">📤</div>
-            <div class="text-xs font-bold text-red-700">Multi-Sync</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">HubSpot / Salesforce</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ENGINE 2 -->
-      <section>
-        <div class="flex items-center gap-3 mb-6">
-          <div class="px-3 py-1 bg-purple-500 text-white text-xs font-bold rounded-full">ENGINE 2</div>
-          <h2 class="text-xl font-bold text-slate-800 uppercase tracking-tight">Outbound Sequence Orchestrator</h2>
-        </div>
-        <div class="node-canvas bg-white/50 border border-slate-200 rounded-3xl overflow-x-auto">
-          <div class="node node-trigger">
-            <div class="node-icon icon-blue">📥</div>
-            <div class="text-xs font-bold text-blue-700">Lead Ingest</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Engine 1 or CRM</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-ai">
-            <div class="node-icon icon-green">📝</div>
-            <div class="text-xs font-bold text-emerald-700">Lead Parser</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Contextual Normalization</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-logic">
-            <div class="node-icon icon-amber">⚙️</div>
-            <div class="text-xs font-bold text-amber-700">Campaign Config</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Tone & Touchpoints</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-ai">
-            <div class="node-icon icon-green">✨</div>
-            <div class="text-xs font-bold text-emerald-700">AI Sequence Gen</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Gemini Personalized Copy</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-logic">
-            <div class="node-icon icon-amber">👁️</div>
-            <div class="text-xs font-bold text-amber-700">Human Review</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Approval Interface</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-output">
-            <div class="node-icon icon-red">📬</div>
-            <div class="text-xs font-bold text-red-700">Sync & Send</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Gmail / CRM Tasks</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ENGINE 3 -->
-      <section>
-        <div class="flex items-center gap-3 mb-6">
-          <div class="px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full">ENGINE 3</div>
-          <h2 class="text-xl font-bold text-slate-800 uppercase tracking-tight">VAT Compliance Flow</h2>
-        </div>
-        <div class="node-canvas bg-white/50 border border-slate-200 rounded-3xl overflow-x-auto">
-          <div class="node node-trigger">
-            <div class="node-icon icon-blue">📧</div>
-            <div class="text-xs font-bold text-blue-700">Fetch Invoices</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">IMAP or PDF Upload</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-ai">
-            <div class="node-icon icon-green">📄</div>
-            <div class="text-xs font-bold text-emerald-700">PDF Extractor</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">pdfplumber Text OCR</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-logic">
-            <div class="node-icon icon-amber">📑</div>
-            <div class="text-xs font-bold text-amber-700">Rule Triage</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">German Tax Categories</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-ai">
-            <div class="node-icon icon-green">⚖️</div>
-            <div class="text-xs font-bold text-emerald-700">AI Reviewer</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Confidence Verification</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-logic">
-            <div class="node-icon icon-amber">🛑</div>
-            <div class="text-xs font-bold text-amber-700">Manual Queue</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">If Confidence < 80%</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-ai">
-            <div class="node-icon icon-green">📊</div>
-            <div class="text-xs font-bold text-emerald-700">ELSTER Calc</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Quarterly Kennzahlen</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-output">
-            <div class="node-icon icon-red">🏛️</div>
-            <div class="text-xs font-bold text-red-700">SAP / ELSTER</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">ERP Post & XML Gen</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ENGINE 4 -->
-      <section>
-        <div class="flex items-center gap-3 mb-6">
-          <div class="px-3 py-1 bg-orange-500 text-white text-xs font-bold rounded-full">ENGINE 4</div>
-          <h2 class="text-xl font-bold text-slate-800 uppercase tracking-tight">Onboarding Operationalizer</h2>
-        </div>
-        <div class="node-canvas bg-white/50 border border-slate-200 rounded-3xl overflow-x-auto">
-          <div class="node node-trigger">
-            <div class="node-icon icon-blue">👤</div>
-            <div class="text-xs font-bold text-blue-700">New Hire Event</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">HR Form or SAP Import</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-logic">
-            <div class="node-icon icon-amber">📋</div>
-            <div class="text-xs font-bold text-amber-700">Template Sync</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Dev/Designer Selector</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-ai">
-            <div class="node-icon icon-green">🧩</div>
-            <div class="text-xs font-bold text-emerald-700">Task Generator</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">YAML → Active Board</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-logic">
-            <div class="node-icon icon-amber">📣</div>
-            <div class="text-xs font-bold text-amber-700">Notify Router</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Team Assignments</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-logic">
-            <div class="node-icon icon-amber">📉</div>
-            <div class="text-xs font-bold text-amber-700">Status Tracker</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Escalation Logic</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-output">
-            <div class="node-icon icon-red">🦞</div>
-            <div class="text-xs font-bold text-red-700">Ecosystem Sync</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Slack, Notion, SAP</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ENGINE 5 -->
-      <section>
-        <div class="flex items-center gap-3 mb-6">
-          <div class="px-3 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">ENGINE 5</div>
-          <h2 class="text-xl font-bold text-slate-800 uppercase tracking-tight">Supplier Exception Monitor</h2>
-        </div>
-        <div class="node-canvas bg-white/50 border border-slate-200 rounded-3xl overflow-x-auto">
-          <div class="node node-trigger">
-            <div class="node-icon icon-blue">📦</div>
-            <div class="text-xs font-bold text-blue-700">PO Ingest</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">SAP MM or CSV</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-ai">
-            <div class="node-icon icon-green">📊</div>
-            <div class="text-xs font-bold text-emerald-700">PO Tracker</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Status Lifecycle Sync</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-logic">
-            <div class="node-icon icon-amber">💲</div>
-            <div class="text-xs font-bold text-amber-700">Price Check</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Historical Variance</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-ai">
-            <div class="node-icon icon-green">🚩</div>
-            <div class="text-xs font-bold text-emerald-700">Risk Classifier</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">AI Performance Score</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-logic">
-            <div class="node-icon icon-amber">📧</div>
-            <div class="text-xs font-bold text-amber-700">Chase Engine</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Auto-Escalation Link</div>
-            <div class="connector"></div>
-          </div>
-          <div class="node node-output">
-            <div class="node-icon icon-red">🔔</div>
-            <div class="text-xs font-bold text-red-700">Ops Alerts</div>
-            <div class="text-[10px] font-medium text-slate-500 mt-1">Slack & SAP Update</div>
-          </div>
-        </div>
-      </section>
-
     </div>
-  </div>
 
+    <section class="mb-10">
+      <h2 class="text-lg font-bold text-slate-800 mb-2">Node Colour Convention</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-2">
+        <div class="flex items-center gap-2 text-sm p-3 rounded-lg border border-slate-200">
+          <span class="inline-block w-3 h-3 rounded-full" style="background:#3b82f6"></span>
+          <div><strong>Blue</strong> · Input nodes</div>
+        </div>
+        <div class="flex items-center gap-2 text-sm p-3 rounded-lg border border-slate-200">
+          <span class="inline-block w-3 h-3 rounded-full" style="background:#22c55e"></span>
+          <div><strong>Green</strong> · Processing nodes</div>
+        </div>
+        <div class="flex items-center gap-2 text-sm p-3 rounded-lg border border-slate-200">
+          <span class="inline-block w-3 h-3 rounded-full" style="background:#f59e0b"></span>
+          <div><strong>Yellow</strong> · Decision nodes</div>
+        </div>
+        <div class="flex items-center gap-2 text-sm p-3 rounded-lg border border-slate-200">
+          <span class="inline-block w-3 h-3 rounded-full" style="background:#ef4444"></span>
+          <div><strong>Red</strong> · Output nodes</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-6">
+      <article class="diagram-panel overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-200">
+          <p class="text-xs uppercase text-slate-500 font-bold tracking-wide">Engine 1: Lead Generation</p>
+          <h3 class="text-xl font-black mt-1">Lead Generation Workflow</h3>
+        </div>
+        <pre class="diagram">┌─────────────────────────────────────────────────────────────────────┐
+│                    LEAD GENERATION WORKFLOW                         │
+└─────────────────────────────────────────────────────────────────────┘
+
+  [Web Search Input]  [Manual URL Input]  [CSV Upload]
+            ↓               ↓                    ↓
+            └───────────────┬────────────────────┘
+                            ↓
+                  ┌─────────────────────┐
+                  │  Web Scraper Node   │
+                  │ (BeautifulSoup)     │
+                  └──────────┬──────────┘
+                           ↓
+                  ┌─────────────────────┐
+                  │  Parse & Clean      │
+                  │  Company Names      │
+                  │  Contact Info       │
+                  └──────────┬──────────┘
+                           ↓
+                  ┌─────────────────────┐
+                  │  Gemini AI Node     │
+                  │ Enrich with:        │
+                  │ • Industry          │
+                  │ • Firmographic Data │
+                  │ • Scoring           │
+                  └──────────┬──────────┘
+                           ↓
+                  ┌─────────────────────┐
+                  │ Deduplication Node  │
+                  │ Remove duplicates   │
+                  └──────────┬──────────┘
+                           ↓
+                  ┌─────────────────────┐
+                  │  Filter Node        │
+                  │ Quality Score > 7?  │
+                  └──────┬──────┬───────┘
+                    YES  │      │  NO
+                         ↓      ↓
+        ┌────────────┬────────────┐
+        │            │            │
+        ↓            ↓            ↓
+  [Salesforce] [HubSpot]  [Slack Alert]
+  Lead Creator Contact    "Low quality
+            lead filtered"
+        │            │
+        └────────────┴─────────────┐
+                                   ↓
+                         ┌─────────────────┐
+                         │  CSV Export     │
+                         │  Download ZIP   │
+                         └─────────────────┘</pre>
+      </article>
+
+      <article class="diagram-panel overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-200">
+          <p class="text-xs uppercase text-slate-500 font-bold tracking-wide">Engine 2: Outbound Sales</p>
+          <h3 class="text-xl font-black mt-1">Outbound Sales Sequence Workflow</h3>
+        </div>
+        <pre class="diagram">┌─────────────────────────────────────────────────────────────────────┐
+│              OUTBOUND SALES SEQUENCE WORKFLOW                       │
+└─────────────────────────────────────────────────────────────────────┘
+
+  [Engine 1 Leads]  [Salesforce]  [HubSpot]  [CSV Import]
+            ↓           ↓            ↓             ↓
+            └───────────┬────────────┬─────────────┘
+                        ↓
+            ┌───────────────────────┐
+            │  Get Lead Details     │
+            │ (Name, Company, Role) │
+            └────────────┬──────────┘
+                         ↓
+            ┌───────────────────────┐
+            │  Campaign Config      │
+            │ Set:                  │
+            │ • Sender Name/Email   │
+            │ • Num Touches (3-5)   │
+            │ • Cadence (days)      │
+            │ • Tone (formal/casual)│
+            │ • Goal (call/demo)    │
+            └────────────┬──────────┘
+                         ↓
+            ┌───────────────────────┐
+            │  Gemini AI Node       │
+            │ Generate Sequence:    │
+            │ • Email 1 (Hook)      │
+            │ • Email 2 (Value)     │
+            │ • Email 3 (Urgency)   │
+            │ • Email 4 (Social P.) │
+            │ • Email 5 (Final CTA) │
+            └────────────┬──────────┘
+                         ↓
+            ┌───────────────────────┐
+            │  Template Renderer    │
+            │ • Personalize         │
+            │ • Insert links        │
+            │ • Style HTML          │
+            └────────────┬──────────┘
+                         ↓
+            ┌───────────────────────┐
+            │  Quality Check        │
+            │ • Length check        │
+            │ • Tone consistency    │
+            │ • Email validation    │
+            └────────────┬──────────┘
+                         ↓
+        ┌────────────┬──────────────────┬──────────────┐
+        │            │                  │              │
+        ↓            ↓                  ↓              ↓
+  [Salesforce] [HubSpot]         [Slack]      [CSV Export]
+  Create Task  Create Sequence   Notify      Download .eml
+  Link to Lead Auto-send emails  Sales Team  files ZIP
+        │            │                  │              │
+        └────────────┴──────────────────┴──────────────┘
+                        ↓
+            ┌───────────────────────┐
+            │  Kanban Board Update  │
+            │ Show sequences by:    │
+            │ • Draft               │
+            │ • Queued              │
+            │ • Sent                │
+            │ • Replied             │
+            └───────────────────────┘</pre>
+      </article>
+
+      <article class="diagram-panel overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-200">
+          <p class="text-xs uppercase text-slate-500 font-bold tracking-wide">Engine 3: VAT Intelligence</p>
+          <h3 class="text-xl font-black mt-1">VAT Compliance Workflow</h3>
+        </div>
+        <pre class="diagram">┌─────────────────────────────────────────────────────────────────────┐
+│                  VAT COMPLIANCE WORKFLOW                            │
+└─────────────────────────────────────────────────────────────────────┘
+
+  [IMAP Email]  [Manual PDF Upload]  [Dropbox Sync]
+       ↓               ↓                    ↓
+       └───────────────┬────────────────────┘
+                        ↓
+         ┌─────────────────────────┐
+         │  Email/PDF Fetch Node   │
+         │ • Extract attachments   │
+         │ • Parse file names      │
+         └────────────┬────────────┘
+                      ↓
+         ┌─────────────────────────┐
+         │  PDF Parser Node        │
+         │ (pdfplumber)            │
+         │ Extract:                │
+         │ • Vendor name           │
+         │ • Amount (€/$)          │
+         │ • Tax rate              │
+         │ • Invoice date          │
+         └────────────┬────────────┘
+                      ↓
+         ┌─────────────────────────┐
+         │  YAML Triage Rules      │
+         │ Apply business rules:   │
+         │ • Skip if <€50          │
+         │ • Intra-EU? (19% VAT)   │
+         │ • Reverse charge?       │
+         │ • Duplicate check       │
+         └────────────┬────────────┘
+                      ↓
+         ┌─────────────────────────┐
+         │  Gemini AI Review Node  │
+         │ Second opinion:         │
+         │ • Classification        │
+         │ • Tax treatment         │
+         │ • Risk flag             │
+         └────────────┬────────────┘
+                      ↓
+         ┌─────────────────────────┐
+         │  Manual Review?         │
+         │  Confidence < 80%?      │
+         └──────┬────────┬───────┘
+              HIGH │        │ LOW
+                   ↓        ↓
+            [Auto Classify] [Queue for
+                    │        Manual Review]
+                    │            │
+                    └──────┬───┘
+                           ↓
+         ┌─────────────────────────┐
+         │  ELSTER Calculator      │
+         │ Compute:                │
+         │ • Kz. 66 (In-Deliveries)│
+         │ • Kz. 67 (Outbound VAT) │
+         │ • Kz. 81 (Taxable Sales)│
+         │ • Kz. 89 (VAT payable)  │
+         └────────────┬────────────┘
+                      ↓
+      ┌───────────┬──────────┬──────────┬──────────┐
+      │           │          │          │          │
+      ↓           ↓          ↓          ↓          ↓
+   [SAP GL]  [Email]   [Telegram]  [Slack]   [Archive]
+   Post to   Reply to  Tax        Notify    Store PDF
+   GL Code   Vendor    Deadline   Finance   + Metadata
+      │           │          │          │          │
+      └───────────┴──────────┴──────────┴──────────┘
+                        ↓
+         ┌─────────────────────────┐
+         │  USt-Voranmeldung       │
+         │  Generate quarterly     │
+         │  tax return XML         │
+         │  (ELSTER format)        │
+         └─────────────────────────┘</pre>
+      </article>
+
+      <article class="diagram-panel overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-200">
+          <p class="text-xs uppercase text-slate-500 font-bold tracking-wide">Engine 4: Onboarding/Offboarding</p>
+          <h3 class="text-xl font-black mt-1">Employee Onboarding/Offboarding Workflow</h3>
+        </div>
+        <pre class="diagram">┌─────────────────────────────────────────────────────────────────────┐
+│          EMPLOYEE ONBOARDING/OFFBOARDING WORKFLOW                   │
+└─────────────────────────────────────────────────────────────────────┘
+
+  [HR Form]  [SAP Import]  [Manual Entry]  [Slack Command]
+     ↓           ↓              ↓               ↓
+     └───────────┬──────────────┬───────────────┘
+                 ↓
+   ┌─────────────────────────────┐
+   │  Get Employee Details       │
+   │ • Name, email, role         │
+   │ • Department, manager       │
+   │ • Start/end date            │
+   │ • Office location           │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Select Template            │
+   │ • Developer Onboarding      │
+   │ • Designer Onboarding       │
+   │ • Offboarding (25 tasks)    │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Generate Checklist         │
+   │ (YAML-driven)               │
+   │ • Pre-boarding (HR)         │
+   │ • Day 1 (IT + Manager)      │
+   │ • Week 1 (Training)         │
+   │ • Month 1 (Onboarding)      │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Assign Tasks to Teams      │
+   │ • HR tasks → HR team        │
+   │ • IT tasks → IT team        │
+   │ • Manager tasks → Manager   │
+   │ • New hire tasks → New hire │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Send Notifications         │
+   │ [Initial notifications      │
+   │  sent to all assignees]     │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Kanban Board               │
+   │ • To Do (30 tasks)          │
+   │ • In Progress               │
+   │ • Done                      │
+   │ • Overdue                   │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Task Update Loop           │
+   │ [Listening for updates]     │
+   └────────────┬────────────────┘
+                ↓
+   ┌─────────────────────────────┐
+   │  Task Status Changed?       │
+   │  (Drag to new column)       │
+   └──────┬─────────────┬──────┘
+       YES   │             │  NO
+             ↓             ↓
+     [Create Activity]  [Update Progress %]
+             │             │
+             └──────┬───────┘
+                    ↓
+   ┌─────────────────────────────┐
+   │  Multi-Output Dispatcher    │
+   └────┬──────────┬──────┬──────┘
+        │          │      │      │
+        ↓          ↓      ↓      ↓
+    [Slack]   [Notion]  [SAP]  [Email]
+    OpenClaw  Employee  Update  Notify
+    Bot Posts DB Entry  Record  Assignees
+    Checklist              │
+    to:                    │
+    • #onboarding
+    • #it-setup
+    • DMs
+    Includes:
+    • Task updates
+    • Progress bars
+    • Overdue flags</pre>
+      </article>
+
+      <article class="diagram-panel overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-200">
+          <p class="text-xs uppercase text-slate-500 font-bold tracking-wide">Engine 5: Supplier Management</p>
+          <h3 class="text-xl font-black mt-1">Supplier Onboarding &amp; PO Monitoring</h3>
+        </div>
+        <pre class="diagram">┌─────────────────────────────────────────────────────────────────────┐
+│            SUPPLIER ONBOARDING & PO MONITORING WORKFLOW             │
+└─────────────────────────────────────────────────────────────────────┘
+
+  [Procurement Form]  [SAP Import]  [Email]  [Manual Entry]
+          ↓               ↓            ↓           ↓
+          └───────────────┬────────────┬───────────┘
+                          ↓
+     ┌──────────────────────────────┐
+     │  New Supplier Input          │
+     │ • Company name               │
+     │ • Contact (name, email)      │
+     │ • Address, tax ID            │
+     │ • Payment terms              │
+     │ • Bank details               │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Generate Supplier Profile   │
+     │ • Unique Vendor ID           │
+     │ • Risk classification        │
+     │ • Document checklist         │
+     │ • Performance scorecard      │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Document Checklist          │
+     │ • Tax certificates           │
+     │ • Insurance docs             │
+     │ • Quality certifications     │
+     │ • Compliance docs            │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Send Onboarding Email       │
+     │ Request documents from       │
+     │ supplier (automated)         │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Track Document Receipt      │
+     │ • Received? Valid? Approved? │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  All Documents Approved?     │
+     └────────┬─────────────────┬───┘
+        YES   │                 │  NO
+              ↓                 ↓
+       [Activate Supplier]  [Send Reminder]
+              │                 │
+              └────────┬────────┘
+                       ↓
+     ┌──────────────────────────────┐
+     │  PO Tracking Loop            │
+     │  Kanban:                    │
+     │  Ordered → Shipped →         │
+     │  Received → Invoiced → Paid  │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Price Monitoring            │
+     │ Compare to approved rate     │
+     │ Flags: Green / Yellow / Red  │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Overdue Detection           │
+     │ → Escalation email L1/L2/L3  │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────────────────────────┐
+     │  Invoice 3-Way Match         │
+     │ PO ↔ Invoice ↔ Receipt qty   │
+     │ Duplicate check              │
+     └────────────┬─────────────────┘
+                  ↓
+     ┌──────────┬──────────┬──────────┐
+     │          │          │          │
+     ↓          ↓          ↓          ↓
+  [SAP]     [Notion]   [Slack]    [Email]
+  Vendor    Supplier   #Procure-  Supplier/
+  Master    DB         ment       Internal
+  Record    Docs/POs   Updates    Team
+     │          │          │          │
+     └──────────┴──────────┴──────────┘
+                     ↓
+     ┌──────────────────────────────┐
+     │  Dashboard & Analytics       │
+     │ • Supplier scorecard         │
+     │ • On-time delivery %         │
+     │ • Price variance %           │
+     │ • Total spend by supplier    │
+     │ • Risk flags                 │
+     └──────────────────────────────┘</pre>
+      </article>
+    </section>
+
+    <section class="mt-10 grid lg:grid-cols-2 gap-6">
+      <div class="diagram-panel p-6">
+        <h3 class="text-lg font-bold mb-4">Cross-Engine Node Pattern Summary</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Engine 1</th>
+                <th>Engine 2</th>
+                <th>Engine 3</th>
+                <th>Engine 4</th>
+                <th>Engine 5</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Input</strong></td>
+                <td>Web scrape</td>
+                <td>Lead import</td>
+                <td>Email/PDF</td>
+                <td>HR form</td>
+                <td>Supplier form</td>
+              </tr>
+              <tr>
+                <td><strong>Process 1</strong></td>
+                <td>Parse HTML</td>
+                <td>Campaign config</td>
+                <td>PDF parse</td>
+                <td>Template select</td>
+                <td>Generate checklist</td>
+              </tr>
+              <tr>
+                <td><strong>Process 2</strong></td>
+                <td>Gemini enrich</td>
+                <td>Gemini sequence</td>
+                <td>YAML rules</td>
+                <td>Generate tasks</td>
+                <td>Doc request</td>
+              </tr>
+              <tr>
+                <td><strong>Process 3</strong></td>
+                <td>Deduplicate</td>
+                <td>Template render</td>
+                <td>Gemini review</td>
+                <td>Assign teams</td>
+                <td>Track receipt</td>
+              </tr>
+              <tr>
+                <td><strong>Filter</strong></td>
+                <td>Quality score</td>
+                <td>Quality check</td>
+                <td>Manual queue</td>
+                <td>Progress track</td>
+                <td>Activation check</td>
+              </tr>
+              <tr>
+                <td><strong>Output</strong></td>
+                <td>Salesforce, HubSpot, Slack, CSV</td>
+                <td>Salesforce, HubSpot, Slack</td>
+                <td>SAP GL, Telegram, Slack</td>
+                <td>Slack, Notion, SAP, Email</td>
+                <td>SAP, Notion, Slack, Email</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="diagram-panel p-6">
+        <h3 class="text-lg font-bold mb-4">Recommended Integration Targets</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr>
+                <th>Engine</th>
+                <th>Primary</th>
+                <th>Secondary</th>
+                <th>Bonus</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1: Lead Gen</strong></td>
+                <td>Salesforce (leads)</td>
+                <td>HubSpot (contacts)</td>
+                <td>Slack (new lead alerts)</td>
+              </tr>
+              <tr>
+                <td><strong>2: Outbound</strong></td>
+                <td>Salesforce (activities)</td>
+                <td>HubSpot (sequences)</td>
+                <td>Slack (campaign status)</td>
+              </tr>
+              <tr>
+                <td><strong>3: VAT</strong></td>
+                <td>SAP (GL posting)</td>
+                <td>Telegram (deadline alerts)</td>
+                <td>Slack (finance team)</td>
+              </tr>
+              <tr>
+                <td><strong>4: Onboarding</strong></td>
+                <td>Slack via OpenClaw</td>
+                <td>Notion (employee DB)</td>
+                <td>SAP (employee record)</td>
+              </tr>
+              <tr>
+                <td><strong>5: Supplier</strong></td>
+                <td>SAP (vendor master)</td>
+                <td>Notion (supplier directory)</td>
+                <td>Slack (#procurement)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-6">
+          <p class="text-xs font-bold text-slate-500 uppercase mb-2">Video story arcs</p>
+          <ul class="text-sm text-slate-700 list-disc ml-5 space-y-1">
+            <li>Sales motion — Engines 1 + 2 → Salesforce</li>
+            <li>Finance motion — Engine 3 → SAP</li>
+            <li>HR motion — Engine 4 → Slack + Notion</li>
+            <li>Procurement motion — Engine 5 → SAP</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
 </body>
 </html>

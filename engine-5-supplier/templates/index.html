@@ -141,7 +141,7 @@
         <!-- Integrations -->
         <div class="hidden md:flex items-center gap-3 border-r border-slate-100 pr-4 mr-1">
           <!-- SAP MM -->
-          <div @click="alert('Linked to SAP Materials Management (S/4HANA)')" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-50 border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors" title="SAP MM Connected">
+          <div @click="if(summary.total_pos > 0) { setTimeout(() => { showSAP = true; }, 500); }" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-50 border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors" title="SAP MM Connected">
             <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
             <span class="text-[10px] font-bold text-blue-700 uppercase tracking-widest">SAP MM</span>
           </div>
@@ -151,7 +151,8 @@
             <span class="text-[10px] font-bold text-sky-600 uppercase tracking-wider">Alerts</span>
           </div>
           <!-- Slack Ops -->
-          <div @click="alert('Linked to #procurement in Slack')" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors" title="Slack Procurement Channel Connected">
+          <div @click="if(summary.total_pos > 0) { setTimeout(() => { showSlack = true; }, 500); }"
+               class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors" title="Slack Procurement Channel Connected">
             <svg class="w-3.5 h-3.5 text-[#4A154B]" viewBox="0 0 24 24" fill="currentColor">
               <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52h-2.521zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521a2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.958 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.52 2.521h-2.522v-2.521zM17.687 8.834a2.528 2.528 0 0 1-2.521 2.521a2.527 2.527 0 0 1-2.521-2.521V2.522A2.527 2.527 0 0 1 15.166 0a2.528 2.528 0 0 1 2.521 2.522v6.312zM15.166 18.958a2.528 2.528 0 0 1 2.521 2.522A2.528 2.528 0 0 1 15.166 24a2.527 2.527 0 0 1-2.521-2.522v-2.52h2.521zM15.166 17.687a2.527 2.527 0 0 1-2.521-2.521a2.527 2.527 0 0 1 2.521-2.521h6.312A2.528 2.528 0 0 1 24 15.166a2.528 2.528 0 0 1-2.522 2.521h-6.312z"/>
             </svg>
@@ -384,7 +385,7 @@
               </div>
               <div class="col-span-1 text-right flex flex-col gap-1">
                 <button x-show="rec.status !== 'green'" 
-                        @click="alert('Approval request sent to #procurement-approvals in Slack')"
+                        @click="requestProcurementApproval(rec)"
                         class="text-[10px] font-bold text-sky-600 hover:underline">Ask Approval</button>
                 <button @click="deleteDeviation(rec.id)" class="text-[10px] text-red-400 hover:text-red-300">Delete</button>
               </div>
@@ -1038,11 +1039,13 @@ function app() {
     },
     showTelegram: false,
     showSAP: false,
+    showSlack: false,
     showWorkflows: false,
 
     selectedPO: null,
     selectedSupplier: null,
     selectedEmail: null,
+    selectedDeviation: null,
 
     newPO: { po_number:'', supplier_id:'', expected_delivery:'', category:'', notes:'', items:[{description:'',quantity:1,unit_price:0}] },
     newSupplier: { name:'', contact_name:'', email:'', phone:'', payment_terms:'Net 30', address:'', category:'' },
@@ -1314,6 +1317,19 @@ function app() {
       this.showToast('Entry deleted', 'success');
     },
 
+    requestProcurementApproval(rec) {
+      if (!rec) return;
+      this.selectedDeviation = rec;
+      this.showToast(`Approval request sent for ${rec.po_number || 'PO'}`, 'success');
+      setTimeout(() => { this.showSlack = true; }, 500);
+    },
+
+    sendOverdueEscalation() {
+      this.showToast('Escalation Level 1 email sent', 'success');
+      this.showTelegram = false;
+      setTimeout(() => { this.showSlack = true; }, 500);
+    },
+
     async generateChase(poId, level) {
       const res = await fetch(`/api/chase-emails/generate/${poId}`, {
         method: 'POST',
@@ -1579,7 +1595,7 @@ function app() {
           <div class="mt-2 pt-2 border-t border-slate-100">
             <p class="text-[11px] text-slate-400 uppercase font-bold">Supplier</p>
             <p class="text-[13px] text-slate-800">Global Logistics Gmbh</p>
-            <button @click="alert('Escalation Level 1 Email Sent')" class="mt-2 w-full py-1.5 bg-sky-500 text-white rounded-lg text-[11px] font-bold">SEND CHASE EMAIL</button>
+            <button @click="sendOverdueEscalation()" class="mt-2 w-full py-1.5 bg-sky-500 text-white rounded-lg text-[11px] font-bold">SEND CHASE EMAIL</button>
           </div>
           <p class="text-[9px] text-slate-400 text-right mt-1">09:41 AM</p>
         </div>
@@ -1609,120 +1625,55 @@ function app() {
   </div>
 
   <!-- ═══════════════════════════════════
-       SAP MM INTEGRATION VIEW
+       SLACK INTEGRATION VIEW
   ═══════════════════════════════════ -->
-  <div x-show="showSAP" x-cloak class="fixed inset-0 z-[100] bg-[#ebeef2] flex flex-col font-sans text-slate-700 overflow-hidden" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
-    <!-- SAP Header -->
-    <header class="h-12 bg-[#354a5f] flex items-center justify-between px-4 shrink-0 shadow-lg">
-      <div class="flex items-center gap-4">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-4 bg-white/20 rounded-sm flex items-center justify-center text-[10px] text-white font-bold">SAP</div>
-          <span class="text-white font-medium text-sm">S/4HANA Materials Management</span>
-        </div>
-        <div class="h-6 w-px bg-white/10 mx-2"></div>
-        <nav class="flex items-center gap-6 text-white/80 text-xs font-medium">
-          <span class="text-white border-b-2 border-white pb-3 pt-3">Manage Purchase Orders</span>
-          <span>Supplier Management</span>
-          <span>Inventory Audit</span>
-        </nav>
-      </div>
+  <div x-show="showSlack" x-cloak class="fixed inset-0 z-[100] bg-[#ffffff] flex flex-col font-sans text-slate-700 overflow-hidden" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+    <!-- Slack-like Header -->
+    <header class="h-14 bg-[#4a154b] flex items-center justify-between px-5 shrink-0 shadow-lg border-b border-purple-200/20">
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center text-white font-bold text-xs">PS</div>
-        <button @click="showSAP = false" class="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded-sm text-xs font-bold transition flex items-center gap-2 border border-white/20">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-          BACK TO DASHBOARD
-        </button>
+        <div class="w-8 h-8 rounded-lg bg-[#ecb22e] flex items-center justify-center text-white font-bold text-xs">S</div>
+        <div>
+          <p class="text-white font-bold text-sm leading-none">#procurement</p>
+          <p class="text-white/70 text-[10px]">Procurement Slack Channel</p>
+        </div>
       </div>
+      <button @click="showSlack = false" class="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded-sm text-xs font-bold transition flex items-center gap-2 border border-white/20">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        BACK TO DASHBOARD
+      </button>
     </header>
 
-    <!-- SAP Sub-header -->
-    <div class="bg-white border-b border-slate-300 p-4 shrink-0">
-      <div class="flex items-center justify-between max-w-7xl mx-auto">
-        <div class="flex items-center gap-8">
-          <div>
-            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Purchasing Org</p>
-            <p class="text-sm font-bold text-slate-800">1010 (Global Sourcing)</p>
-          </div>
-          <div>
-            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Active Alerts</p>
-            <div class="flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-              <p class="text-sm font-bold text-red-600">3 Overdue Deliveries</p>
-            </div>
-          </div>
+    <!-- Slack Stream -->
+    <div class="flex-1 bg-[#F8F8F8] overflow-y-auto p-5">
+      <div class="max-w-4xl mx-auto space-y-4">
+        <div class="text-[11px] text-slate-400 uppercase tracking-widest font-bold">Procurement activity stream</div>
+        <div class="bg-white border border-[#e2e8f0] rounded-lg p-4 shadow-sm">
+          <p class="text-[12px] font-bold text-[#4A154B]">#procurement · Channel Feed</p>
+          <p class="text-xs text-slate-500 mt-1">Live updates from supplier operations board</p>
         </div>
-        <div class="flex gap-2">
-          <button class="bg-[#0854a0] text-white px-4 py-1.5 rounded-sm text-xs font-bold">Refresh SAP Sync</button>
+
+        <div class="bg-white border border-[#e2e8f0] rounded-lg p-4">
+          <p class="text-xs font-bold text-slate-700">09:41</p>
+          <p class="text-sm text-slate-700 mt-2"><span class="font-bold">OpenClaw</span> synced PO-2026-105 from SAP into Supplier Hub.</p>
+        </div>
+
+        <div class="bg-white border border-[#e2e8f0] rounded-lg p-4">
+          <p class="text-xs font-bold text-slate-700">09:45</p>
+          <p class="text-sm text-slate-700 mt-2"><span class="font-bold">OpenClaw</span> flagged 1 PO as overdue; escalation pending.</p>
+        </div>
+
+        <div class="bg-white border border-[#e2e8f0] rounded-lg p-4">
+          <p class="text-xs font-bold text-slate-700">09:52</p>
+          <p class="text-sm text-slate-700 mt-2">Price monitor updated: PO-2026-104 variance now at <span class="font-bold text-emerald-600">+2.1%</span>.</p>
         </div>
       </div>
     </div>
 
-    <!-- SAP Content -->
-    <div class="flex-1 overflow-y-auto p-6">
-      <div class="max-w-7xl mx-auto space-y-6">
-        <div class="bg-white shadow-sm border border-slate-300 rounded-sm overflow-hidden">
-          <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-            <h3 class="text-sm font-bold text-slate-800">Master Purchase Orders (Cloud Sync Active)</h3>
-            <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-sm border border-blue-200 uppercase">Live Integration</span>
-          </div>
-          <table class="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr class="bg-slate-50 border-b border-slate-200">
-                <th class="p-3 font-bold text-slate-600">PO Number</th>
-                <th class="p-3 font-bold text-slate-600">Supplier</th>
-                <th class="p-3 font-bold text-slate-600">Items</th>
-                <th class="p-3 font-bold text-slate-600">Expected</th>
-                <th class="p-3 font-bold text-slate-600">Total Value</th>
-                <th class="p-3 font-bold text-slate-600">ERP Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-b border-slate-100 hover:bg-sky-50 transition-colors">
-                <td class="p-3 font-mono text-blue-600 font-bold underline">PO-2026-104</td>
-                <td class="p-3 font-bold">Global Logistics Gmbh</td>
-                <td class="p-3">Freight Services (Sea)</td>
-                <td class="p-3 text-red-600 font-bold">10.04.2026</td>
-                <td class="p-3 font-bold">€12,450.00</td>
-                <td class="p-3">
-                  <span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded-sm border border-amber-200 font-bold uppercase">Pending Confirmation</span>
-                </td>
-              </tr>
-              <tr class="border-b border-slate-100 hover:bg-sky-50 transition-colors">
-                <td class="p-3 font-mono text-blue-600 font-bold underline">PO-2026-105</td>
-                <td class="p-3 font-bold">Industrial Parts Inc.</td>
-                <td class="p-3">Steel Plates (10mm)</td>
-                <td class="p-3">15.04.2026</td>
-                <td class="p-3 font-bold">€8,900.00</td>
-                <td class="p-3">
-                  <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-sm border border-emerald-200 font-bold uppercase">In Transit</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="grid grid-cols-3 gap-6">
-          <div class="bg-white border border-slate-300 p-4 rounded-sm shadow-sm">
-            <h4 class="text-[10px] font-bold text-slate-400 uppercase mb-3 tracking-widest">Sourcing Intelligence</h4>
-            <div class="flex items-center justify-between">
-              <span class="text-xs text-slate-600">AI Risk Score</span>
-              <span class="text-sm font-bold text-emerald-600">Low</span>
-            </div>
-          </div>
-          <div class="bg-white border border-slate-300 p-4 rounded-sm shadow-sm">
-            <h4 class="text-[10px] font-bold text-slate-400 uppercase mb-3 tracking-widest">Last Sync</h4>
-            <div class="flex items-center justify-between">
-              <span class="text-xs text-slate-600">KI Katapult Hub</span>
-              <span class="text-sm font-bold text-slate-800">2 mins ago</span>
-            </div>
-          </div>
-          <div class="bg-white border border-slate-300 p-4 rounded-sm shadow-sm bg-sky-50 border-sky-100">
-            <h4 class="text-[10px] font-bold text-sky-600 uppercase mb-3 tracking-widest">Bot Command</h4>
-            <p class="text-[11px] text-sky-800 font-medium italic">"Chase PO-2026-104 via Telegram escalation engine"</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Floating Back Button -->
+    <button @click="showSlack = false" class="fixed top-8 right-8 bg-[#4A154B] text-white px-6 py-3 rounded-full font-bold transition flex items-center gap-3 border border-white/20 shadow-lg">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      EXIT PREVIEW
+    </button>
   </div>
 
   <!-- ═══════════════════════════════════

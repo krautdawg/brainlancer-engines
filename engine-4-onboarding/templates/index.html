@@ -170,7 +170,7 @@
         Logic Workflows
       </button>
       <button
-        @click="alert('Syncing employee records with SAP SuccessFactors...')"
+        @click="if (selectedEmployeeId) setTimeout(() => { showSAP = true; }, 500)"
         class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-slate-900"
       >
         <div class="w-4 h-4 rounded-sm bg-blue-600 flex items-center justify-center text-[8px] text-white font-bold shrink-0">SAP</div>
@@ -1083,6 +1083,7 @@ function app() {
     slackUserMessages: [],
     showNotion: false,
     showWorkflows: false,
+    showSAP: false,
 
     // ── Computed ──
     get unreadCount() {
@@ -1876,6 +1877,80 @@ function app() {
             <p class="text-xs leading-relaxed text-blue-700/80 italic">This page is automatically maintained by the KI Katapult Onboarding Engine. Do not edit tasks manually as they sync bidirectionally with the HR Dashboard.</p>
           </div>
         </div>
+      </div>
+    </main>
+  </div>
+
+  <div x-show="showSAP" x-cloak class="fixed inset-0 z-[100] bg-[#0f2a43] text-white flex flex-col overflow-hidden" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+    <header class="h-14 bg-[#0f2a43] border-b border-white/15 px-4 flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded bg-[#d9e9ff] text-[#0f2a43] font-bold flex items-center justify-center text-sm">SAP</div>
+        <div>
+          <p class="font-bold text-sm leading-tight">SAP S/4HANA Employee Record</p>
+          <p class="text-xs opacity-70">Live onboarding sync</p>
+        </div>
+      </div>
+      <button @click="showSAP = false" class="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded text-xs font-bold transition flex items-center gap-2">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        EXIT PREVIEW
+      </button>
+    </header>
+
+    <main class="flex-1 overflow-auto p-6">
+      <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">
+        <section class="rounded-xl bg-white/10 border border-white/20 p-5">
+          <h2 class="text-lg font-bold mb-3">Employee Record</h2>
+          <dl class="space-y-3 text-sm">
+            <div>
+              <dt class="text-xs opacity-70">Employee</dt>
+              <dd class="font-bold" x-text="selectedEmployee?.name || '—'"></dd>
+            </div>
+            <div>
+              <dt class="text-xs opacity-70">Email</dt>
+              <dd x-text="selectedEmployee?.email || '—'"></dd>
+            </div>
+            <div>
+              <dt class="text-xs opacity-70">Role</dt>
+              <dd x-text="selectedEmployee?.role || '—'"></dd>
+            </div>
+            <div>
+              <dt class="text-xs opacity-70">Department</dt>
+              <dd x-text="selectedEmployee?.department || '—'"></dd>
+            </div>
+            <div>
+              <dt class="text-xs opacity-70">Start Date</dt>
+              <dd x-text="selectedEmployee?.start_date || '—'"></dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="rounded-xl bg-white/10 border border-white/20 p-5">
+          <h2 class="text-lg font-bold mb-3">Sync State</h2>
+          <ul class="space-y-2 text-sm">
+            <li class="flex items-center justify-between"><span>Personnel Admin</span> <span class="font-bold text-[#4ade80]">Synced</span></li>
+            <li class="flex items-center justify-between"><span>Task Assignment</span> <span class="font-bold text-[#4ade80]">Synced</span></li>
+            <li class="flex items-center justify-between"><span>Manager Notification</span> <span class="font-bold text-[#4ade80]">Synced</span></li>
+            <li class="flex items-center justify-between"><span>Workspace Access</span> <span class="font-bold text-[#facc15]">Queued</span></li>
+          </ul>
+        </section>
+
+        <section class="md:col-span-2 rounded-xl bg-white/5 border border-white/20 p-5">
+          <h2 class="text-lg font-bold mb-3">SAP SuccessFactors Dashboard (Preview)</h2>
+          <div class="grid grid-cols-3 gap-3 text-sm">
+            <div class="rounded-lg bg-white/10 p-4">
+              <p class="text-xs opacity-70">Live Sync</p>
+              <p class="text-2xl font-black mt-2">99.2%</p>
+            </div>
+            <div class="rounded-lg bg-white/10 p-4">
+              <p class="text-xs opacity-70">Last Update</p>
+              <p class="text-2xl font-black mt-2" x-text="new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })"></p>
+            </div>
+            <div class="rounded-lg bg-white/10 p-4">
+              <p class="text-xs opacity-70">Record ID</p>
+              <p class="text-lg font-black mt-2" x-text="selectedEmployee?.employee_number || 'EM-' + (selectedEmployeeId || '—')"></p>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
   </div>
