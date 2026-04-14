@@ -130,6 +130,7 @@
 
     /* Modal */
     .modal-backdrop { background: rgba(15,23,42,0.5); backdrop-filter: blur(4px); }
+    [x-cloak] { display: none !important; }
 
     /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
@@ -174,25 +175,25 @@
     <div class="flex items-center gap-4">
       <!-- Integration Badges -->
       <div class="flex items-center -space-x-1 overflow-hidden">
-        <div @click="if(selectedLead) showHubSpot = true" class="w-7 h-7 rounded-full border-2 border-white bg-white flex items-center justify-center shadow-sm cursor-pointer hover:scale-110 transition-transform" title="HubSpot Integrated">
+        <div @click="openHubSpotOverlay(selectedLead)" class="w-7 h-7 rounded-full border-2 border-white bg-white flex items-center justify-center shadow-sm cursor-pointer hover:scale-110 transition-transform" title="HubSpot Integrated">
           <svg class="w-4 h-4 text-[#ff7a59]" viewBox="0 0 24 24" fill="currentColor"><path d="M18.89 11.23a4.54 4.54 0 0 0-4.05-2.73 4.5 4.5 0 0 0-4.5 4.5c0 .32.04.62.11.92l-4.5 2.6a4.5 4.5 0 1 0 .91 1.58l4.47-2.58a4.51 4.51 0 1 0 6.64-3.72l2.3-1.33a2.02 2.02 0 1 0-1.38-.24zm-10.4 7.64a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm5.5-5.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0z"/></svg>
         </div>
-        <div @click="if(selectedLead) showSalesforce = true" class="w-7 h-7 rounded-full border-2 border-white bg-white flex items-center justify-center shadow-sm cursor-pointer hover:scale-110 transition-transform" title="Salesforce Integrated">
+        <div @click="openSalesforceOverlay(selectedLead)" class="w-7 h-7 rounded-full border-2 border-white bg-white flex items-center justify-center shadow-sm cursor-pointer hover:scale-110 transition-transform" title="Salesforce Integrated">
           <svg class="w-4 h-4 text-[#00a1e0]" viewBox="0 0 24 24" fill="currentColor"><path d="M18.1 13.5c-.1 0-.1 0 0 0 .1-.4.2-.8.2-1.2 0-2.8-2.3-5-5-5-1.5 0-2.9.7-3.8 1.8C8.6 8.5 7.4 8 6 8c-2.2 0-4 1.8-4 4 0 .4.1.8.2 1.2C.9 13.8 0 15 0 16.5c0 1.9 1.6 3.5 3.5 3.5h14c1.9 0 3.5-1.6 3.5-3.5 0-1.6-1.1-2.9-2.9-3.5z"/></svg>
         </div>
-        <div @click="if(selectedLead) showNotion = true" class="w-7 h-7 rounded-full border-2 border-white bg-white flex items-center justify-center shadow-sm cursor-pointer hover:scale-110 transition-transform" title="Notion Integrated">
+        <div @click="openNotionOverlay(selectedLead)" class="w-7 h-7 rounded-full border-2 border-white bg-white flex items-center justify-center shadow-sm cursor-pointer hover:scale-110 transition-transform" title="Notion Integrated">
           <svg class="w-3.5 h-3.5 text-black" viewBox="0 0 24 24" fill="currentColor"><path d="M4.459 4.208c.739.043 1.207.245 1.765.348 1.458.261 2.916.522 4.374.783.504.088.941.16 1.344.209.682.083 1.25.12 1.93.12 1.159 0 2.317-.05 3.476-.1 1.054-.045 1.549-.241 1.938-.72.333-.414.47-.962.47-1.549 0-.256-.011-.512-.032-.767-.042-.501-.132-.821-.47-1.159-.319-.319-.711-.47-1.159-.47-.192 0-.384.032-.576.096-.192.064-.384.192-.512.384-.128.192-.192.384-.192.576 0 .192.064.384.192.512.128.128.32.192.512.192.192 0 .384-.064.512-.192.128-.128.192-.32.192-.512 0-.192-.064-.384-.192-.512-.128-.128-.32-.192-.512-.192-.192 0-.384.064-.512.192s-.192.32-.192.512c0 .192.064.384.192.512.128.128.32.192.512.192 1.124 0 2.112-.641 2.56-1.6.448-.959.448-2.08 0-3.039-.448-.959-1.436-1.6-2.56-1.6-1.124 0-2.112.641-2.56 1.6-.448.959-.448 2.08 0 3.039.448.959 1.436 1.6 2.56 1.6 1.124 0 2.112-.641 2.56-1.6.448-.959.448-2.08 0-3.039z"/><path d="M4.459 4.208V20.84c0 .546.223 1.052.593 1.419.37.367.886.581 1.442.581h13.298c1.124 0 2.035-.911 2.035-2.035V4.208c0-1.124-.911-2.035-2.035-2.035H6.494c-1.124 0-2.035.911-2.035 2.035zm2.864 1.938h10.354v14.694H7.323V6.146zm2.302 2.302v10.09h1.938V8.448H9.625zm4.481 0v10.09h1.938V8.448h-1.938z"/></svg>
         </div>
       </div>
-      <button @click="showWorkflows = true" class="btn-ghost flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 hover:bg-slate-50 transition-all">
+      <button @click="openWorkflows()" class="btn-ghost flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 hover:bg-slate-50 transition-all">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         Workflows
       </button>
       <div class="h-4 w-px bg-slate-200"></div>
       <button
-        @click="if (selectedLead) pushToSlack()"
-        :disabled="!selectedLead"
-        :class="selectedLead ? 'btn-ghost flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 hover:bg-slate-50 transition-all' : 'btn-ghost flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 opacity-40 cursor-not-allowed'"
+        @click="openSlackOverlay(selectedLead)"
+        :disabled="!selectedLead || credits <= 0"
+        :class="!selectedLead || credits <= 0 ? 'btn-ghost flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 opacity-40 cursor-not-allowed' : 'btn-ghost flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 hover:bg-slate-50 transition-all'"
       >
         <svg class="w-3.5 h-3.5 text-[#4A154B]" viewBox="0 0 24 24" fill="currentColor">
           <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52h-2.521zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521a2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.958 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.52 2.521h-2.522v-2.521zM17.687 8.834a2.528 2.528 0 0 1-2.521 2.521a2.527 2.527 0 0 1-2.521-2.521V2.522A2.527 2.527 0 0 1 15.166 0a2.528 2.528 0 0 1 2.521 2.522v6.312zM15.166 18.958a2.528 2.528 0 0 1 2.521 2.522A2.528 2.528 0 0 1 15.166 24a2.527 2.527 0 0 1-2.521-2.522v-2.52h2.521zM15.166 17.687a2.527 2.527 0 0 1-2.521-2.521a2.527 2.527 0 0 1 2.521-2.521h6.312A2.528 2.528 0 0 1 24 15.166a2.528 2.528 0 0 1-2.522 2.521h-6.312z"/>
@@ -843,9 +844,9 @@
         <div class="grid grid-cols-2 gap-2">
           <button
             @click="syncToHubSpot(selectedLead)"
-            :disabled="selectedLead?.hubspot_synced"
+            :disabled="selectedLead?.hubspot_synced || credits <= 0"
             class="flex-1 py-2 px-3 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all border"
-            :class="selectedLead?.hubspot_synced ? 'bg-orange-50 text-orange-600 border-orange-200' : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200'"
+            :class="selectedLead?.hubspot_synced || credits <= 0 ? 'bg-orange-50 text-orange-600 border-orange-200' : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200'"
           >
             <svg class="w-3.5 h-3.5" :class="selectedLead?.hubspot_synced ? 'text-orange-500' : 'text-[#ff7a59]'" viewBox="0 0 24 24" fill="currentColor">
               <path d="M18.89 11.23a4.54 4.54 0 0 0-4.05-2.73 4.5 4.5 0 0 0-4.5 4.5c0 .32.04.62.11.92l-4.5 2.6a4.5 4.5 0 1 0 .91 1.58l4.47-2.58a4.51 4.51 0 1 0 6.64-3.72l2.3-1.33a2.02 2.02 0 1 0-1.38-.24zm-10.4 7.64a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm5.5-5.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0z"/>
@@ -854,9 +855,9 @@
           </button>
           <button
             @click="syncToSalesforce(selectedLead)"
-            :disabled="selectedLead?.salesforce_synced"
+            :disabled="selectedLead?.salesforce_synced || credits <= 0"
             class="flex-1 py-2 px-3 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all border"
-            :class="selectedLead?.salesforce_synced ? 'bg-sky-50 text-sky-600 border-sky-200' : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200'"
+            :class="selectedLead?.salesforce_synced || credits <= 0 ? 'bg-sky-50 text-sky-600 border-sky-200' : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200'"
           >
             <svg class="w-3.5 h-3.5" :class="selectedLead?.salesforce_synced ? 'text-sky-500' : 'text-[#00a1e0]'" viewBox="0 0 24 24" fill="currentColor">
               <path d="M18.1 13.5c-.1 0-.1 0 0 0 .1-.4.2-.8.2-1.2 0-2.8-2.3-5-5-5-1.5 0-2.9.7-3.8 1.8C8.6 8.5 7.4 8 6 8c-2.2 0-4 1.8-4 4 0 .4.1.8.2 1.2C.9 13.8 0 15 0 16.5c0 1.9 1.6 3.5 3.5 3.5h14c1.9 0 3.5-1.6 3.5-3.5 0-1.6-1.1-2.9-2.9-3.5z"/>
@@ -867,9 +868,9 @@
 
         <button
           @click="syncToNotion(selectedLead)"
-          :disabled="selectedLead?.notion_synced"
+          :disabled="selectedLead?.notion_synced || credits <= 0"
           class="w-full py-2.5 px-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all border"
-          :class="selectedLead?.notion_synced ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-900 text-white hover:bg-slate-800 border-slate-900'"
+          :class="selectedLead?.notion_synced || credits <= 0 ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-900 text-white hover:bg-slate-800 border-slate-900'"
         >
           <svg x-show="!selectedLead?.notion_synced" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
             <path d="M4.459 4.208c.739.043 1.207.245 1.765.348 1.458.261 2.916.522 4.374.783.504.088.941.16 1.344.209.682.083 1.25.12 1.93.12 1.159 0 2.317-.05 3.476-.1 1.054-.045 1.549-.241 1.938-.72.333-.414.47-.962.47-1.549 0-.256-.011-.512-.032-.767-.042-.501-.132-.821-.47-1.159-.319-.319-.711-.47-1.159-.47-.192 0-.384.032-.576.096-.192.064-.384.192-.512.384-.128.192-.192.384-.192.576 0 .192.064.384.192.512.128.128.32.192.512.192.192 0 .384-.064.512-.192.128-.128.192-.32.192-.512 0-.192-.064-.384-.192-.512-.128-.128-.32-.192-.512-.192-.192 0-.384.064-.512.192s-.192.32-.192.512c0 .192.064.384.192.512.128.128.32.192.512.192 1.124 0 2.112-.641 2.56-1.6.448-.959.448-2.08 0-3.039-.448-.959-1.436-1.6-2.56-1.6-1.124 0-2.112.641-2.56 1.6-.448.959-.448 2.08 0 3.039.448.959 1.436 1.6 2.56 1.6 1.124 0 2.112-.641 2.56-1.6.448-.959.448-2.08 0-3.039z"/>
@@ -935,36 +936,84 @@
         analyzeStep: 0,
         leadStep: 0,
         loadingUrl: '',
-        loadingUrl: '',
         showSalesforce: false,
         showHubSpot: false,
         showNotion: false,
         showWorkflows: false,
         showSlack: false,
 
-        syncToNotion(lead) {
+        closeAllOverlays() {
+          this.showHubSpot = false;
+          this.showSalesforce = false;
+          this.showNotion = false;
+          this.showWorkflows = false;
+          this.showSlack = false;
+        },
+
+        openHubSpotOverlay(lead) {
           if (!lead) return;
+          this.selectedLead = lead;
+          this.closeAllOverlays();
+          setTimeout(() => { this.showHubSpot = true; }, 500);
+        },
+
+        openSalesforceOverlay(lead) {
+          if (!lead) return;
+          this.selectedLead = lead;
+          this.closeAllOverlays();
+          setTimeout(() => { this.showSalesforce = true; }, 500);
+        },
+
+        openNotionOverlay(lead) {
+          if (!lead) return;
+          this.selectedLead = lead;
+          this.closeAllOverlays();
+          setTimeout(() => { this.showNotion = true; }, 500);
+        },
+
+        openWorkflows() {
+          this.closeAllOverlays();
+          this.showWorkflows = true;
+        },
+
+        openSlackOverlay(lead) {
+          if (!lead || this.credits <= 0) return;
+          this.selectedLead = lead;
+          this.closeAllOverlays();
+          this.credits -= 1;
+          setTimeout(() => { this.showSlack = true; }, 500);
+        },
+
+        syncToNotion(lead) {
+          if (!lead || this.credits <= 0) return;
+          this.selectedLead = lead;
+          this.closeAllOverlays();
           lead.notion_synced = true;
           this.credits -= 1;
           setTimeout(() => { this.showNotion = true; }, 500);
         },
 
         syncToHubSpot(lead) {
-          if (!lead) return;
+          if (!lead || this.credits <= 0) return;
+          this.selectedLead = lead;
+          this.closeAllOverlays();
           lead.hubspot_synced = true;
           this.credits -= 1;
           setTimeout(() => { this.showHubSpot = true; }, 500);
         },
 
         syncToSalesforce(lead) {
-          if (!lead) return;
+          if (!lead || this.credits <= 0) return;
+          this.selectedLead = lead;
+          this.closeAllOverlays();
           lead.salesforce_synced = true;
           this.credits -= 1;
           setTimeout(() => { this.showSalesforce = true; }, 500);
         },
 
         pushToSlack() {
-          if (!this.selectedLead) return;
+          if (!this.selectedLead || this.credits <= 0) return;
+          this.closeAllOverlays();
           this.credits -= 1;
           setTimeout(() => { this.showSlack = true; }, 500);
         },
@@ -1158,7 +1207,7 @@
         </div>
         <h2 class="font-extrabold text-slate-800 tracking-tight">Lead Generation Pipeline — Visual Logic</h2>
       </div>
-      <button @click="showWorkflows = false" class="bg-slate-900 text-white px-5 py-2 rounded-xl text-xs font-bold transition hover:bg-slate-800 flex items-center gap-2">
+      <button @click="closeAllOverlays()" class="bg-slate-900 text-white px-5 py-2 rounded-xl text-xs font-bold transition hover:bg-slate-800 flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         EXIT WORKFLOW VIEW
       </button>
@@ -1241,7 +1290,7 @@
           <span>Sales</span>
         </nav>
       </div>
-      <button @click="showHubSpot = false" class="bg-[#ff7a59] hover:bg-[#ff8f73] text-white px-4 py-1.5 rounded text-xs font-bold transition flex items-center gap-2">
+      <button @click="closeAllOverlays()" class="bg-[#ff7a59] hover:bg-[#ff8f73] text-white px-4 py-1.5 rounded text-xs font-bold transition flex items-center gap-2">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         BACK TO KI KATAPULT
       </button>
@@ -1297,7 +1346,7 @@
         <div class="flex items-center gap-2 px-2 py-1.5 opacity-60 text-sm">📁 Market Analysis</div>
       </nav>
       <div class="p-4 border-t border-[#efefee]">
-        <button @click="showNotion = false" class="w-full py-2 bg-black text-white rounded text-xs font-bold transition hover:bg-zinc-800">EXIT NOTION</button>
+        <button @click="closeAllOverlays()" class="w-full py-2 bg-black text-white rounded text-xs font-bold transition hover:bg-zinc-800">EXIT NOTION</button>
       </div>
     </aside>
     <main class="flex-1 overflow-y-auto p-20">
@@ -1338,7 +1387,7 @@
           <p class="text-xs opacity-80">#sales-leads · Channel Simulation</p>
         </div>
       </div>
-      <button @click="showSlack = false" class="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded text-xs font-bold transition flex items-center gap-2">
+      <button @click="closeAllOverlays()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded text-xs font-bold transition flex items-center gap-2">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         EXIT KI KATAPULT
       </button>
@@ -1379,7 +1428,7 @@
           <span class="opacity-80">Opportunities</span>
         </nav>
       </div>
-      <button @click="showSalesforce = false" class="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded text-xs font-bold transition flex items-center gap-2">
+      <button @click="closeAllOverlays()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded text-xs font-bold transition flex items-center gap-2">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         BACK TO KI KATAPULT
       </button>
