@@ -1230,6 +1230,7 @@ function vatApp() {
     isDemoMode: false,
     hasData: false,
     showSAP: false,
+    showTelegram: false,
 
     // Views
     activeView: 'triage', // triage | all | elster | workflows
@@ -1865,6 +1866,80 @@ function vatApp() {
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       TELEGRAM INTEGRATION VIEW
+  ═══════════════════════════════════ -->
+  <div x-show="showTelegram" x-cloak class="fixed inset-0 z-[100] bg-[#000000bb] backdrop-blur-sm flex items-center justify-center p-4" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+    <!-- Phone Frame -->
+    <div class="relative w-[320px] h-[650px] bg-slate-900 rounded-[3rem] border-[8px] border-slate-800 shadow-2xl overflow-hidden flex flex-col font-sans">
+      <!-- Status Bar -->
+      <div class="h-6 bg-slate-900 w-full flex justify-between px-6 pt-2 items-center shrink-0">
+        <span class="text-[10px] text-white font-bold">9:41</span>
+        <div class="flex gap-1">
+          <div class="w-3 h-2 bg-white/20 rounded-sm"></div>
+          <div class="w-3 h-2 bg-white rounded-sm"></div>
+        </div>
+      </div>
+
+      <!-- Telegram Header -->
+      <div class="h-14 bg-[#24a1de] flex items-center px-4 gap-3 shrink-0">
+        <button @click="showTelegram = false" class="text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold">V</div>
+        <div>
+          <p class="text-white font-bold text-sm leading-tight">VAT Compliance Bot</p>
+          <p class="text-white/70 text-[10px]">bot</p>
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="flex-1 bg-[#8db1c5] p-4 flex flex-col gap-3 overflow-y-auto">
+        <div class="self-center bg-white/20 rounded-full px-3 py-1 text-[10px] text-white font-medium mb-2">Today</div>
+        
+        <!-- Bot Message -->
+        <div class="self-start max-w-[85%] bg-white rounded-2xl rounded-tl-none p-3 shadow-sm">
+          <p class="text-[13px] text-slate-800 font-bold mb-1">📊 Q1 VAT Summary</p>
+          <p class="text-[12px] text-slate-600 leading-snug">The quarterly VAT return for <b>Acme Corp DE</b> is ready for review.</p>
+          <div class="mt-2 pt-2 border-t border-slate-100">
+            <p class="text-[11px] text-slate-400 uppercase font-bold tracking-tight">Financial Highlights</p>
+            <div class="flex justify-between text-[12px] mt-1">
+              <span>Total Net:</span>
+              <span class="font-bold">€124,500.00</span>
+            </div>
+            <div class="flex justify-between text-[12px]">
+              <span>VAT Payable:</span>
+              <span class="font-bold text-red-600">€23,655.00</span>
+            </div>
+            <button @click="alert('ELSTER Submission Triggered')" class="mt-3 w-full py-2 bg-[#24a1de] text-white rounded-xl text-[11px] font-bold">APPROVE & SUBMIT</button>
+          </div>
+          <p class="text-[9px] text-slate-400 text-right mt-1">09:41 AM</p>
+        </div>
+
+        <!-- Bot Message 2 -->
+        <div class="self-start max-w-[85%] bg-white rounded-2xl rounded-tl-none p-3 shadow-sm">
+          <p class="text-[13px] text-amber-600 font-bold mb-1">⚠️ AI Risk Alert</p>
+          <p class="text-[12px] text-slate-600 leading-snug">3 invoices flagged for manual review due to ambiguous tax rates.</p>
+          <p class="text-[9px] text-slate-400 text-right mt-1">10:02 AM</p>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="h-14 bg-white px-4 flex items-center gap-3 shrink-0">
+        <div class="flex-1 bg-slate-100 rounded-full h-9 px-4 flex items-center text-slate-400 text-sm">Message</div>
+        <div class="w-9 h-9 rounded-full bg-[#24a1de] flex items-center justify-center text-white">
+          <svg class="w-5 h-5 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Back Button -->
+    <button @click="showTelegram = false" class="fixed top-8 right-8 bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-full font-bold transition flex items-center gap-3 backdrop-blur-md border border-white/20">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      EXIT PREVIEW
+    </button>
   </div>
 
 </body>
