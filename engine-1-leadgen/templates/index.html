@@ -1214,136 +1214,152 @@
     </header>
 
     <div class="flex-1 overflow-auto bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] bg-[length:24px_24px] p-10">
-      <div class="max-w-6xl mx-auto min-w-max">
+      <div class="max-w-3xl mx-auto">
         <div class="text-center mb-10">
           <h3 class="font-extrabold text-lg text-slate-800">Lead Generation Workflow</h3>
-          <p class="text-xs text-slate-500 mt-1">Documented N8N-style flow from the implementation reference</p>
+          <p class="text-xs text-slate-500 mt-1">N8N-style node flow — inputs → processing → decision → outputs</p>
         </div>
 
-        <div class="space-y-7">
-          <!-- Inputs -->
-          <div class="flex justify-center gap-4">
-            <div class="w-44 p-4 rounded-xl border-2 border-blue-500 bg-blue-50 text-center shadow-sm">
-              <div class="w-8 h-8 rounded-lg bg-blue-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🌐</div>
-              <div class="text-[11px] font-bold text-blue-700">Web Search Input</div>
-            </div>
-            <div class="w-44 p-4 rounded-xl border-2 border-blue-500 bg-blue-50 text-center shadow-sm">
-              <div class="w-8 h-8 rounded-lg bg-blue-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🔗</div>
-              <div class="text-[11px] font-bold text-blue-700">Manual URL Input</div>
-            </div>
-            <div class="w-44 p-4 rounded-xl border-2 border-blue-500 bg-blue-50 text-center shadow-sm">
-              <div class="w-8 h-8 rounded-lg bg-blue-500 text-white mx-auto flex items-center justify-center text-sm mb-2">📤</div>
-              <div class="text-[11px] font-bold text-blue-700">CSV Upload</div>
-            </div>
+        <!-- ── INPUTS ── -->
+        <p class="text-[10px] uppercase tracking-widest text-slate-400 text-center mb-3">Inputs</p>
+        <div class="flex justify-center gap-4">
+          <div class="w-48 p-4 rounded-xl border border-slate-200 bg-white text-center shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-blue-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🌐</div>
+            <div class="text-[11px] font-bold text-slate-700">Web Search Input</div>
           </div>
+          <div class="w-48 p-4 rounded-xl border border-slate-200 bg-white text-center shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-blue-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🔗</div>
+            <div class="text-[11px] font-bold text-slate-700">Manual URL Input</div>
+          </div>
+          <div class="w-48 p-4 rounded-xl border border-slate-200 bg-white text-center shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-blue-500 text-white mx-auto flex items-center justify-center text-sm mb-2">📤</div>
+            <div class="text-[11px] font-bold text-slate-700">CSV Upload</div>
+          </div>
+        </div>
 
-          <div class="text-center text-xl text-slate-400 font-bold">↓</div>
+        <div class="w-px h-8 bg-slate-300 mx-auto"></div>
 
-          <!-- Processing chain -->
-          <div class="flex justify-center">
-            <div class="w-52 p-4 rounded-xl border-2 border-blue-500 bg-blue-50 text-center shadow-sm">
-              <div class="w-8 h-8 rounded-lg bg-blue-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🕸</div>
-              <div class="text-[11px] font-bold text-blue-700">Web Scraper Node</div>
-              <div class="text-[10px] text-slate-500 mt-1">(BeautifulSoup)</div>
-            </div>
-          </div>
-          <div class="text-center text-xl text-slate-400 font-bold">↓</div>
-          <div class="flex justify-center">
-            <div class="w-52 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-center shadow-sm">
-              <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🧹</div>
-              <div class="text-[11px] font-bold text-emerald-700">Parse &amp; Clean</div>
-              <div class="text-[10px] text-slate-500 mt-1">Company names, contact data</div>
-            </div>
-          </div>
-          <div class="text-center text-xl text-slate-400 font-bold">↓</div>
-          <div class="flex justify-center">
-            <div class="w-52 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-center shadow-sm">
-              <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🤖</div>
-              <div class="text-[11px] font-bold text-emerald-700">Gemini AI Node</div>
-              <div class="text-[10px] text-slate-500 mt-1">Industry · Firmographic · Scoring</div>
-            </div>
-          </div>
-          <div class="text-center text-xl text-slate-400 font-bold">↓</div>
-          <div class="flex justify-center">
-            <div class="w-52 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-center shadow-sm">
-              <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🗑️</div>
-              <div class="text-[11px] font-bold text-emerald-700">Deduplication Node</div>
-              <div class="text-[10px] text-slate-500 mt-1">Remove duplicates by domain</div>
-            </div>
-          </div>
-          <div class="text-center text-xl text-slate-400 font-bold">↓</div>
-          <div class="flex justify-center">
-            <div class="w-64 p-4 rounded-xl border-2 border-amber-500 bg-amber-50 text-center shadow-sm">
-              <div class="w-8 h-8 rounded-lg bg-amber-500 text-white mx-auto flex items-center justify-center text-sm mb-2">✅</div>
-              <div class="text-[11px] font-bold text-amber-700">Filter Node</div>
-              <div class="text-[10px] text-slate-500 mt-1">Quality Score &gt; 7?</div>
-            </div>
-          </div>
+        <!-- ── PROCESSING ── -->
+        <p class="text-[10px] uppercase tracking-widest text-slate-400 text-center mb-3">Processing</p>
 
-          <!-- Branch split -->
-          <div class="relative">
-            <div class="flex justify-center">
-              <div class="h-8 w-px bg-slate-300"></div>
-            </div>
-            <div class="flex justify-center items-end gap-28">
-              <div class="relative">
-                <div class="text-xs font-bold text-emerald-600 mb-1">YES</div>
-                <div class="h-4 w-36 border-b-2 border-slate-300 -mb-px"></div>
-                <div class="h-6 w-px bg-slate-300 mx-auto"></div>
-              </div>
-              <div class="relative">
-                <div class="text-xs font-bold text-slate-500 mb-1">NO</div>
-                <div class="h-4 w-36 border-b-2 border-slate-300 -mb-px"></div>
-                <div class="h-6 w-px bg-slate-300 mx-auto"></div>
-              </div>
-            </div>
+        <div class="flex justify-center">
+          <div class="w-64 p-4 rounded-xl border border-slate-200 bg-white text-center shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-blue-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🕸</div>
+            <div class="text-[11px] font-bold text-slate-700">Web Scraper Node</div>
+            <div class="text-[10px] text-slate-500 mt-1">(BeautifulSoup)</div>
           </div>
+        </div>
+        <div class="w-px h-8 bg-slate-300 mx-auto"></div>
+        <div class="flex justify-center">
+          <div class="w-64 p-4 rounded-xl border border-slate-200 bg-white text-center shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🧹</div>
+            <div class="text-[11px] font-bold text-slate-700">Parse &amp; Clean</div>
+            <div class="text-[10px] text-slate-500 mt-1">Company names, contact data</div>
+          </div>
+        </div>
+        <div class="w-px h-8 bg-slate-300 mx-auto"></div>
+        <div class="flex justify-center">
+          <div class="w-64 p-4 rounded-xl border border-slate-200 bg-white text-center shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🤖</div>
+            <div class="text-[11px] font-bold text-slate-700">Gemini AI Node</div>
+            <div class="text-[10px] text-slate-500 mt-1">Industry · Firmographic · Scoring</div>
+          </div>
+        </div>
+        <div class="w-px h-8 bg-slate-300 mx-auto"></div>
+        <div class="flex justify-center">
+          <div class="w-64 p-4 rounded-xl border border-slate-200 bg-white text-center shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🗑️</div>
+            <div class="text-[11px] font-bold text-slate-700">Deduplication Node</div>
+            <div class="text-[10px] text-slate-500 mt-1">Remove duplicates by domain</div>
+          </div>
+        </div>
+        <div class="w-px h-8 bg-slate-300 mx-auto"></div>
 
-          <div class="grid grid-cols-3 gap-6">
-            <div class="space-y-3 col-span-2">
-              <div class="w-56 p-4 rounded-xl border-2 border-red-500 bg-red-50 text-center shadow-sm">
-                <div class="w-8 h-8 rounded-lg bg-red-500 text-white mx-auto flex items-center justify-center text-sm mb-2">☁</div>
-                <div class="text-[11px] font-bold text-red-700">Salesforce</div>
+        <!-- ── DECISION ── -->
+        <p class="text-[10px] uppercase tracking-widest text-slate-400 text-center mb-3">Decision</p>
+        <div class="flex justify-center">
+          <div class="w-64 p-4 rounded-xl border border-amber-300 bg-amber-50 text-center shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white mx-auto flex items-center justify-center text-sm mb-2">✅</div>
+            <div class="text-[11px] font-bold text-amber-700">Filter Node</div>
+            <div class="text-[10px] text-slate-500 mt-1">Quality Score &gt; 7?</div>
+          </div>
+        </div>
+
+        <!-- center stem down to T-bar -->
+        <div class="w-px h-6 bg-slate-300 mx-auto"></div>
+
+        <!-- ── BRANCH SPLIT ──
+             Each column is w-64 (16rem), gap between is 8rem.
+             Horizontal bar spans between column centers: 16 + 8 = 24rem wide,
+             offset left by half that (12rem) from the 50% midpoint.
+        -->
+        <div class="relative">
+          <!-- horizontal T-bar -->
+          <div class="absolute top-0 h-px bg-slate-300" style="width: 24rem; left: calc(50% - 12rem);"></div>
+
+          <div class="flex justify-center gap-32 pt-0">
+
+            <!-- YES branch -->
+            <div class="flex flex-col items-center">
+              <div class="w-px h-4 bg-slate-300"></div>
+              <div class="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full mb-3">YES — Score &gt; 7</div>
+              <p class="text-[10px] uppercase tracking-widest text-slate-400 text-center mb-3">Outputs</p>
+              <div class="w-64 p-4 rounded-xl border border-slate-200 bg-white text-center shadow-sm">
+                <div class="w-8 h-8 rounded-lg bg-sky-600 text-white mx-auto flex items-center justify-center text-sm mb-2">☁</div>
+                <div class="text-[11px] font-bold text-slate-700">Salesforce</div>
                 <div class="text-[10px] text-slate-500 mt-1">Lead Creator</div>
               </div>
-              <div class="w-56 p-4 rounded-xl border-2 border-red-500 bg-red-50 text-center shadow-sm">
-                <div class="w-8 h-8 rounded-lg bg-red-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🏷</div>
-                <div class="text-[11px] font-bold text-red-700">HubSpot</div>
-                <div class="text-[10px] text-slate-500 mt-1">Lead Creator</div>
+              <div class="w-px h-5 bg-slate-300"></div>
+              <div class="w-64 p-4 rounded-xl border border-slate-200 bg-white text-center shadow-sm">
+                <div class="w-8 h-8 rounded-lg bg-orange-500 text-white mx-auto flex items-center justify-center text-sm mb-2">🏷</div>
+                <div class="text-[11px] font-bold text-slate-700">HubSpot</div>
+                <div class="text-[10px] text-slate-500 mt-1">Contact Creator</div>
               </div>
-              <div class="w-56 p-4 rounded-xl border-2 border-red-500 bg-red-50 text-center shadow-sm">
-                <div class="w-8 h-8 rounded-lg bg-red-500 text-white mx-auto flex items-center justify-center text-sm mb-2">📣</div>
-                <div class="text-[11px] font-bold text-red-700">Slack Alert</div>
-                <div class="text-[10px] text-slate-500 mt-1">High-quality leads</div>
+              <div class="w-px h-5 bg-slate-300"></div>
+              <div class="w-64 p-4 rounded-xl border border-slate-200 bg-white text-center shadow-sm">
+                <div class="w-8 h-8 rounded-lg bg-purple-500 text-white mx-auto flex items-center justify-center text-sm mb-2">📣</div>
+                <div class="text-[11px] font-bold text-slate-700">Slack Alert</div>
+                <div class="text-[10px] text-slate-500 mt-1">Notify sales channel</div>
               </div>
             </div>
-            <div class="flex items-end">
-              <div class="w-56 p-4 rounded-xl border-2 border-slate-300 bg-slate-50 text-center shadow-sm">
+
+            <!-- NO branch -->
+            <div class="flex flex-col items-center justify-center">
+              <div class="w-px h-4 bg-slate-300"></div>
+              <div class="text-[10px] font-bold text-red-500 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full mb-3">NO — Score ≤ 7</div>
+              <div class="w-64 p-4 rounded-xl border border-slate-200 bg-white text-center shadow-sm">
                 <div class="w-8 h-8 rounded-lg bg-slate-400 text-white mx-auto flex items-center justify-center text-sm mb-2">⚠</div>
-                <div class="text-[11px] font-bold text-slate-700">Low-Quality Lead Filtered</div>
-                <div class="text-[10px] text-slate-500 mt-1">Quality Score ≤ 7</div>
+                <div class="text-[11px] font-bold text-slate-600">Low-Quality Lead</div>
+                <div class="text-[10px] text-slate-500 mt-1">Filtered out</div>
               </div>
             </div>
-          </div>
 
-          <div class="text-center text-xl text-slate-400 font-bold">↓</div>
-          <div class="flex justify-center">
-            <div class="w-72 p-4 rounded-xl border-2 border-indigo-500 bg-indigo-50 text-center shadow-sm">
-              <div class="w-8 h-8 rounded-lg bg-indigo-500 text-white mx-auto flex items-center justify-center text-sm mb-2">📦</div>
-              <div class="text-[11px] font-bold text-indigo-700">CSV Export</div>
-              <div class="text-[10px] text-slate-500 mt-1">Download ZIP</div>
-            </div>
-          </div>
-
-          <div class="pt-6 grid grid-cols-1 gap-2 max-w-3xl mx-auto text-[11px] text-slate-600">
-            <p class="text-center font-semibold">Key Nodes</p>
-            <p>🔍 Web Scraper — Crawl company websites</p>
-            <p>🤖 Gemini AI Enrichment — Add industry, employee count, tech stack</p>
-            <p>🗑️ Deduplication — Filter duplicates by domain</p>
-            <p>✅ Quality Filter — Only pass high-confidence leads</p>
-            <p>📤 Multi-Output — Salesforce, HubSpot, Slack, CSV export</p>
           </div>
         </div>
+
+        <!-- reconnect YES branch back to center spine -->
+        <div class="w-px h-8 bg-slate-300 mx-auto mt-2"></div>
+
+        <!-- ── EXPORT ── -->
+        <p class="text-[10px] uppercase tracking-widest text-slate-400 text-center mb-3">Export</p>
+        <div class="flex justify-center">
+          <div class="w-64 p-4 rounded-xl border border-indigo-200 bg-indigo-50 text-center shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-indigo-500 text-white mx-auto flex items-center justify-center text-sm mb-2">📦</div>
+            <div class="text-[11px] font-bold text-indigo-700">CSV Export</div>
+            <div class="text-[10px] text-slate-500 mt-1">Download ZIP</div>
+          </div>
+        </div>
+
+        <!-- Key Nodes legend -->
+        <div class="pt-8 grid grid-cols-1 gap-2 max-w-xl mx-auto text-[11px] text-slate-500 border-t border-slate-200 mt-8">
+          <p class="text-center font-semibold text-slate-700 mb-1">Key Nodes</p>
+          <p>🔍 Web Scraper — Crawl company websites</p>
+          <p>🤖 Gemini AI Enrichment — Add industry, employee count, tech stack</p>
+          <p>🗑️ Deduplication — Filter duplicates by domain</p>
+          <p>✅ Quality Filter — Only pass high-confidence leads (score &gt; 7)</p>
+          <p>📤 Multi-Output — Salesforce, HubSpot, Slack, CSV export</p>
+        </div>
+
       </div>
     </div>
   </div>
